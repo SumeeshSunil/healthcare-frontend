@@ -99,21 +99,21 @@ function PatientDashboard() {
                     <div className="flex flex-wrap gap-4">
 
                         <Link
-                            to="/book-appointment"
+                            to="/patient/book-appointment"
                             className="bg-blue-600 text-white px-5 py-3 rounded-lg hover:bg-blue-700 transition"
                         >
                             Book Appointment
                         </Link>
 
                         <Link
-                            to="/records"
+                            to="/patient/medical-history"
                             className="bg-green-600 text-white px-5 py-3 rounded-lg hover:bg-green-700 transition"
                         >
                             View Records
                         </Link>
 
                         <Link
-                            to="/bills"
+                            to="/patient/billing"
                             className="bg-purple-600 text-white px-5 py-3 rounded-lg hover:bg-purple-700 transition"
                         >
                             Pay Bills
