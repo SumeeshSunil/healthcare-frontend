@@ -1,0 +1,52 @@
+[
+  {
+    "id": 1,
+    "patientId": 1,
+    "doctorId": 1,
+    "date": "2026-07-27",
+    "time": "09:00 AM",
+    "status": "confirmed",
+    "reason": "Chest pain follow-up",
+    "createdAt": "2026-07-18"
+  },
+  {
+    "id": 2,
+    "patientId": 1,
+    "doctorId": 2,
+    "date": "2026-07-29",
+    "time": "01:00 PM",
+    "status": "pending",
+    "reason": "Skin rash consultation",
+    "createdAt": "2026-07-20"
+  },
+  {
+    "id": 3,
+    "patientId": 2,
+    "doctorId": 1,
+    "date": "2026-07-22",
+    "time": "10:00 AM",
+    "status": "completed",
+    "reason": "Routine cardiac checkup",
+    "createdAt": "2026-07-10"
+  },
+  {
+    "id": 4,
+    "patientId": 2,
+    "doctorId": 3,
+    "date": "2026-08-01",
+    "time": "04:00 PM",
+    "status": "cancelled",
+    "reason": "Knee pain",
+    "createdAt": "2026-07-15"
+  },
+  {
+    "id": 5,
+    "patientId": 3,
+    "doctorId": 1,
+    "date": "2026-07-25",
+    "time": "11:30 AM",
+    "status": "confirmed",
+    "reason": "Blood pressure monitoring",
+    "createdAt": "2026-07-19"
+  }
+]
