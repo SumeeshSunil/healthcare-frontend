@@ -1,11 +1,18 @@
 import { useState } from "react";
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
+import { useSelector, useDispatch } from "react-redux";
 
+import { addAppointment } from "../../redux/slices/appointmentSlice";
+
+import patients from "../../data/dummyPatients.json"
 import doctors from "../../data/dummyDoctors.json";
 import Navbar from "../../components/Navbar";
 
 function BookAppointment() {
 
+    const auth = useSelector((state) => state.auth);
+    const appointments = useSelector((state) => state.appointment.appointments);
+    const dispatch = useDispatch();
     const [selectedDate, setSelectedDate] = useState("");
     const [selectedTimeSlot, setSelectedTimeSlot] = useState("");
 
@@ -20,6 +27,7 @@ function BookAppointment() {
     ];
 
     const { doctorId } = useParams();
+    const navigate = useNavigate();
 
     const doctor = doctors.find((d) => d.id === Number(doctorId));
 
@@ -28,6 +36,36 @@ function BookAppointment() {
     const dayName = dayNames[dayIndex];
 
     const available = doctor.availability.find((a) => a.day === dayName);
+
+    const existingAppointment = appointments.find((a) =>
+        a.doctorId === doctor.id &&
+        a.date === selectedDate &&
+        a.time === selectedTimeSlot &&
+        a.status !== "cancelled"
+    );
+
+    console.log(existingAppointment);
+
+    const handleConfirmBooking = () => {
+        const patientProfile = patients.find((P) => P.userId === auth.user.id);
+
+
+        const newAppointment = {
+            id: Date.now(),
+            patientId: patientProfile.id,
+            doctorId: doctor.id,
+            date: selectedDate,
+            time: selectedTimeSlot,
+            status: "pending",
+            reason: "General consultation",
+            createdAt: new Date().toISOString().split("T")[0],
+        };
+
+        dispatch(addAppointment(newAppointment));
+        alert("appointment scheduled.");
+        navigate("/patient/dashboard");
+
+    };
 
     return (
         <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-cyan-100">
@@ -135,10 +173,9 @@ function BookAppointment() {
                                             onClick={() => setSelectedTimeSlot(slot)}
                                             className={`px-6 py-3 rounded-xl font-semibold transition duration-300 shadow-md
                                                 
-                                                ${
-                                                    selectedTimeSlot === slot
-                                                        ? "bg-gradient-to-r from-blue-600 to-cyan-500 text-white scale-105 shadow-xl"
-                                                        : "bg-white border border-gray-300 hover:border-blue-500 hover:bg-blue-50"
+                                                ${selectedTimeSlot === slot
+                                                    ? "bg-gradient-to-r from-blue-600 to-cyan-500 text-white scale-105 shadow-xl"
+                                                    : "bg-white border border-gray-300 hover:border-blue-500 hover:bg-blue-50"
                                                 }`}
                                         >
 
@@ -170,36 +207,157 @@ function BookAppointment() {
 
                         {selectedTimeSlot && (
 
-                            <div className="mt-12 bg-gradient-to-r from-green-500 to-emerald-500 rounded-2xl p-6 text-white shadow-lg">
+                            existingAppointment ? (
+                                <div className="mt-12 bg-gradient-to-r from-red-600 via-red-500 to-orange-500 rounded-3xl shadow-2xl overflow-hidden">
 
-                                <h2 className="text-2xl font-bold">
-                                    Appointment Summary
-                                </h2>
+                                    <div className="px-8 py-6 border-b border-white/20">
+                                        <div className="flex items-center gap-4">
+                                            <div className="w-16 h-16 rounded-2xl bg-white/20 flex items-center justify-center text-3xl">
+                                                ⚠️
+                                            </div>
 
-                                <div className="mt-4 space-y-2">
+                                            <div>
+                                                <h2 className="text-3xl font-bold text-white">
+                                                    Slot Already Booked
+                                                </h2>
 
-                                    <p>
-                                        <span className="font-semibold">Doctor:</span>{" "}
-                                        {doctor.name}
-                                    </p>
+                                                <p className="text-red-100 mt-1">
+                                                    This appointment slot has already been reserved by another patient.
+                                                </p>
+                                            </div>
+                                        </div>
+                                    </div>
 
-                                    <p>
-                                        <span className="font-semibold">Date:</span>{" "}
-                                        {selectedDate}
-                                    </p>
+                                    <div className="bg-white p-8">
 
-                                    <p>
-                                        <span className="font-semibold">Time:</span>{" "}
-                                        {selectedTimeSlot}
-                                    </p>
+                                        <h3 className="text-xl font-bold text-gray-800 mb-6">
+                                            Existing Appointment Details
+                                        </h3>
+
+                                        <div className="grid md:grid-cols-2 gap-5">
+
+                                            <div className="bg-red-50 rounded-2xl p-5 border border-red-100">
+                                                <p className="text-sm text-gray-500 mb-1">
+                                                    Doctor
+                                                </p>
+
+                                                <p className="text-lg font-bold text-gray-800">
+                                                    {doctor.name}
+                                                </p>
+                                            </div>
+
+                                            <div className="bg-red-50 rounded-2xl p-5 border border-red-100">
+                                                <p className="text-sm text-gray-500 mb-1">
+                                                    Patient ID
+                                                </p>
+
+                                                <p className="text-lg font-bold text-gray-800">
+                                                    #{existingAppointment.patientId}
+                                                </p>
+                                            </div>
+
+                                            <div className="bg-red-50 rounded-2xl p-5 border border-red-100">
+                                                <p className="text-sm text-gray-500 mb-1">
+                                                    Appointment Date
+                                                </p>
+
+                                                <p className="text-lg font-bold text-gray-800">
+                                                    {existingAppointment.date}
+                                                </p>
+                                            </div>
+
+                                            <div className="bg-red-50 rounded-2xl p-5 border border-red-100">
+                                                <p className="text-sm text-gray-500 mb-1">
+                                                    Time Slot
+                                                </p>
+
+                                                <p className="text-lg font-bold text-gray-800">
+                                                    {existingAppointment.time}
+                                                </p>
+                                            </div>
+
+                                            <div className="bg-red-50 rounded-2xl p-5 border border-red-100">
+                                                <p className="text-sm text-gray-500 mb-1">
+                                                    Status
+                                                </p>
+
+                                                <span className="inline-block px-4 py-2 rounded-full bg-red-600 text-white font-semibold capitalize">
+                                                    {existingAppointment.status}
+                                                </span>
+                                            </div>
+
+                                            <div className="bg-red-50 rounded-2xl p-5 border border-red-100">
+                                                <p className="text-sm text-gray-500 mb-1">
+                                                    Booking Date
+                                                </p>
+
+                                                <p className="text-lg font-bold text-gray-800">
+                                                    {existingAppointment.createdAt}
+                                                </p>
+                                            </div>
+
+                                        </div>
+
+                                        <div className="mt-8 rounded-2xl bg-amber-50 border border-amber-200 p-5">
+
+                                            <div className="flex gap-4">
+
+                                                <div className="text-3xl">
+                                                    💡
+                                                </div>
+
+                                                <div>
+                                                    <h4 className="font-bold text-amber-800">
+                                                        Choose another available time
+                                                    </h4>
+
+                                                    <p className="text-amber-700 mt-1">
+                                                        The selected slot is no longer available. Please select another time slot or another date to continue booking.
+                                                    </p>
+                                                </div>
+
+                                            </div>
+
+                                        </div>
+
+                                    </div>
 
                                 </div>
+                            ) : (
+                                <div className="mt-12 bg-gradient-to-r from-green-500 to-emerald-500 rounded-2xl p-6 text-white shadow-lg">
 
-                                <button className="mt-6 bg-white text-green-700 px-8 py-3 rounded-xl font-bold hover:scale-105 transition">
-                                    Confirm Appointment
-                                </button>
+                                    <h2 className="text-2xl font-bold">
+                                        Appointment Summary
+                                    </h2>
 
-                            </div>
+                                    <div className="mt-4 space-y-2">
+
+                                        <p>
+                                            <span className="font-semibold">Doctor:</span>{" "}
+                                            {doctor.name}
+                                        </p>
+
+                                        <p>
+                                            <span className="font-semibold">Date:</span>{" "}
+                                            {selectedDate}
+                                        </p>
+
+                                        <p>
+                                            <span className="font-semibold">Time:</span>{" "}
+                                            {selectedTimeSlot}
+                                        </p>
+
+                                    </div>
+
+                                    <button
+                                        className="mt-6 bg-white text-green-700 px-8 py-3 rounded-xl font-bold hover:scale-105 transition"
+                                        onClick={handleConfirmBooking}
+                                    >
+                                        Confirm Appointment
+                                    </button>
+
+                                </div>
+                            )
 
                         )}
 

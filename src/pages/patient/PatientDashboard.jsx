@@ -2,7 +2,6 @@ import { useSelector } from "react-redux";
 import { Link } from "react-router-dom";
 
 import patients from "../../data/dummyPatients.json";
-import appointments from "../../data/dummyAppointments.json";
 import doctors from "../../data/dummyDoctors.json";
 import bills from "../../data/dummyBills.json";
 
@@ -10,6 +9,8 @@ import Navbar from "../../components/Navbar";
 
 function PatientDashboard() {
     const auth = useSelector((state) => state.auth);
+    const appointments = useSelector((state) => state.appointment.appointments);
+    console.log(appointments)
 
     const patientProfile = patients.find(
         (p) => p.userId === auth.user.id
@@ -99,7 +100,7 @@ function PatientDashboard() {
                     <div className="flex flex-wrap gap-4">
 
                         <Link
-                            to="/patient/book-appointment"
+                            to="/patient/doctor-search"
                             className="bg-blue-600 text-white px-5 py-3 rounded-lg hover:bg-blue-700 transition"
                         >
                             Book Appointment
