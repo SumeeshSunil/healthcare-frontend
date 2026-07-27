@@ -9,9 +9,15 @@ const appointmentSlice = createSlice({
     reducers: {
         addAppointment: (state, action) => {
             state.appointments.push(action.payload)
+        },
+        cancelAppointment: (state, action) => {
+            const appointment = state.appointments.find((a) => a.id === action.payload);
+            if (appointment) {
+                appointment.status = "cancelled";
+            }
         }
     }
 })
 
-export const { addAppointment } = appointmentSlice.actions;
+export const { addAppointment, cancelAppointment } = appointmentSlice.actions;
 export default appointmentSlice.reducer;

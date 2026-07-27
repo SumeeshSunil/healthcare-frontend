@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { Link } from "react-router-dom";
 
 function Register() {
   const [role, setRole] = useState("patient");
@@ -15,142 +16,141 @@ function Register() {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    console.log("Submit Logic Goes Here");
   };
 
   return (
-    <div className="min-h-screen bg-slate-100 flex items-center justify-center py-10">
-      <div className="w-full max-w-xl bg-white rounded-xl shadow-lg p-8">
+    <div className="min-h-screen bg-slate-900 flex items-center justify-center p-6 py-12">
+      <div className="w-full max-w-xl bg-white rounded-3xl shadow-2xl p-8 border border-slate-800">
 
-        <h1 className="text-3xl font-bold text-center text-slate-800">
-          Create Account
-        </h1>
+        <div className="text-center mb-8">
 
-        <p className="text-center text-gray-500 mt-2 mb-8">
-          Register as a Patient or Doctor
-        </p>
+          <div className="w-12 h-12 rounded-2xl bg-gradient-to-tr from-blue-700 via-teal-600 to-teal-400 text-white flex items-center justify-center font-black text-xl shadow-lg mx-auto mb-3">
+            ✚
+          </div>
 
-        <form onSubmit={handleSubmit} className="space-y-5">
+          <h1 className="text-2xl font-extrabold text-slate-900 tracking-tight">
+            Create Account
+          </h1>
 
-          {/* Role */}
+          <p className="text-xs text-slate-500 mt-1">
+            Register as a Patient or Healthcare Practitioner
+          </p>
 
-          <div className="border rounded-lg p-4">
-            <h2 className="font-semibold text-gray-700 mb-3">
-              Register As
-            </h2>
+        </div>
 
-            <div className="flex gap-10">
+        <form onSubmit={handleSubmit} className="space-y-5 text-xs">
 
-              <label className="flex items-center gap-2 cursor-pointer">
+          <div className="bg-slate-50 p-4 rounded-2xl border border-slate-200">
+
+            <label className="block font-bold text-slate-700 mb-2">
+              Registration Role
+            </label>
+
+            <div className="flex gap-8">
+
+              <label className="flex items-center gap-2 cursor-pointer font-bold text-slate-800">
                 <input
                   type="radio"
                   name="role"
                   value="patient"
                   checked={role === "patient"}
                   onChange={(e) => setRole(e.target.value)}
-                  className="accent-blue-600"
+                  className="accent-teal-600"
                 />
-                Patient
+                Patient Account
               </label>
 
-              <label className="flex items-center gap-2 cursor-pointer">
+              <label className="flex items-center gap-2 cursor-pointer font-bold text-slate-800">
                 <input
                   type="radio"
                   name="role"
                   value="doctor"
                   checked={role === "doctor"}
                   onChange={(e) => setRole(e.target.value)}
-                  className="accent-blue-600"
+                  className="accent-teal-600"
                 />
-                Doctor
+                Physician Practitioner
               </label>
 
             </div>
+
           </div>
 
-          {/* Name */}
-
           <div>
-            <label className="block text-sm font-medium mb-2">
-              Full Name
+            <label className="block font-bold text-slate-700 mb-1.5">
+              Full Legal Name
             </label>
 
             <input
               type="text"
-              placeholder="Enter your full name"
+              placeholder="Enter full name"
               value={nameInput}
               onChange={(e) => setNameInput(e.target.value)}
-              className="w-full border rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-teal-500 font-semibold text-slate-900"
             />
           </div>
 
-          {/* Email */}
-
           <div>
-            <label className="block text-sm font-medium mb-2">
+            <label className="block font-bold text-slate-700 mb-1.5">
               Email Address
             </label>
 
             <input
               type="email"
-              placeholder="Enter your email"
+              placeholder="name@domain.com"
               value={emailInput}
               onChange={(e) => setEmailInput(e.target.value)}
-              className="w-full border rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-teal-500 font-semibold text-slate-900"
             />
           </div>
 
-          {/* Password */}
-
           <div>
-            <label className="block text-sm font-medium mb-2">
-              Password
+            <label className="block font-bold text-slate-700 mb-1.5">
+              Account Password
             </label>
 
             <input
               type="password"
-              placeholder="Enter your password"
+              placeholder="••••••••"
               value={passwordInput}
               onChange={(e) => setPasswordInput(e.target.value)}
-              className="w-full border rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-teal-500 font-semibold text-slate-900"
             />
           </div>
 
-          {/* Patient */}
-
           {role === "patient" && (
-            <div className="space-y-5">
+            <div className="space-y-4 pt-2">
 
               <div>
-                <label className="block text-sm font-medium mb-2">
-                  Address
+                <label className="block font-bold text-slate-700 mb-1.5">
+                  Residential Address
                 </label>
 
                 <input
                   type="text"
-                  placeholder="Enter your address"
+                  placeholder="Enter full address"
                   value={addressInput}
                   onChange={(e) => setAddressInput(e.target.value)}
-                  className="w-full border rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-teal-500 font-semibold text-slate-900"
                 />
               </div>
 
               <div>
-                <label className="block text-sm font-medium mb-2">
-                  Mobile Number
+                <label className="block font-bold text-slate-700 mb-1.5">
+                  Mobile Contact Number
                 </label>
 
                 <input
                   type="text"
-                  placeholder="Enter your mobile number"
+                  placeholder="Enter contact number"
                   value={mobileInput}
                   onChange={(e) => setMobileInput(e.target.value)}
-                  className="w-full border rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-teal-500 font-semibold text-slate-900"
                 />
               </div>
 
               <div>
-                <label className="block text-sm font-medium mb-2">
+                <label className="block font-bold text-slate-700 mb-1.5">
                   Date of Birth
                 </label>
 
@@ -158,63 +158,61 @@ function Register() {
                   type="date"
                   value={dobInput}
                   onChange={(e) => setDobInput(e.target.value)}
-                  className="w-full border rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-teal-500 font-semibold text-slate-900"
                 />
               </div>
 
             </div>
           )}
 
-          {/* Doctor */}
-
           {role === "doctor" && (
-            <div className="space-y-5">
+            <div className="space-y-4 pt-2">
 
               <div>
-                <label className="block text-sm font-medium mb-2">
-                  Specialization
+                <label className="block font-bold text-slate-700 mb-1.5">
+                  Medical Specialization
                 </label>
 
                 <input
                   type="text"
-                  placeholder="Enter your specialization"
+                  placeholder="e.g. Cardiology, Orthopedics"
                   value={specializationInput}
                   onChange={(e) =>
                     setSpecializationInput(e.target.value)
                   }
-                  className="w-full border rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-teal-500 font-semibold text-slate-900"
                 />
               </div>
 
               <div>
-                <label className="block text-sm font-medium mb-2">
-                  Years of Experience
+                <label className="block font-bold text-slate-700 mb-1.5">
+                  Years of Practice
                 </label>
 
                 <input
                   type="number"
-                  placeholder="Enter years of experience"
+                  placeholder="Years in practice"
                   value={experienceInput}
                   onChange={(e) =>
                     setExperienceInput(e.target.value)
                   }
-                  className="w-full border rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-teal-500 font-semibold text-slate-900"
                 />
               </div>
 
               <div>
-                <label className="block text-sm font-medium mb-2">
-                  Qualification
+                <label className="block font-bold text-slate-700 mb-1.5">
+                  Medical Qualifications
                 </label>
 
                 <input
                   type="text"
-                  placeholder="Enter your qualification"
+                  placeholder="e.g. MBBS, MD"
                   value={qualificationInput}
                   onChange={(e) =>
                     setQualificationInput(e.target.value)
                   }
-                  className="w-full border rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-teal-500 font-semibold text-slate-900"
                 />
               </div>
 
@@ -222,15 +220,25 @@ function Register() {
           )}
 
           {error && (
-            <p className="text-red-500 text-sm">{error}</p>
+            <p className="text-rose-600 font-bold">{error}</p>
           )}
 
           <button
             type="submit"
-            className="w-full bg-blue-600 hover:bg-blue-700 transition text-white py-3 rounded-lg font-semibold"
+            className="w-full bg-teal-600 hover:bg-teal-700 transition text-white py-3.5 rounded-xl font-bold uppercase tracking-wider text-xs shadow-lg shadow-teal-600/25"
           >
-            Register
+            Create Account
           </button>
+
+          <div className="text-center pt-2 text-slate-500">
+
+            Already registered?{" "}
+
+            <Link to="/login" className="text-teal-600 font-bold hover:underline">
+              Sign In
+            </Link>
+
+          </div>
 
         </form>
       </div>

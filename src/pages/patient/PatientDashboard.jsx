@@ -6,15 +6,17 @@ import doctors from "../../data/dummyDoctors.json";
 import bills from "../../data/dummyBills.json";
 
 import Navbar from "../../components/Navbar";
+import Sidebar from "../../components/Sidebar";
 
 function PatientDashboard() {
     const auth = useSelector((state) => state.auth);
     const appointments = useSelector((state) => state.appointment.appointments);
-    console.log(appointments)
+
+    const currentUserId = auth.user ? auth.user.id : 4;
 
     const patientProfile = patients.find(
-        (p) => p.userId === auth.user.id
-    );
+        (p) => p.userId === currentUserId
+    ) || patients[0];
 
     const myAppointments = appointments.filter(
         (a) => a.patientId === patientProfile.id
@@ -24,160 +26,340 @@ function PatientDashboard() {
         (a) => a.status !== "cancelled"
     ).length;
 
-    const myBills = bills.filter((b) => b.patientId === patientProfile.id)
-    const unpaidBills = myBills.filter((b) => b.status === "unpaid").length
+    const myBills = bills.filter((b) => b.patientId === patientProfile.id);
+    const unpaidBills = myBills.filter((b) => b.status === "unpaid").length;
 
-    const getStatusColor = (status) => {
+    const getStatusBadge = (status) => {
         switch (status) {
             case "confirmed":
-                return "bg-green-100 text-green-700";
+                return "bg-emerald-50 text-emerald-700 border-emerald-200";
 
             case "pending":
-                return "bg-yellow-100 text-yellow-700";
+                return "bg-amber-50 text-amber-700 border-amber-200";
 
             case "cancelled":
-                return "bg-red-100 text-red-700";
+                return "bg-rose-50 text-rose-700 border-rose-200";
 
             case "completed":
-                return "bg-blue-100 text-blue-700";
+                return "bg-sky-50 text-sky-700 border-sky-200";
 
             default:
-                return "bg-gray-100 text-gray-700";
+                return "bg-slate-50 text-slate-700 border-slate-200";
         }
     };
 
     return (
-        <div className="min-h-screen bg-gray-100">
+        <div className="min-h-screen bg-slate-50 flex flex-col">
             <Navbar />
 
-            <div className="max-w-7xl mx-auto p-8">
+            <div className="flex flex-1">
+                <Sidebar />
 
-                {/* Welcome */}
-                <div className="bg-white rounded-xl shadow p-6 mb-8">
-                    <h1 className="text-3xl font-bold text-gray-800">
-                        Welcome, {auth.user.name}
-                    </h1>
+                <main className="flex-1 max-w-7xl p-8 space-y-8">
 
-                    <p className="text-gray-500 mt-2">
-                        Manage your appointments and health records from your dashboard.
-                    </p>
-                </div>
+                    {/* Hero Banner */}
 
-                {/* Quick Stats */}
+                    <div className="relative overflow-hidden bg-gradient-to-r from-slate-900 via-slate-800 to-teal-900 text-white rounded-3xl p-8 shadow-xl border border-slate-800">
 
-                <div className="grid md:grid-cols-2 gap-6 mb-8">
+                        <div className="relative z-10 max-w-2xl">
 
-                    <div className="bg-white rounded-xl shadow p-6">
-                        <h3 className="text-gray-500">
-                            Upcoming Appointments
-                        </h3>
+                            <span className="inline-block px-3 py-1 bg-teal-500/20 text-teal-300 rounded-full text-xs font-semibold uppercase tracking-wider mb-3 border border-teal-500/30">
+                                Patient Overview
+                            </span>
 
-                        <p className="text-4xl font-bold text-blue-600 mt-2">
-                            {upcomingAppointments}
-                        </p>
-                    </div>
+                            <h1 className="text-3xl font-extrabold tracking-tight sm:text-4xl text-white">
+                                Welcome back, {auth.user?.name || patientProfile.name}
+                            </h1>
 
-                    <div className="bg-white rounded-xl shadow p-6">
-                        <h3 className="text-gray-500">
-                            Unpaid Bills
-                        </h3>
+                            <p className="text-slate-300 mt-3 text-sm leading-relaxed">
+                                Access your clinical summaries, upcoming consultations, prescriptions, and medical billing statements in one place.
+                            </p>
 
-                        <p className="text-4xl font-bold text-red-600 mt-2">
-                            {unpaidBills}
-                        </p>
-                    </div>
+                        </div>
 
-                </div>
-
-                {/* Quick Actions */}
-
-                <div className="bg-white rounded-xl shadow p-6 mb-8">
-
-                    <h2 className="text-xl font-semibold mb-5">
-                        Quick Actions
-                    </h2>
-
-                    <div className="flex flex-wrap gap-4">
-
-                        <Link
-                            to="/patient/doctor-search"
-                            className="bg-blue-600 text-white px-5 py-3 rounded-lg hover:bg-blue-700 transition"
-                        >
-                            Book Appointment
-                        </Link>
-
-                        <Link
-                            to="/patient/medical-history"
-                            className="bg-green-600 text-white px-5 py-3 rounded-lg hover:bg-green-700 transition"
-                        >
-                            View Records
-                        </Link>
-
-                        <Link
-                            to="/patient/billing"
-                            className="bg-purple-600 text-white px-5 py-3 rounded-lg hover:bg-purple-700 transition"
-                        >
-                            Pay Bills
-                        </Link>
+                        <div className="absolute right-0 top-0 bottom-0 w-1/3 bg-gradient-to-l from-teal-500/10 to-transparent pointer-events-none hidden md:block"></div>
 
                     </div>
 
-                </div>
+                    {/* Quick Stats Grid */}
 
-                {/* Appointments */}
+                    <div className="grid md:grid-cols-3 gap-6">
 
-                <div>
+                        <div className="bg-white rounded-2xl p-6 shadow-sm border border-slate-200/80 hover:shadow-md transition">
 
-                    <h2 className="text-2xl font-bold mb-5">
-                        My Appointments
-                    </h2>
+                            <div className="flex items-center justify-between">
 
-                    <div className="space-y-5">
+                                <div>
 
-                        {myAppointments.map((appointment) => {
+                                    <p className="text-xs font-bold text-slate-400 uppercase tracking-wider">
+                                        Upcoming Visits
+                                    </p>
 
-                            const doctor = doctors.find(
-                                (d) => d.id === appointment.doctorId
-                            );
-
-                            return (
-
-                                <div
-                                    key={appointment.id}
-                                    className="bg-white rounded-xl shadow p-6 flex justify-between items-center"
-                                >
-
-                                    <div>
-
-                                        <h3 className="text-xl font-semibold">
-                                            {doctor.name}
-                                        </h3>
-
-                                        <p className="text-gray-600 mt-1">
-                                            📅 {appointment.date}
-                                        </p>
-
-                                        <p className="text-gray-600">
-                                            🕒 {appointment.time}
-                                        </p>
-
-                                    </div>
-
-                                    <span
-                                        className={`px-4 py-2 rounded-full font-medium capitalize ${getStatusColor(
-                                            appointment.status
-                                        )}`}
-                                    >
-                                        {appointment.status}
-                                    </span>
+                                    <h3 className="text-3xl font-extrabold text-slate-900 mt-2">
+                                        {upcomingAppointments}
+                                    </h3>
 
                                 </div>
 
-                            );
-                        })}
+                                <div className="w-12 h-12 rounded-2xl bg-sky-50 text-sky-600 flex items-center justify-center font-bold text-xl">
+                                    📅
+                                </div>
+
+                            </div>
+
+                            <div className="mt-4 pt-3 border-t border-slate-100 flex items-center justify-between text-xs">
+
+                                <span className="text-slate-500 font-medium">Scheduled & Active</span>
+
+                                <Link to="/patient/my-appointments" className="text-sky-600 font-semibold hover:underline">
+                                    View details →
+                                </Link>
+
+                            </div>
+
+                        </div>
+
+                        <div className="bg-white rounded-2xl p-6 shadow-sm border border-slate-200/80 hover:shadow-md transition">
+
+                            <div className="flex items-center justify-between">
+
+                                <div>
+
+                                    <p className="text-xs font-bold text-slate-400 uppercase tracking-wider">
+                                        Unpaid Invoices
+                                    </p>
+
+                                    <h3 className="text-3xl font-extrabold text-rose-600 mt-2">
+                                        {unpaidBills}
+                                    </h3>
+
+                                </div>
+
+                                <div className="w-12 h-12 rounded-2xl bg-rose-50 text-rose-600 flex items-center justify-center font-bold text-xl">
+                                    💳
+                                </div>
+
+                            </div>
+
+                            <div className="mt-4 pt-3 border-t border-slate-100 flex items-center justify-between text-xs">
+
+                                <span className="text-slate-500 font-medium">Pending Payments</span>
+
+                                <Link to="/patient/billing" className="text-rose-600 font-semibold hover:underline">
+                                    Pay balance →
+                                </Link>
+
+                            </div>
+
+                        </div>
+
+                        <div className="bg-white rounded-2xl p-6 shadow-sm border border-slate-200/80 hover:shadow-md transition">
+
+                            <div className="flex items-center justify-between">
+
+                                <div>
+
+                                    <p className="text-xs font-bold text-slate-400 uppercase tracking-wider">
+                                        Health Status
+                                    </p>
+
+                                    <h3 className="text-3xl font-extrabold text-emerald-600 mt-2">
+                                        Active
+                                    </h3>
+
+                                </div>
+
+                                <div className="w-12 h-12 rounded-2xl bg-emerald-50 text-emerald-600 flex items-center justify-center font-bold text-xl">
+                                    🩺
+                                </div>
+
+                            </div>
+
+                            <div className="mt-4 pt-3 border-t border-slate-100 flex items-center justify-between text-xs">
+
+                                <span className="text-slate-500 font-medium">Records updated</span>
+
+                                <Link to="/patient/medical-history" className="text-teal-600 font-semibold hover:underline">
+                                    Medical records →
+                                </Link>
+
+                            </div>
+
+                        </div>
+
                     </div>
 
-                </div>
+                    {/* Quick Actions */}
+
+                    <div className="bg-white rounded-2xl shadow-sm border border-slate-200/80 p-6">
+
+                        <h2 className="text-lg font-bold text-slate-900 mb-4">
+                            Quick Healthcare Actions
+                        </h2>
+
+                        <div className="grid sm:grid-cols-3 gap-4">
+
+                            <Link
+                                to="/patient/doctor-search"
+                                className="group p-5 rounded-2xl border border-slate-200 bg-slate-50/50 hover:bg-teal-50/60 hover:border-teal-300 transition flex items-center gap-4"
+                            >
+
+                                <div className="w-12 h-12 rounded-xl bg-teal-600 text-white flex items-center justify-center text-xl font-bold shadow-md shadow-teal-600/20 group-hover:scale-105 transition">
+                                    🔍
+                                </div>
+
+                                <div>
+
+                                    <h4 className="font-bold text-slate-900 group-hover:text-teal-700 transition">
+                                        Book Appointment
+                                    </h4>
+
+                                    <p className="text-xs text-slate-500 mt-0.5">
+                                        Find specialists & dates
+                                    </p>
+
+                                </div>
+
+                            </Link>
+
+                            <Link
+                                to="/patient/medical-history"
+                                className="group p-5 rounded-2xl border border-slate-200 bg-slate-50/50 hover:bg-blue-50/60 hover:border-blue-300 transition flex items-center gap-4"
+                            >
+
+                                <div className="w-12 h-12 rounded-xl bg-blue-600 text-white flex items-center justify-center text-xl font-bold shadow-md shadow-blue-600/20 group-hover:scale-105 transition">
+                                    📋
+                                </div>
+
+                                <div>
+
+                                    <h4 className="font-bold text-slate-900 group-hover:text-blue-700 transition">
+                                        Medical History
+                                    </h4>
+
+                                    <p className="text-xs text-slate-500 mt-0.5">
+                                        Diagnoses & lab tests
+                                    </p>
+
+                                </div>
+
+                            </Link>
+
+                            <Link
+                                to="/patient/billing"
+                                className="group p-5 rounded-2xl border border-slate-200 bg-slate-50/50 hover:bg-purple-50/60 hover:border-purple-300 transition flex items-center gap-4"
+                            >
+
+                                <div className="w-12 h-12 rounded-xl bg-purple-600 text-white flex items-center justify-center text-xl font-bold shadow-md shadow-purple-600/20 group-hover:scale-105 transition">
+                                    💳
+                                </div>
+
+                                <div>
+
+                                    <h4 className="font-bold text-slate-900 group-hover:text-purple-700 transition">
+                                        Invoices & Billing
+                                    </h4>
+
+                                    <p className="text-xs text-slate-500 mt-0.5">
+                                        Clear unpaid balance
+                                    </p>
+
+                                </div>
+
+                            </Link>
+
+                        </div>
+
+                    </div>
+
+                    {/* Scheduled Appointments */}
+
+                    <div className="bg-white rounded-2xl shadow-sm border border-slate-200/80 p-6">
+
+                        <div className="flex justify-between items-center mb-6">
+
+                            <div>
+
+                                <h2 className="text-lg font-bold text-slate-900">
+                                    Upcoming Consultations
+                                </h2>
+
+                                <p className="text-xs text-slate-500 mt-0.5">
+                                    Confirmed and pending doctor visits
+                                </p>
+
+                            </div>
+
+                            <Link
+                                to="/patient/my-appointments"
+                                className="text-sm font-bold text-teal-600 hover:text-teal-800"
+                            >
+                                View all →
+                            </Link>
+
+                        </div>
+
+                        <div className="space-y-4">
+
+                            {myAppointments.map((appointment) => {
+
+                                const doctor = doctors.find(
+                                    (d) => d.id === appointment.doctorId
+                                ) || { name: "Doctor", specialization: "Specialist" };
+
+                                return (
+
+                                    <div
+                                        key={appointment.id}
+                                        className="p-5 rounded-2xl border border-slate-200/80 bg-slate-50/40 hover:bg-white hover:border-teal-300 hover:shadow-sm transition flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4"
+                                    >
+
+                                        <div className="flex items-center gap-4">
+
+                                            <div className="w-12 h-12 rounded-xl bg-slate-900 text-teal-400 font-bold text-lg flex items-center justify-center shrink-0">
+                                                {doctor.name.replace(/^Dr\.?\s*/i, "").charAt(0)}
+                                            </div>
+
+                                            <div>
+
+                                                <h4 className="font-bold text-slate-900">
+                                                    {doctor.name}
+                                                </h4>
+
+                                                <p className="text-xs font-semibold text-teal-600 mt-0.5">
+                                                    {doctor.specialization}
+                                                </p>
+
+                                                <div className="flex items-center gap-4 mt-2 text-xs text-slate-500">
+
+                                                    <span>📅 {appointment.date}</span>
+
+                                                    <span>🕒 {appointment.time}</span>
+
+                                                </div>
+
+                                            </div>
+
+                                        </div>
+
+                                        <span
+                                            className={`px-3 py-1 rounded-full text-xs font-bold capitalize border ${getStatusBadge(
+                                                appointment.status
+                                            )}`}
+                                        >
+                                            {appointment.status}
+                                        </span>
+
+                                    </div>
+
+                                );
+                            })}
+
+                        </div>
+
+                    </div>
+
+                </main>
 
             </div>
         </div>

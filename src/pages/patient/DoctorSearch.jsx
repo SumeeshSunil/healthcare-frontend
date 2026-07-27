@@ -1,6 +1,7 @@
 import { useState, useRef, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import Navbar from "../../components/Navbar";
+import Sidebar from "../../components/Sidebar";
 
 import doctors from "../../data/dummyDoctors.json";
 
@@ -10,20 +11,17 @@ function DoctorSearch() {
     const [showSuggestions, setShowSuggestions] = useState(false);
 
     const searchRef = useRef(null);
-    const navigate = useNavigate()
+    const navigate = useNavigate();
 
-    // Get unique specializations
     const specializations = [...new Set(doctors.map((d) => d.specialization))];
 
-    // Filter suggestions while typing
     const filteredSpecializations = specializations.filter((spec) =>
         spec.toLowerCase().includes(searchText.toLowerCase())
     );
 
-    // Show doctors of selected specialization
     const filteredDoctors = selectedSpecialization
         ? doctors.filter((d) => d.specialization === selectedSpecialization)
-        : [];
+        : doctors;
 
     const handleSelectSpecialization = (spec) => {
         setSelectedSpecialization(spec);
@@ -46,113 +44,202 @@ function DoctorSearch() {
     }, []);
 
     return (
-        <div className="min-h-screen bg-gray-100">
+        <div className="min-h-screen bg-slate-50 flex flex-col">
             <Navbar />
 
-            <div className="max-w-6xl mx-auto px-4 py-10">
+            <div className="flex flex-1">
+                <Sidebar />
 
-                <h1 className="text-4xl font-bold text-center text-blue-700 mb-8">
-                    Find a Doctor
-                </h1>
+                <main className="flex-1 max-w-7xl p-8 space-y-8">
 
-                {/* Search Box */}
-                <div ref={searchRef} className="relative max-w-lg mx-auto">
+                    {/* Page Header */}
 
-                    <input
-                        type="text"
-                        placeholder="Search specialization..."
-                        value={searchText}
-                        onChange={(e) => {
-                            setSearchText(e.target.value);
-                            setShowSuggestions(true);
-                            setSelectedSpecialization("");
-                        }}
-                        onFocus={() => setShowSuggestions(true)}
-                        className="w-full px-5 py-3 border rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    />
+                    <div className="bg-gradient-to-r from-slate-900 via-blue-950 to-teal-900 text-white rounded-3xl p-8 shadow-xl relative overflow-hidden">
 
-                    {showSuggestions && filteredSpecializations.length > 0 && (
-                        <div className="absolute w-full bg-white rounded-lg shadow-lg mt-2 border z-10">
+                        <div className="relative z-10 max-w-xl">
 
-                            {filteredSpecializations.map((spec) => (
-                                <div
-                                    key={spec}
-                                    onClick={() => handleSelectSpecialization(spec)}
-                                    className="px-5 py-3 cursor-pointer hover:bg-blue-100 transition"
-                                >
-                                    {spec}
-                                </div>
-                            ))}
+                            <span className="inline-block px-3 py-1 bg-teal-500/20 text-teal-300 rounded-full text-xs font-semibold uppercase tracking-wider mb-3 border border-teal-500/30">
+                                Specialist Directory
+                            </span>
+
+                            <h1 className="text-3xl font-extrabold tracking-tight sm:text-4xl text-white">
+                                Find a Clinical Specialist
+                            </h1>
+
+                            <p className="text-slate-300 mt-2 text-sm leading-relaxed">
+                                Search certified healthcare physicians, cardiologists, dermatologists, and surgeons available for consultation.
+                            </p>
 
                         </div>
-                    )}
-                </div>
 
-                {/* Doctor Cards */}
+                    </div>
 
-                {selectedSpecialization && (
-                    <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6 mt-10">
+                    {/* Search Bar */}
 
-                        {filteredDoctors.map((doctor) => (
-                            <div
-                                key={doctor.id}
-                                className="bg-white rounded-xl shadow-md hover:shadow-xl transition p-6"
-                            >
-                                {/* Profile Circle */}
-                                <div className="flex justify-center mb-4">
-                                    <div className="w-24 h-24 rounded-full border-4 border-blue-200 bg-blue-600 flex items-center justify-center text-white text-4xl font-bold">
-                                        {doctor.name
-                                            .replace(/^Dr\.?\s*/i, "")
-                                            .charAt(0)
-                                            .toUpperCase()}
-                                    </div>
-                                </div>
+                    <div ref={searchRef} className="relative max-w-2xl mx-auto">
 
-                                {/* Doctor Name */}
-                                <h2 className="text-2xl font-bold text-center text-gray-800">
-                                    {doctor.name}
-                                </h2>
+                        <div className="relative">
 
-                                {/* Specialization */}
-                                <p className="text-center text-blue-600 font-semibold mt-2">
-                                    {doctor.specialization}
-                                </p>
+                            <input
+                                type="text"
+                                placeholder="Search by medical specialization (e.g. Cardiology, Dermatology)..."
+                                value={searchText}
+                                onChange={(e) => {
+                                    setSearchText(e.target.value);
+                                    setShowSuggestions(true);
+                                    if (!e.target.value) setSelectedSpecialization("");
+                                }}
+                                onFocus={() => setShowSuggestions(true)}
+                                className="w-full pl-12 pr-5 py-4 bg-white border border-slate-200 rounded-2xl shadow-sm text-sm focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-teal-500 font-medium"
+                            />
 
-                                {/* Details */}
-                                <div className="mt-5 space-y-2 text-gray-600">
-                                    <p>
-                                        <span className="font-semibold">
-                                            Experience:
-                                        </span>{" "}
-                                        {doctor.experience}
-                                    </p>
-
-                                    <p>
-                                        <span className="font-semibold">
-                                            Location:
-                                        </span>{" "}
-                                        {doctor.location}
-                                    </p>
-
-                                    <p>
-                                        <span className="font-semibold">
-                                            Rating:
-                                        </span>{" "}
-                                        {doctor.rating} ★
-                                    </p>
-                                </div>
-
-                                {/* Button */}
-                                <button
-                                    onClick={() => navigate(`/patient/book-appointment/${doctor.id}`)}
-                                    className="w-full mt-6 bg-blue-600 hover:bg-blue-700 text-white py-2 rounded-lg font-semibold transition">
-                                    Book Appointment
-                                </button>
+                            <div className="absolute left-4 top-4 text-slate-400 text-lg">
+                                🔍
                             </div>
+
+                        </div>
+
+                        {showSuggestions && filteredSpecializations.length > 0 && (
+                            <div className="absolute w-full bg-white rounded-2xl shadow-2xl mt-2 border border-slate-200 z-20 overflow-hidden">
+
+                                {filteredSpecializations.map((spec) => (
+                                    <div
+                                        key={spec}
+                                        onClick={() => handleSelectSpecialization(spec)}
+                                        className="px-6 py-3.5 cursor-pointer hover:bg-teal-50 hover:text-teal-700 transition text-sm font-semibold text-slate-700 border-b border-slate-100 last:border-0 flex justify-between items-center"
+                                    >
+                                        <span>{spec}</span>
+
+                                        <span className="text-xs text-slate-400 font-normal">Select →</span>
+                                    </div>
+                                ))}
+
+                            </div>
+                        )}
+
+                    </div>
+
+                    {/* Filter Pills */}
+
+                    <div className="flex flex-wrap gap-2 justify-center">
+
+                        <button
+                            onClick={() => {
+                                setSelectedSpecialization("");
+                                setSearchText("");
+                            }}
+                            className={`px-4 py-2 rounded-xl text-xs font-bold transition border ${
+                                !selectedSpecialization
+                                    ? "bg-teal-600 text-white border-teal-600 shadow"
+                                    : "bg-white text-slate-600 border-slate-200 hover:bg-slate-100"
+                            }`}
+                        >
+                            All Doctors ({doctors.length})
+                        </button>
+
+                        {specializations.map((spec) => (
+
+                            <button
+                                key={spec}
+                                onClick={() => handleSelectSpecialization(spec)}
+                                className={`px-4 py-2 rounded-xl text-xs font-bold transition border ${
+                                    selectedSpecialization === spec
+                                        ? "bg-teal-600 text-white border-teal-600 shadow"
+                                        : "bg-white text-slate-600 border-slate-200 hover:bg-slate-100"
+                                }`}
+                            >
+                                {spec}
+                            </button>
+
                         ))}
 
                     </div>
-                )}
+
+                    {/* Doctors Cards Grid */}
+
+                    <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
+
+                        {filteredDoctors.map((doctor) => (
+
+                            <div
+                                key={doctor.id}
+                                className="bg-white rounded-3xl p-6 shadow-sm border border-slate-200/80 hover:shadow-xl hover:border-teal-300 transition duration-300 flex flex-col justify-between"
+                            >
+
+                                <div>
+
+                                    <div className="flex items-center gap-4 mb-5">
+
+                                        <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-slate-900 to-teal-900 text-teal-300 font-extrabold text-2xl flex items-center justify-center shadow border-2 border-white shrink-0">
+                                            {doctor.name
+                                                .replace(/^Dr\.?\s*/i, "")
+                                                .charAt(0)
+                                                .toUpperCase()}
+                                        </div>
+
+                                        <div>
+
+                                            <div className="flex items-center gap-2">
+
+                                                <h3 className="text-xl font-bold text-slate-900 leading-tight">
+                                                    {doctor.name}
+                                                </h3>
+
+                                                {doctor.verified && (
+                                                    <span className="text-teal-600 text-sm" title="Verified Physician">
+                                                        ✔
+                                                    </span>
+                                                )}
+
+                                            </div>
+
+                                            <p className="text-xs font-bold text-teal-600 mt-1">
+                                                {doctor.specialization}
+                                            </p>
+
+                                            <div className="flex items-center gap-1.5 mt-1 text-xs text-amber-500 font-bold">
+                                                <span>⭐ {doctor.rating}</span>
+
+                                                <span className="text-slate-400 font-normal">Rating</span>
+                                            </div>
+
+                                        </div>
+
+                                    </div>
+
+                                    <div className="space-y-2 py-4 border-t border-b border-slate-100 text-xs text-slate-600">
+
+                                        <div className="flex justify-between">
+                                            <span className="text-slate-400 font-medium">Experience:</span>
+
+                                            <span className="font-bold text-slate-800">{doctor.experience}</span>
+                                        </div>
+
+                                        <div className="flex justify-between">
+                                            <span className="text-slate-400 font-medium">Hospital Location:</span>
+
+                                            <span className="font-bold text-slate-800">📍 {doctor.location}</span>
+                                        </div>
+
+                                    </div>
+
+                                </div>
+
+                                <button
+                                    onClick={() => navigate(`/patient/book-appointment/${doctor.id}`)}
+                                    className="w-full mt-6 bg-slate-900 hover:bg-teal-600 text-white py-3 rounded-xl text-xs font-bold transition duration-200 shadow"
+                                >
+                                    Schedule Consultation
+                                </button>
+
+                            </div>
+
+                        ))}
+
+                    </div>
+
+                </main>
+
             </div>
         </div>
     );
