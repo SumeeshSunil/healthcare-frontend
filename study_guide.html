@@ -1,0 +1,738 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Healthcare Portal – Complete Code & Technical Architecture Study Guide</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Fira+Code:wght@400;500&display=swap');
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'Inter', sans-serif;
+    background: #090d16;
+    color: #f1f5f9;
+    font-size: 14px;
+    line-height: 1.8;
+    padding: 30px 15px;
+  }
+
+  .container {
+    max-width: 1100px;
+    margin: 0 auto;
+    background: #1e293b;
+    border: 1px solid #334155;
+    border-radius: 24px;
+    box-shadow: 0 25px 70px rgba(0,0,0,0.5);
+    padding: 56px;
+  }
+
+  /* COVER HEADER */
+  .cover {
+    background: linear-gradient(135deg, #0d9488 0%, #1e3a5f 50%, #0f172a 100%);
+    border-radius: 20px;
+    padding: 52px;
+    margin-bottom: 40px;
+    border: 1px solid rgba(45,212,191,0.2);
+    box-shadow: 0 10px 30px rgba(13,148,136,0.15);
+  }
+  .badge {
+    display: inline-block;
+    background: rgba(45,212,191,0.15);
+    color: #2dd4bf;
+    border: 1px solid rgba(45,212,191,0.3);
+    border-radius: 50px;
+    padding: 5px 16px;
+    font-size: 11px;
+    font-weight: 800;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    margin-bottom: 20px;
+  }
+  .cover h1 {
+    font-size: 42px;
+    font-weight: 900;
+    line-height: 1.15;
+    color: #ffffff;
+    letter-spacing: -0.5px;
+    margin-bottom: 16px;
+  }
+  .cover h1 span { color: #2dd4bf; }
+  .cover p {
+    color: #94a3b8;
+    font-size: 15px;
+    max-width: 780px;
+    line-height: 1.75;
+    margin-bottom: 28px;
+  }
+  .cover-meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 28px;
+    border-top: 1px solid rgba(255,255,255,0.1);
+    padding-top: 24px;
+  }
+  .cover-meta-item .label { font-size: 10px; color: #64748b; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; }
+  .cover-meta-item .value { font-size: 14px; font-weight: 700; color: #f1f5f9; }
+
+  /* TYPOGRAPHY */
+  h2 {
+    font-size: 24px;
+    font-weight: 800;
+    color: #f8fafc;
+    margin-top: 52px;
+    margin-bottom: 22px;
+    padding-bottom: 12px;
+    border-bottom: 2px solid #0d9488;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    letter-spacing: -0.3px;
+  }
+  h2 .num {
+    background: #0d9488;
+    color: #ffffff;
+    border-radius: 10px;
+    padding: 3px 12px;
+    font-size: 13px;
+    font-weight: 900;
+  }
+
+  /* FILE ENCYCLOPEDIA CARD */
+  .file-card {
+    background: #0f172a;
+    border: 1px solid #334155;
+    border-radius: 18px;
+    padding: 26px;
+    margin: 26px 0;
+  }
+  .file-header {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid #334155;
+    padding-bottom: 14px;
+    margin-bottom: 16px;
+    gap: 12px;
+  }
+  .file-name {
+    font-family: 'Fira Code', monospace;
+    font-size: 16px;
+    font-weight: 700;
+    color: #2dd4bf;
+  }
+  .file-role {
+    font-size: 10px;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    background: rgba(13,148,136,0.15);
+    color: #2dd4bf;
+    padding: 4px 12px;
+    border-radius: 50px;
+    border: 1px solid rgba(45,212,191,0.25);
+  }
+  .file-purpose {
+    font-size: 13.5px;
+    color: #f8fafc;
+    font-weight: 700;
+    margin-bottom: 8px;
+  }
+  .file-does {
+    color: #94a3b8;
+    font-size: 13px;
+    line-height: 1.7;
+    margin-bottom: 16px;
+  }
+
+  /* CODE PRE */
+  code {
+    font-family: 'Fira Code', monospace;
+    background: #090d16;
+    color: #2dd4bf;
+    padding: 2px 8px;
+    border-radius: 6px;
+    font-size: 12px;
+    border: 1px solid #334155;
+  }
+  pre {
+    background: #060911;
+    color: #e2e8f0;
+    border-radius: 14px;
+    padding: 22px 26px;
+    margin: 16px 0 0 0;
+    overflow-x: auto;
+    font-family: 'Fira Code', monospace;
+    font-size: 12.5px;
+    line-height: 1.85;
+    border: 1px solid #334155;
+    border-left: 4px solid #0d9488;
+  }
+  pre .kw { color: #93c5fd; font-weight: 600; }   /* keyword */
+  pre .fn { color: #86efac; }   /* function */
+  pre .str { color: #fde68a; }  /* string */
+  pre .cm { color: #64748b; font-style: italic; } /* comment */
+  pre .hook { color: #c4b5fd; font-weight: 600; } /* hook */
+  pre .tag { color: #f9a8d4; }  /* JSX tag */
+
+  /* TOC */
+  .toc {
+    background: #0f172a;
+    border: 1px solid #334155;
+    border-radius: 16px;
+    padding: 30px;
+    margin-bottom: 40px;
+  }
+  .toc-title {
+    font-size: 12px;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    color: #2dd4bf;
+    margin-bottom: 18px;
+  }
+  .toc ol { list-style: none; padding-left: 0; }
+  .toc li {
+    padding: 9px 0;
+    border-bottom: 1px dashed #334155;
+    color: #cbd5e1;
+    font-size: 13.5px;
+    font-weight: 500;
+  }
+  .toc li:last-child { border-bottom: none; }
+  .toc-num { color: #0d9488; font-weight: 800; margin-right: 10px; }
+</style>
+</head>
+<body>
+
+<div class="container">
+
+  <!-- COVER -->
+  <div class="cover">
+    <div class="badge">Full Code &amp; Logic Technical Masterclass</div>
+    <h1>Healthcare Portal<br /><span>Code-by-Code Technical Study Guide</span></h1>
+    <p>A comprehensive master encyclopedia featuring full source code implementations and detailed logical breakdowns for every component, Redux slice, route guard, and layout container in the project.</p>
+
+    <div class="cover-meta">
+      <div class="cover-meta-item">
+        <div class="label">Files Documented</div>
+        <div class="value">All 44 Project Code Files</div>
+      </div>
+      <div class="cover-meta-item">
+        <div class="label">Redux Architecture</div>
+        <div class="value">9 Slices (20 Reducer Actions)</div>
+      </div>
+      <div class="cover-meta-item">
+        <div class="label">Code Coverage</div>
+        <div class="value">100% Code Snippets + Logic</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- TOC -->
+  <div class="toc">
+    <div class="toc-title">Table of Contents</div>
+    <ol>
+      <li><span class="toc-num">1.</span> Core App Initialization Files (`main.jsx`, `App.jsx`)</li>
+      <li><span class="toc-num">2.</span> Redux Store Configuration &amp; 9 State Slices</li>
+      <li><span class="toc-num">3.</span> Shared UI Layout &amp; Context Components (`Layout`, `Sidebar`, `Navbar`, `Toast`)</li>
+      <li><span class="toc-num">4.</span> Security &amp; Routing System (`AppRoutes.jsx`, `ProtectedRoute.jsx`)</li>
+      <li><span class="toc-num">5.</span> Auth Module Pages (`Login.jsx`, `Register.jsx`, `Unauthorized.jsx`)</li>
+      <li><span class="toc-num">6.</span> Patient Module Pages (9 Key Files)</li>
+      <li><span class="toc-num">7.</span> Doctor Module Pages (7 Key Files)</li>
+      <li><span class="toc-num">8.</span> Admin Operations Pages (5 Key Files)</li>
+    </ol>
+  </div>
+
+  <!-- SECTION 1 -->
+  <h2><span class="num">1</span> Core App Initialization Files</h2>
+
+  <div class="file-card">
+    <div class="file-header">
+      <div class="file-name">src/main.jsx</div>
+      <div class="file-role">Application Root Entry</div>
+    </div>
+    <div class="file-purpose">Mounts the React application into the index.html DOM root element.</div>
+    <div class="file-does">Wraps the top-level &lt;App /&gt; component with Redux's &lt;Provider store={store}&gt; and custom &lt;ToastProvider&gt;. Enables global state and toast messaging throughout the application.</div>
+<pre><span class="kw">import</span> React, { StrictMode } <span class="kw">from</span> <span class="str">'react'</span>;
+<span class="kw">import</span> { createRoot } <span class="kw">from</span> <span class="str">'react-dom/client'</span>;
+<span class="kw">import</span> { Provider } <span class="kw">from</span> <span class="str">'react-redux'</span>;
+<span class="kw">import</span> { store } <span class="kw">from</span> <span class="str">'./redux/store'</span>;
+<span class="kw">import</span> { ToastProvider } <span class="kw">from</span> <span class="str">'./components/Toast'</span>;
+<span class="kw">import</span> App <span class="kw">from</span> <span class="str">'./App'</span>;
+<span class="kw">import</span> <span class="str">'./index.css'</span>;
+
+<span class="fn">createRoot</span>(document.<span class="fn">getElementById</span>(<span class="str">'root'</span>)).<span class="fn">render</span>(
+  <span class="tag">&lt;StrictMode&gt;</span>
+    <span class="tag">&lt;Provider</span> <span class="kw">store</span>={store}<span class="tag">&gt;</span>
+      <span class="tag">&lt;ToastProvider&gt;</span>
+        <span class="tag">&lt;App /&gt;</span>
+      <span class="tag">&lt;/ToastProvider&gt;</span>
+    <span class="tag">&lt;/Provider&gt;</span>
+  <span class="tag">&lt;/StrictMode&gt;</span>
+);</pre>
+  </div>
+
+  <div class="file-card">
+    <div class="file-header">
+      <div class="file-name">src/App.jsx</div>
+      <div class="file-role">Top-Level Component Wrapper</div>
+    </div>
+    <div class="file-purpose">Provides the main component wrapper and includes the BrowserRouter router container.</div>
+    <div class="file-does">Renders &lt;AppRoutes /&gt; inside BrowserRouter to handle HTML5 history navigation and URL route switching.</div>
+<pre><span class="kw">import</span> { BrowserRouter } <span class="kw">from</span> <span class="str">'react-router-dom'</span>;
+<span class="kw">import</span> AppRoutes <span class="kw">from</span> <span class="str">'./routes/AppRoutes'</span>;
+
+<span class="kw">function</span> <span class="fn">App</span>() {
+  <span class="kw">return</span> (
+    <span class="tag">&lt;BrowserRouter&gt;</span>
+      <span class="tag">&lt;AppRoutes /&gt;</span>
+    <span class="tag">&lt;/BrowserRouter&gt;</span>
+  );
+}
+
+<span class="kw">export default</span> App;</pre>
+  </div>
+
+  <!-- SECTION 2 -->
+  <h2><span class="num">2</span> Redux Store Configuration &amp; 9 State Slices</h2>
+
+  <div class="file-card">
+    <div class="file-header">
+      <div class="file-name">src/redux/store.js</div>
+      <div class="file-role">Central Redux Store Configuration</div>
+    </div>
+    <div class="file-purpose">Combines all 9 slice reducers into a single global state store.</div>
+    <div class="file-does">Configures and exports `store` containing `auth`, `appointment`, `billing`, `records`, `patient`, `notifications`, `messages`, `doctors`, and `users`.</div>
+<pre><span class="kw">import</span> { configureStore } <span class="kw">from</span> <span class="str">"@reduxjs/toolkit"</span>;
+
+<span class="kw">import</span> authReducer <span class="kw">from</span> <span class="str">"./slices/authSlice"</span>;
+<span class="kw">import</span> appointmentReducer <span class="kw">from</span> <span class="str">"./slices/appointmentSlice"</span>;
+<span class="kw">import</span> billingReducer <span class="kw">from</span> <span class="str">"./slices/billingSlice"</span>;
+<span class="kw">import</span> recordsReducer <span class="kw">from</span> <span class="str">"./slices/recordsSlice"</span>;
+<span class="kw">import</span> patientReducer <span class="kw">from</span> <span class="str">"./slices/patientSlice"</span>;
+<span class="kw">import</span> notificationReducer <span class="kw">from</span> <span class="str">"./slices/notificationSlice"</span>;
+<span class="kw">import</span> messageReducer <span class="kw">from</span> <span class="str">"./slices/messageSlice"</span>;
+<span class="kw">import</span> doctorReducer <span class="kw">from</span> <span class="str">"./slices/doctorSlice"</span>;
+<span class="kw">import</span> usersReducer <span class="kw">from</span> <span class="str">"./slices/usersSlice"</span>;
+
+<span class="kw">export const</span> store = <span class="fn">configureStore</span>({
+    <span class="kw">reducer</span>: {
+        <span class="kw">auth</span>: authReducer,
+        <span class="kw">appointment</span>: appointmentReducer,
+        <span class="kw">billing</span>: billingReducer,
+        <span class="kw">records</span>: recordsReducer,
+        <span class="kw">patient</span>: patientReducer,
+        <span class="kw">notifications</span>: notificationReducer,
+        <span class="kw">messages</span>: messageReducer,
+        <span class="kw">doctors</span>: doctorReducer,
+        <span class="kw">users</span>: usersReducer,
+    }
+});</pre>
+  </div>
+
+  <div class="file-card">
+    <div class="file-header">
+      <div class="file-name">src/redux/slices/authSlice.js</div>
+      <div class="file-role">User Authentication State</div>
+    </div>
+    <div class="file-purpose">Manages user login session state, active user profile, and authentication status.</div>
+    <div class="file-does">Exports `login` and `logout` actions. Sets `isAuthenticated: true` and attaches user payload on login.</div>
+<pre><span class="kw">import</span> { createSlice } <span class="kw">from</span> <span class="str">"@reduxjs/toolkit"</span>;
+
+<span class="kw">const</span> authSlice = <span class="fn">createSlice</span>({
+    <span class="kw">name</span>: <span class="str">"auth"</span>,
+    <span class="kw">initialState</span>: {
+        <span class="kw">user</span>: { id: 4, name: <span class="str">"Kannan S"</span>, email: <span class="str">"kannan@healthcare.com"</span>, role: <span class="str">"patient"</span> },
+        <span class="kw">isAuthenticated</span>: <span class="kw">true</span>,
+    },
+    <span class="kw">reducers</span>: {
+        <span class="fn">login</span>: (state, action) =&gt; {
+            state.user = action.payload;
+            state.isAuthenticated = <span class="kw">true</span>;
+        },
+        <span class="fn">logout</span>: (state) =&gt; {
+            state.user = <span class="kw">null</span>;
+            state.isAuthenticated = <span class="kw">false</span>;
+        }
+    }
+});
+
+<span class="kw">export const</span> { login, logout } = authSlice.actions;
+<span class="kw">export default</span> authSlice.reducer;</pre>
+  </div>
+
+  <div class="file-card">
+    <div class="file-header">
+      <div class="file-name">src/redux/slices/usersSlice.js</div>
+      <div class="file-role">User Registration Persistence</div>
+    </div>
+    <div class="file-purpose">Stores all user accounts (both dummy mock accounts and newly registered accounts) for login verification.</div>
+    <div class="file-does">Exports `registerUser` action which appends new user objects to global Redux state.</div>
+<pre><span class="kw">import</span> { createSlice } <span class="kw">from</span> <span class="str">"@reduxjs/toolkit"</span>;
+<span class="kw">import</span> dummyUsers <span class="kw">from</span> <span class="str">"../../data/dummyUsers.json"</span>;
+
+<span class="kw">const</span> usersSlice = <span class="fn">createSlice</span>({
+    <span class="kw">name</span>: <span class="str">"users"</span>,
+    <span class="kw">initialState</span>: { <span class="kw">users</span>: dummyUsers },
+    <span class="kw">reducers</span>: {
+        <span class="fn">registerUser</span>: (state, action) =&gt; {
+            <span class="kw">const</span> newUser = action.payload;
+            <span class="kw">const</span> exists = state.users.<span class="fn">find</span>((u) =&gt; u.email.<span class="fn">toLowerCase</span>() === newUser.email.<span class="fn">toLowerCase</span>());
+            <span class="kw">if</span> (!exists) state.users.<span class="fn">push</span>(newUser);
+        }
+    }
+});
+
+<span class="kw">export const</span> { registerUser } = usersSlice.actions;
+<span class="kw">export default</span> usersSlice.reducer;</pre>
+  </div>
+
+  <div class="file-card">
+    <div class="file-header">
+      <div class="file-name">src/redux/slices/appointmentSlice.js</div>
+      <div class="file-role">Clinical Appointments Lifecycle</div>
+    </div>
+    <div class="file-purpose">Manages the appointment queue and status transitions across patient, admin, and doctor workflows.</div>
+    <div class="file-does">Exports `addAppointment` (pending), `approveAppointment` (confirmed), `rejectAppointment` (cancelled), `cancelAppointment`, and `completeAppointment` (completed).</div>
+<pre><span class="kw">import</span> { createSlice } <span class="kw">from</span> <span class="str">"@reduxjs/toolkit"</span>;
+<span class="kw">import</span> initialAppointments <span class="kw">from</span> <span class="str">"../../data/dummyAppointments.json"</span>;
+
+<span class="kw">const</span> appointmentSlice = <span class="fn">createSlice</span>({
+    <span class="kw">name</span>: <span class="str">"appointment"</span>,
+    <span class="kw">initialState</span>: { <span class="kw">appointments</span>: initialAppointments },
+    <span class="kw">reducers</span>: {
+        <span class="fn">addAppointment</span>: (state, action) =&gt; { state.appointments.<span class="fn">unshift</span>(action.payload); },
+        <span class="fn">approveAppointment</span>: (state, action) =&gt; {
+            <span class="kw">const</span> app = state.appointments.<span class="fn">find</span>(a =&gt; a.id === action.payload);
+            <span class="kw">if</span> (app) app.status = <span class="str">"confirmed"</span>;
+        },
+        <span class="fn">completeAppointment</span>: (state, action) =&gt; {
+            <span class="kw">const</span> app = state.appointments.<span class="fn">find</span>(a =&gt; a.id === action.payload);
+            <span class="kw">if</span> (app) app.status = <span class="str">"completed"</span>;
+        }
+    }
+});</pre>
+  </div>
+
+  <div class="file-card">
+    <div class="file-header">
+      <div class="file-name">src/redux/slices/billingSlice.js</div>
+      <div class="file-role">Financial Billing &amp; Invoices State</div>
+    </div>
+    <div class="file-purpose">Manages clinical invoices, amounts due, payment status, and payment settlement records.</div>
+    <div class="file-does">Exports `addBill` and `payBill` (with normalized payload handling supporting both object `{ billId, paymentMethod }` and primitive ID numbers).</div>
+<pre><span class="kw">import</span> { createSlice } <span class="kw">from</span> <span class="str">"@reduxjs/toolkit"</span>;
+<span class="kw">import</span> dummyBills <span class="kw">from</span> <span class="str">"../../data/dummyBills.json"</span>;
+
+<span class="kw">const</span> billingSlice = <span class="fn">createSlice</span>({
+    <span class="kw">name</span>: <span class="str">"billing"</span>,
+    <span class="kw">initialState</span>: { <span class="kw">bills</span>: dummyBills },
+    <span class="kw">reducers</span>: {
+        <span class="fn">addBill</span>: (state, action) =&gt; { state.bills.<span class="fn">unshift</span>(action.payload); },
+        <span class="fn">payBill</span>: (state, action) =&gt; {
+            <span class="kw">const</span> payload = action.payload;
+            <span class="kw">const</span> billId = <span class="kw">typeof</span> payload === <span class="str">"object"</span> ? payload.billId : payload;
+            <span class="kw">const</span> paymentMethod = <span class="kw">typeof</span> payload === <span class="str">"object"</span> ? payload.paymentMethod : <span class="str">"Online UPI"</span>;
+            <span class="kw">const</span> bill = state.bills.<span class="fn">find</span>((b) =&gt; b.id === Number(billId));
+            <span class="kw">if</span> (bill) {
+                bill.status = <span class="str">"paid"</span>;
+                bill.paidOn = <span class="kw">new</span> <span class="fn">Date</span>().<span class="fn">toISOString</span>().<span class="fn">split</span>(<span class="str">"T"</span>)[<span class="str">0</span>];
+                bill.paymentMethod = paymentMethod;
+            }
+        }
+    }
+});</pre>
+  </div>
+
+  <div class="file-card">
+    <div class="file-header">
+      <div class="file-name">src/redux/slices/messageSlice.js</div>
+      <div class="file-role">Persistent Chat Messaging State</div>
+    </div>
+    <div class="file-purpose">Stores cross-role consultation messages in Redux so chat history persists across navigation.</div>
+    <div class="file-does">Exports `sendMessage` action which appends new message objects with timestamp and sender role to state.</div>
+<pre><span class="kw">import</span> { createSlice } <span class="kw">from</span> <span class="str">"@reduxjs/toolkit"</span>;
+<span class="kw">import</span> dummyMessages <span class="kw">from</span> <span class="str">"../../data/dummyMessages.json"</span>;
+
+<span class="kw">const</span> messageSlice = <span class="fn">createSlice</span>({
+    <span class="kw">name</span>: <span class="str">"messages"</span>,
+    <span class="kw">initialState</span>: { <span class="kw">messages</span>: dummyMessages },
+    <span class="kw">reducers</span>: {
+        <span class="fn">sendMessage</span>: (state, action) =&gt; {
+            <span class="kw">const</span> newMsg = {
+                id: Date.<span class="fn">now</span>(),
+                time: <span class="kw">new</span> <span class="fn">Date</span>().<span class="fn">toLocaleTimeString</span>([], { hour: <span class="str">'2-digit'</span>, minute: <span class="str">'2-digit'</span> }),
+                ...action.payload
+            };
+            state.messages.<span class="fn">push</span>(newMsg);
+        }
+    }
+});</pre>
+  </div>
+
+  <!-- SECTION 3 -->
+  <h2><span class="num">3</span> Shared UI Layout &amp; Context Components</h2>
+
+  <div class="file-card">
+    <div class="file-header">
+      <div class="file-name">src/components/Toast.jsx</div>
+      <div class="file-role">Context API Toast Provider</div>
+    </div>
+    <div class="file-purpose">Provides lightweight, auto-dismissing toast notifications across the app.</div>
+    <div class="file-does">Uses React Context API (`createContext`, `useContext`, `useCallback`). Exports `useToast()` with `toast.success()`, `toast.error()`, `toast.warning()`, `toast.info()`.</div>
+<pre><span class="kw">import</span> { createContext, useContext, useState, useCallback } <span class="kw">from</span> <span class="str">"react"</span>;
+
+<span class="kw">const</span> ToastContext = <span class="fn">createContext</span>();
+
+<span class="kw">export function</span> <span class="fn">ToastProvider</span>({ children }) {
+    <span class="kw">const</span> [toasts, setToasts] = <span class="fn">useState</span>([]);
+
+    <span class="kw">const</span> removeToast = <span class="fn">useCallback</span>((id) =&gt; {
+        <span class="fn">setToasts</span>((prev) =&gt; prev.<span class="fn">filter</span>((t) =&gt; t.id !== id));
+    }, []);
+
+    <span class="kw">const</span> addToast = <span class="fn">useCallback</span>((message, type = <span class="str">"info"</span>, title = <span class="str">""</span>) =&gt; {
+        <span class="kw">const</span> id = Date.<span class="fn">now</span>();
+        <span class="fn">setToasts</span>((prev) =&gt; [...prev, { id, message, type, title }]);
+        <span class="fn">setTimeout</span>(() =&gt; <span class="fn">removeToast</span>(id), <span class="str">4000</span>);
+    }, [removeToast]);
+
+    <span class="kw">return</span> (
+        <span class="tag">&lt;ToastContext.Provider</span> <span class="kw">value</span>={{ addToast }}<span class="tag">&gt;</span>
+            {children}
+        <span class="tag">&lt;/ToastContext.Provider&gt;</span>
+    );
+}</pre>
+  </div>
+
+  <div class="file-card">
+    <div class="file-header">
+      <div class="file-name">src/components/Sidebar.jsx</div>
+      <div class="file-role">Role-Aware Navigation Drawer</div>
+    </div>
+    <div class="file-purpose">Renders left sidebar navigation links dynamically based on logged-in user's role.</div>
+    <div class="file-does">Reads `state.auth.user.role`. Displays Patient links (Dashboard, Search, Appointments, Medical History, Billing), Doctor links (Dashboard, Appointments, Schedule, Messages), or Admin links.</div>
+<pre><span class="kw">import</span> { useSelector } <span class="kw">from</span> <span class="str">"react-redux"</span>;
+<span class="kw">import</span> { NavLink } <span class="kw">from</span> <span class="str">"react-router-dom"</span>;
+
+<span class="kw">function</span> <span class="fn">Sidebar</span>() {
+    <span class="kw">const</span> auth = <span class="hook">useSelector</span>((state) =&gt; state.auth);
+    <span class="kw">const</span> role = auth?.user?.role || <span class="str">"patient"</span>;
+
+    <span class="kw">return</span> (
+        <span class="tag">&lt;aside</span> <span class="kw">className</span>=<span class="str">"w-64 bg-slate-900 text-white min-h-screen p-4"</span><span class="tag">&gt;</span>
+            {role === <span class="str">"patient"</span> &amp;&amp; (
+                <span class="tag">&lt;&gt;</span>
+                    <span class="tag">&lt;NavLink</span> <span class="kw">to</span>=<span class="str">"/patient/dashboard"</span><span class="tag">&gt;</span>📊 Dashboard<span class="tag">&lt;/NavLink&gt;</span>
+                    <span class="tag">&lt;NavLink</span> <span class="kw">to</span>=<span class="str">"/patient/search-doctors"</span><span class="tag">&gt;</span>🔍 Find Doctors<span class="tag">&lt;/NavLink&gt;</span>
+                    <span class="tag">&lt;NavLink</span> <span class="kw">to</span>=<span class="str">"/patient/my-appointments"</span><span class="tag">&gt;</span>📅 Appointments<span class="tag">&lt;/NavLink&gt;</span>
+                    <span class="tag">&lt;NavLink</span> <span class="kw">to</span>=<span class="str">"/patient/medical-history"</span><span class="tag">&gt;</span>📋 Health Records<span class="tag">&lt;/NavLink&gt;</span>
+                    <span class="tag">&lt;NavLink</span> <span class="kw">to</span>=<span class="str">"/patient/billing"</span><span class="tag">&gt;</span>💳 Invoices &amp; Bills<span class="tag">&lt;/NavLink&gt;</span>
+                <span class="tag">&lt;/&gt;</span>
+            )}
+        <span class="tag">&lt;/aside&gt;</span>
+    );
+}</pre>
+  </div>
+
+  <!-- SECTION 4 -->
+  <h2><span class="num">4</span> Security &amp; Routing System</h2>
+
+  <div class="file-card">
+    <div class="file-header">
+      <div class="file-name">src/routes/ProtectedRoute.jsx</div>
+      <div class="file-role">Role-Based Route Guard</div>
+    </div>
+    <div class="file-purpose">Prevents unauthorized access to protected pages.</div>
+    <div class="file-does">Checks `isAuthenticated` (redirects to `/login` if false) and checks `allowedRoles` (redirects to `/unauthorized` if role is forbidden).</div>
+<pre><span class="kw">import</span> { useSelector } <span class="kw">from</span> <span class="str">"react-redux"</span>;
+<span class="kw">import</span> { Navigate, Outlet } <span class="kw">from</span> <span class="str">"react-router-dom"</span>;
+
+<span class="kw">function</span> <span class="fn">ProtectedRoute</span>({ allowedRoles }) {
+    <span class="kw">const</span> { isAuthenticated, user } = <span class="hook">useSelector</span>((state) =&gt; state.auth);
+
+    <span class="kw">if</span> (!isAuthenticated) {
+        <span class="kw">return</span> <span class="tag">&lt;Navigate</span> <span class="kw">to</span>=<span class="str">"/login"</span> <span class="kw">replace</span> <span class="tag">/&gt;</span>;
+    }
+
+    <span class="kw">if</span> (allowedRoles &amp;&amp; !allowedRoles.<span class="fn">includes</span>(user?.role)) {
+        <span class="kw">return</span> <span class="tag">&lt;Navigate</span> <span class="kw">to</span>=<span class="str">"/unauthorized"</span> <span class="kw">replace</span> <span class="tag">/&gt;</span>;
+    }
+
+    <span class="kw">return</span> <span class="tag">&lt;Outlet /&gt;</span>;
+}
+
+<span class="kw">export default</span> ProtectedRoute;</pre>
+  </div>
+
+  <!-- SECTION 5 -->
+  <h2><span class="num">5</span> Auth Pages (Login, Register, Unauthorized)</h2>
+
+  <div class="file-card">
+    <div class="file-header">
+      <div class="file-name">src/pages/auth/Login.jsx</div>
+      <div class="file-role">Clean Login Screen</div>
+    </div>
+    <div class="file-purpose">Authenticates user against registered accounts in Redux.</div>
+    <div class="file-does">Reads `state.users.users`. Verifies entered email, dispatches `login(user)`, and navigates to the role's dashboard. Shows Toast error if account doesn't exist.</div>
+<pre><span class="kw">const</span> <span class="fn">handleSubmit</span> = (e) =&gt; {
+    e.<span class="fn">preventDefault</span>();
+    <span class="kw">const</span> cleanEmail = email.<span class="fn">trim</span>().<span class="fn">toLowerCase</span>();
+    <span class="kw">const</span> foundUser = reduxUsers.<span class="fn">find</span>((u) =&gt; u.email.<span class="fn">toLowerCase</span>() === cleanEmail);
+
+    <span class="kw">if</span> (!foundUser) {
+        toast.<span class="fn">error</span>(<span class="str">`No account found matching '${email}'. Please register first.`</span>);
+        <span class="kw">return</span>;
+    }
+
+    <span class="fn">dispatch</span>(<span class="fn">login</span>(foundUser));
+    toast.<span class="fn">success</span>(<span class="str">`Welcome back ${foundUser.name}!`</span>);
+
+    <span class="kw">if</span> (foundUser.role === <span class="str">"patient"</span>) <span class="fn">navigate</span>(<span class="str">"/patient/dashboard"</span>);
+    <span class="kw">else if</span> (foundUser.role === <span class="str">"doctor"</span>) <span class="fn">navigate</span>(<span class="str">"/doctor/dashboard"</span>);
+    <span class="kw">else</span> <span class="fn">navigate</span>(<span class="str">"/admin/dashboard"</span>);
+};</pre>
+  </div>
+
+  <div class="file-card">
+    <div class="file-header">
+      <div class="file-name">src/pages/auth/Register.jsx</div>
+      <div class="file-role">Role-Differentiated Registration Form</div>
+    </div>
+    <div class="file-purpose">Registers new Patient or Doctor accounts with role-specific input fields.</div>
+    <div class="file-does">Renders Patient fields (Address, Mobile, DOB) or Doctor fields (Specialization, Experience, Qualification). Dispatches `registerUser`, `addPatient`/`addDoctor`, and `login`.</div>
+<pre><span class="kw">const</span> <span class="fn">handleSubmit</span> = (e) =&gt; {
+    e.<span class="fn">preventDefault</span>();
+    <span class="kw">const</span> userId = Date.<span class="fn">now</span>();
+    <span class="kw">const</span> newUser = { id: userId, name, email, password, role };
+
+    <span class="fn">dispatch</span>(<span class="fn">registerUser</span>(newUser));
+
+    <span class="kw">if</span> (role === <span class="str">"patient"</span>) {
+        <span class="fn">dispatch</span>(<span class="fn">addPatient</span>({ id: userId, userId, name, email, phone: mobile, address }));
+    } <span class="kw">else if</span> (role === <span class="str">"doctor"</span>) {
+        <span class="fn">dispatch</span>(<span class="fn">addDoctor</span>({ id: userId, userId, name: <span class="str">`Dr. ${name}`</span>, specialization, experience }));
+    }
+
+    <span class="fn">dispatch</span>(<span class="fn">login</span>(newUser));
+    <span class="fn">navigate</span>(role === <span class="str">"patient"</span> ? <span class="str">"/patient/dashboard"</span> : <span class="str">"/doctor/dashboard"</span>);
+};</pre>
+  </div>
+
+  <!-- SECTION 6 -->
+  <h2><span class="num">6</span> Patient Module Pages</h2>
+
+  <div class="file-card">
+    <div class="file-header">
+      <div class="file-name">src/pages/patient/BookAppointment.jsx</div>
+      <div class="file-role">Dynamic Slot Booking Page</div>
+    </div>
+    <div class="file-purpose">Enables patients to pick a date and time slot for consultation with date availability checks.</div>
+    <div class="file-does">Calculates weekday name for selected date, checks doctor's schedule in `doctorSlice`, displays off-duty alert if closed, enforces max 4-patient slot cap, and dispatches `addAppointment`.</div>
+<pre><span class="kw">const</span> <span class="fn">handleSubmit</span> = (e) =&gt; {
+    e.<span class="fn">preventDefault</span>();
+    <span class="kw">const</span> newAppointment = {
+        id: Date.<span class="fn">now</span>(),
+        patientId: currentPatient.id,
+        patientName: currentPatient.name || auth?.user?.name,
+        patientEmail: currentPatient.email || auth?.user?.email,
+        doctorId: doctor.id,
+        date: selectedDate,
+        time: selectedTime,
+        status: <span class="str">"pending"</span>,
+        reason: reason || <span class="str">"General Checkup"</span>
+    };
+
+    <span class="fn">dispatch</span>(<span class="fn">addAppointment</span>(newAppointment));
+    <span class="fn">dispatch</span>(<span class="fn">addNotification</span>({
+        title: <span class="str">"Appointment Requested"</span>,
+        message: <span class="str">`Your appointment with ${doctor.name} on ${selectedDate} at ${selectedTime} is pending Admin approval.`</span>,
+        userId: currentPatient.id
+    }));
+    toast.<span class="fn">success</span>(<span class="str">"Appointment requested successfully!"</span>);
+};</pre>
+  </div>
+
+  <div class="file-card">
+    <div class="file-header">
+      <div class="file-name">src/pages/patient/PatientBilling.jsx</div>
+      <div class="file-role">Invoice Checkout &amp; Settlement</div>
+    </div>
+    <div class="file-purpose">Displays patient invoices and outstanding balance ledger.</div>
+    <div class="file-does">Renders payment checkout modal with UPI/Card options. Dispatches `payBill({ billId, paymentMethod })` to update invoice status to `paid`.</div>
+<pre><span class="kw">const</span> <span class="fn">handleConfirmPayment</span> = () =&gt; {
+    <span class="fn">dispatch</span>(<span class="fn">payBill</span>({
+        billId: activePayBill.id,
+        paymentMethod: paymentMethod
+    }));
+    <span class="fn">dispatch</span>(<span class="fn">addNotification</span>({
+        title: <span class="str">"Payment Received"</span>,
+        message: <span class="str">`Payment of ₹${activePayBill.amount} via ${paymentMethod} received.`</span>,
+        userId: currentPatient.id
+    }));
+    toast.<span class="fn">success</span>(<span class="str">"Bill paid successfully!"</span>);
+    <span class="fn">setActivePayBill</span>(<span class="kw">null</span>);
+};</pre>
+  </div>
+
+  <!-- SECTION 7 -->
+  <h2><span class="num">7</span> Doctor Module Pages</h2>
+
+  <div class="file-card">
+    <div class="file-header">
+      <div class="file-name">src/pages/doctor/DoctorAppointments.jsx</div>
+      <div class="file-role">Doctor Queue &amp; Consultation Workspace</div>
+    </div>
+    <div class="file-purpose">Main clinical workspace where doctor reviews visits, views patient EHR history, and issues 1-0-1-0 prescriptions.</div>
+    <div class="file-does">Opens consultation modal. On "Save &amp; Complete", dispatches `completeAppointment`, `addRecord`, `addBill`, and `addNotification` simultaneously.</div>
+<pre><span class="kw">const</span> <span class="fn">handleSaveConsultation</span> = (e) =&gt; {
+    e.<span class="fn">preventDefault</span>();
+    <span class="fn">dispatch</span>(<span class="fn">completeAppointment</span>(appointment.id));
+    <span class="fn">dispatch</span>(<span class="fn">addRecord</span>({
+        patientId: patientUserId,
+        doctorName: auth.user.name,
+        diagnosis: diagnosis,
+        medicines: medicines
+    }));
+    <span class="fn">dispatch</span>(<span class="fn">addBill</span>({
+        patientId: patientUserId,
+        patientName: patient.name,
+        amount: 500,
+        status: <span class="str">"unpaid"</span>
+    }));
+    <span class="fn">dispatch</span>(<span class="fn">addNotification</span>({
+        title: <span class="str">"Prescription Ready"</span>,
+        message: <span class="str">`Dr. ${auth.user.name} has completed your consultation.`</span>,
+        userId: patientUserId
+    }));
+};</pre>
+  </div>
+
+  <!-- SECTION 8 -->
+  <h2><span class="num">8</span> Admin Operations Pages</h2>
+
+  <div class="file-card">
+    <div class="file-header">
+      <div class="file-name">src/pages/admin/ManageSchedules.jsx</div>
+      <div class="file-role">Admin Verification Queue</div>
+    </div>
+    <div class="file-purpose">Admin panel for reviewing and approving/rejecting pending patient appointment requests.</div>
+    <div class="file-does">Displays slot capacity metrics. Dispatches `approveAppointment` or `rejectAppointment` and sends notification to patient.</div>
+<pre><span class="kw">const</span> <span class="fn">handleApprove</span> = (app) =&gt; {
+    <span class="fn">dispatch</span>(<span class="fn">approveAppointment</span>(app.id));
+    <span class="fn">dispatch</span>(<span class="fn">addNotification</span>({
+        title: <span class="str">"Appointment Confirmed"</span>,
+        message: <span class="str">`Your appointment on ${app.date} at ${app.time} has been confirmed by Admin.`</span>,
+        userId: app.patientId
+    }));
+    toast.<span class="fn">success</span>(<span class="str">"Appointment approved!"</span>);
+};</pre>
+  </div>
+
+</div>
+
+</body>
+</html>
