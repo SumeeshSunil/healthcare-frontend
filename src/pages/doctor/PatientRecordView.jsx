@@ -1,16 +1,21 @@
 import { useState } from "react";
+import { useSelector, useDispatch } from "react-redux";
 import dummyPatients from "../../data/dummyPatients.json";
 import dummyRecords from "../../data/dummyRecords.json";
 import Layout from "../../components/Layout";
+import { addRecord } from "../../redux/slices/recordsSlice";
 
 function PatientRecordView() {
-    const [selectedPatientId, setSelectedPatientId] = useState(dummyPatients[0].id);
+    const dispatch = useDispatch();
+    const reduxPatients = useSelector((state) => state.patient?.patients || dummyPatients);
+    const reduxRecords = useSelector((state) => state.records?.records || dummyRecords);
+
+    const [selectedPatientId, setSelectedPatientId] = useState(reduxPatients[0]?.id || 1);
     const [newDiagnosis, setNewDiagnosis] = useState("");
     const [newPrescription, setNewPrescription] = useState("");
-    const [recordsList, setRecordsList] = useState(dummyRecords);
 
-    const selectedPatient = dummyPatients.find((p) => p.id === parseInt(selectedPatientId, 10)) || dummyPatients[0];
-    const patientRecords = recordsList.filter((r) => r.patientId === selectedPatient.id);
+    const selectedPatient = reduxPatients.find((p) => p.id === parseInt(selectedPatientId, 10) || p.userId === parseInt(selectedPatientId, 10)) || reduxPatients[0] || dummyPatients[0];
+    const patientRecords = reduxRecords.filter((r) => r.patientId === selectedPatient.id || r.patientId === selectedPatient.userId);
 
     const handleAddRecord = (e) => {
         e.preventDefault();

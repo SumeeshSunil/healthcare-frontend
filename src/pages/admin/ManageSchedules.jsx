@@ -11,6 +11,8 @@ function ManageSchedules() {
     const dispatch = useDispatch();
     const toast = useToast();
     const appointments = useSelector((state) => state.appointment?.appointments || []);
+    const reduxPatients = useSelector((state) => state.patient?.patients || dummyPatients);
+    const reduxDoctors = useSelector((state) => state.doctors?.doctors || dummyDoctors);
 
     const [allFilter, setAllFilter] = useState("pending");
 
@@ -26,29 +28,33 @@ function ManageSchedules() {
     };
 
     const handleApprove = (app) => {
-        const patient = dummyPatients.find((p) => p.id === app.patientId);
-        const doctor = dummyDoctors.find((d) => d.id === app.doctorId);
+        const patient = reduxPatients.find((p) => p.id === app.patientId || p.userId === app.patientId);
+        const doctor = reduxDoctors.find((d) => d.id === app.doctorId);
+        const patientName = patient?.name || app.patientName || "Patient";
+        const patientUserId = patient?.userId || app.patientId;
 
         dispatch(approveAppointment(app.id));
 
-        if (patient?.userId) {
+        if (patientUserId) {
             dispatch(addNotification({
                 title: "Appointment Confirmed",
                 message: `Your appointment with ${doctor?.name || "your doctor"} on ${app.date} at ${app.time} has been confirmed by Admin.`,
                 type: "appointment",
-                userId: patient.userId,
+                userId: patientUserId,
             }));
         }
 
         toast.success(
-            `${patient?.name || "Patient"}'s appointment with ${doctor?.name} has been confirmed.`,
+            `${patientName}'s appointment with ${doctor?.name || "doctor"} has been confirmed.`,
             "Appointment Approved"
         );
     };
 
     const handleReject = (app) => {
-        const patient = dummyPatients.find((p) => p.id === app.patientId);
-        const doctor = dummyDoctors.find((d) => d.id === app.doctorId);
+        const patient = reduxPatients.find((p) => p.id === app.patientId || p.userId === app.patientId);
+        const doctor = reduxDoctors.find((d) => d.id === app.doctorId);
+        const patientName = patient?.name || app.patientName || "Patient";
+        const patientUserId = patient?.userId || app.patientId;
 
         dispatch(rejectAppointment(app.id));
 
@@ -134,10 +140,10 @@ function ManageSchedules() {
                 ) : (
                     <div className="space-y-4">
                         {filteredAppointments.map((app) => {
-                            const patient = dummyPatients.find((p) => p.id === app.patientId) || {
-                                name: "Patient Record", age: 30, gender: "Male", phone: "+91 9876543210", address: "Kerala"
+                            const patient = reduxPatients.find((p) => p.id === app.patientId || p.userId === app.patientId) || {
+                                name: app.patientName || "Registered Patient", age: 28, gender: "Patient", phone: "+91 9876543210", address: "Kerala"
                             };
-                            const doctor = dummyDoctors.find((d) => d.id === app.doctorId) || {
+                            const doctor = reduxDoctors.find((d) => d.id === app.doctorId) || {
                                 name: "Attending Doctor", specialization: "Clinical Specialist"
                             };
                             const occupancy = getSlotOccupancy(app.doctorId, app.date, app.time);

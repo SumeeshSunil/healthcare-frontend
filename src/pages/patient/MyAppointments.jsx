@@ -14,10 +14,20 @@ function MyAppointments() {
 
     const [filter, setFilter] = useState("all");
 
-    const currentUserId = auth?.user ? auth.user.id : 4;
-    const currentPatient = patients.find((p) => p.userId === currentUserId) || patients[0];
+    const reduxPatients = useSelector((state) => state.patient?.patients || patients);
 
-    const myAppointments = appointments.filter((a) => a.patientId === currentPatient.id);
+    const currentPatient = reduxPatients.find(
+        (p) => p.userId === auth?.user?.id || p.email?.toLowerCase() === auth?.user?.email?.toLowerCase() || p.id === auth?.user?.id
+    ) || {
+        id: auth?.user?.id || 4,
+        userId: auth?.user?.id || 4,
+        name: auth?.user?.name || "Patient",
+        email: auth?.user?.email || "patient@healthcare.com"
+    };
+
+    const myAppointments = appointments.filter(
+        (a) => a.patientId === currentPatient.id || a.patientId === auth?.user?.id
+    );
 
     const filteredAppointments = myAppointments.filter((a) => {
         if (filter === "all") return true;

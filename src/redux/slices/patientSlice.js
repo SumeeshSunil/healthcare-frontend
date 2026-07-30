@@ -7,8 +7,15 @@ const patientSlice = createSlice({
         patients: patientsData,
     },
     reducers: {
+        addPatient: (state, action) => {
+            const newPatient = action.payload;
+            const exists = state.patients.find((p) => p.userId === newPatient.userId || p.email === newPatient.email);
+            if (!exists) {
+                state.patients.push(newPatient);
+            }
+        },
         updatePatientProfile: (state, action) => {
-            const index = state.patients.findIndex((p) => p.id === action.payload.id);
+            const index = state.patients.findIndex((p) => p.id === action.payload.id || p.userId === action.payload.userId);
             if (index !== -1) {
                 state.patients[index] = { ...state.patients[index], ...action.payload };
             }
@@ -16,5 +23,5 @@ const patientSlice = createSlice({
     }
 });
 
-export const { updatePatientProfile } = patientSlice.actions;
+export const { addPatient, updatePatientProfile } = patientSlice.actions;
 export default patientSlice.reducer;

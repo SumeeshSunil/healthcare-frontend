@@ -7,6 +7,13 @@ const doctorSlice = createSlice({
         doctors: dummyDoctors,
     },
     reducers: {
+        addDoctor: (state, action) => {
+            const newDoc = action.payload;
+            const exists = state.doctors.find((d) => d.userId === newDoc.userId || d.name === newDoc.name);
+            if (!exists) {
+                state.doctors.push(newDoc);
+            }
+        },
         updateDoctorSchedule: (state, action) => {
             const { doctorId, availability } = action.payload;
             const doctor = state.doctors.find((d) => d.id === Number(doctorId));
@@ -24,5 +31,5 @@ const doctorSlice = createSlice({
     }
 });
 
-export const { updateDoctorSchedule, updateDoctorProfile } = doctorSlice.actions;
+export const { addDoctor, updateDoctorSchedule, updateDoctorProfile } = doctorSlice.actions;
 export default doctorSlice.reducer;

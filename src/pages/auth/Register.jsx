@@ -2,6 +2,10 @@ import { useState } from "react";
 import { useDispatch } from "react-redux";
 import { useNavigate, Link } from "react-router-dom";
 import { login } from "../../redux/slices/authSlice";
+import { registerUser } from "../../redux/slices/usersSlice";
+import { addPatient } from "../../redux/slices/patientSlice";
+import { addDoctor } from "../../redux/slices/doctorSlice";
+import { useToast } from "../../components/Toast";
 
 function Register() {
     const [role, setRole] = useState("patient");
@@ -19,21 +23,64 @@ function Register() {
 
     const dispatch = useDispatch();
     const navigate = useNavigate();
+    const toast = useToast();
 
     const handleSubmit = (e) => {
         e.preventDefault();
 
+        const userId = Date.now();
+        const formattedName = role === "doctor" && !name.toLowerCase().startsWith("dr.")
+            ? `Dr. ${name.trim()}`
+            : name.trim();
+
         const newUser = {
-            id: Date.now(),
-            name: name || "New User",
-            email: email,
+            id: userId,
+            name: formattedName || "Registered User",
+            email: email.trim(),
+            password: password,
             role: role,
             ...(role === "patient"
                 ? { address, mobile, dob }
                 : { specialization, experience, qualification })
         };
 
+        dispatch(registerUser(newUser));
+
+        if (role === "patient") {
+            const newPatientObj = {
+                id: userId,
+                userId: userId,
+                name: formattedName,
+                email: email.trim(),
+                age: 28,
+                gender: "Patient",
+                phone: mobile || "+91 9876543210",
+                address: address || "Kerala",
+                bloodGroup: "O+"
+            };
+            dispatch(addPatient(newPatientObj));
+        } else if (role === "doctor") {
+            const newDoctorObj = {
+                id: userId,
+                userId: userId,
+                name: formattedName,
+                specialization: specialization || "General Medicine",
+                location: "Kochi, Kerala",
+                experience: experience ? `${experience} years` : "5 years",
+                rating: 4.8,
+                availability: [
+                    { day: "Monday", slots: ["09:00 AM", "10:00 AM", "11:30 AM"] },
+                    { day: "Wednesday", slots: ["02:00 PM", "03:00 PM"] },
+                    { day: "Friday", slots: ["09:00 AM", "10:00 AM"] }
+                ],
+                verified: true
+            };
+            dispatch(addDoctor(newDoctorObj));
+        }
+
         dispatch(login(newUser));
+
+        toast.success(`Account registered successfully as ${role.toUpperCase()}! Welcome ${formattedName}.`, "Registration Successful");
 
         if (role === "patient") navigate("/patient/dashboard");
         else if (role === "doctor") navigate("/doctor/dashboard");

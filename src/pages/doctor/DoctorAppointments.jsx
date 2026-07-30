@@ -14,8 +14,21 @@ function DoctorAppointments() {
     const auth = useSelector((state) => state.auth);
     const reduxAppointments = useSelector((state) => state.appointment?.appointments || []);
     const reduxRecords = useSelector((state) => state.records?.records || []);
+    const reduxPatients = useSelector((state) => state.patient?.patients || dummyPatients);
     const dispatch = useDispatch();
     const toast = useToast();
+
+    const getPatientInfo = (pId, fallbackName) => {
+        const found = reduxPatients.find((p) => p.id === pId || p.userId === pId);
+        if (found) return found;
+        return {
+            name: fallbackName || "Registered Patient",
+            age: 28,
+            gender: "Patient",
+            phone: "+91 9876543210",
+            bloodGroup: "O+"
+        };
+    };
 
     const [statusFilter, setStatusFilter] = useState("all");
 
@@ -71,8 +84,8 @@ function DoctorAppointments() {
         if (!activeConsultationApp) return;
 
         const appointment = activeConsultationApp;
-        const patient = dummyPatients.find((p) => p.id === appointment.patientId);
-        const patientUserId = patient?.userId;
+        const patient = getPatientInfo(appointment.patientId, appointment.patientName);
+        const patientUserId = patient?.userId || appointment.patientId;
 
         dispatch(completeAppointment(appointment.id));
 
@@ -211,12 +224,7 @@ function DoctorAppointments() {
                     </div>
                 ) : (
                     filteredAppointments.map((appointment) => {
-                        const patient = dummyPatients.find((p) => p.id === appointment.patientId) || {
-                            name: "Patient Record",
-                            age: 30,
-                            gender: "Male",
-                            phone: "+91 9876543210"
-                        };
+                        const patient = getPatientInfo(appointment.patientId, appointment.patientName);
 
                         return (
                             <div
@@ -294,7 +302,7 @@ function DoctorAppointments() {
                                     Clinical Consultation Workspace
                                 </span>
                                 <h2 className="text-xl sm:text-2xl font-extrabold text-slate-900 mt-1">
-                                    Consulting: {dummyPatients.find(p => p.id === activeConsultationApp.patientId)?.name}
+                                    Consulting: {getPatientInfo(activeConsultationApp.patientId, activeConsultationApp.patientName).name}
                                 </h2>
                                 <p className="text-xs text-slate-500 mt-0.5">
                                     Appointment Date: {activeConsultationApp.date} at {activeConsultationApp.time}
@@ -313,7 +321,7 @@ function DoctorAppointments() {
                                 📋 Patient Clinical History & Profile
                             </h3>
                             {(() => {
-                                const pat = dummyPatients.find(p => p.id === activeConsultationApp.patientId);
+                                const pat = getPatientInfo(activeConsultationApp.patientId, activeConsultationApp.patientName);
                                 const historyRecords = reduxRecords.filter(r => r.patientId === activeConsultationApp.patientId);
                                 return (
                                     <div className="space-y-2 text-xs">

@@ -14,10 +14,12 @@ function DoctorMessages() {
         (d) => d.name === auth?.user?.name || d.userId === auth?.user?.id
     ) || dummyDoctors[0];
 
-    const [selectedPatientId, setSelectedPatientId] = useState(dummyPatients[0].id);
+    const reduxPatients = useSelector((state) => state.patient?.patients || dummyPatients);
+
+    const [selectedPatientId, setSelectedPatientId] = useState(reduxPatients[0]?.id || dummyPatients[0].id);
     const [newMessage, setNewMessage] = useState("");
 
-    const activePatient = dummyPatients.find((p) => p.id === Number(selectedPatientId)) || dummyPatients[0];
+    const activePatient = reduxPatients.find((p) => p.id === Number(selectedPatientId) || p.userId === Number(selectedPatientId)) || reduxPatients[0] || dummyPatients[0];
 
     const currentChatMessages = reduxMessages.filter(
         (m) => m.doctorId === doctorObj.id && m.patientId === Number(selectedPatientId)

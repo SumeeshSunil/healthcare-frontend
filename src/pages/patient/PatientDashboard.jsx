@@ -11,14 +11,23 @@ function PatientDashboard() {
     const auth = useSelector((state) => state.auth);
     const appointments = useSelector((state) => state.appointment?.appointments || []);
 
-    const currentUserId = auth?.user ? auth.user.id : 4;
+    const reduxPatients = useSelector((state) => state.patient?.patients || patients);
 
-    const patientProfile = patients.find(
-        (p) => p.userId === currentUserId
-    ) || patients[0];
+    const patientProfile = reduxPatients.find(
+        (p) => p.userId === auth?.user?.id || p.email?.toLowerCase() === auth?.user?.email?.toLowerCase() || p.id === auth?.user?.id
+    ) || {
+        id: auth?.user?.id || 4,
+        userId: auth?.user?.id || 4,
+        name: auth?.user?.name || "Patient",
+        email: auth?.user?.email || "patient@healthcare.com",
+        age: 28,
+        gender: "Patient",
+        phone: "+91 9876543210",
+        address: "Kerala"
+    };
 
     const myAppointments = appointments.filter(
-        (a) => a.patientId === patientProfile.id
+        (a) => a.patientId === patientProfile.id || a.patientId === auth?.user?.id
     );
 
     const upcomingAppointments = myAppointments.filter(

@@ -16,8 +16,17 @@ function BookAppointment() {
     const reduxDoctors = useSelector((state) => state.doctors?.doctors || dummyDoctors);
     const appointments = useSelector((state) => state.appointment?.appointments || []);
 
-    const currentUserId = auth?.user ? auth.user.id : 4;
-    const currentPatient = patients.find((p) => p.userId === currentUserId) || patients[0];
+    const reduxPatients = useSelector((state) => state.patient?.patients || patients);
+
+    const currentPatient = reduxPatients.find(
+        (p) => p.userId === auth?.user?.id || p.email?.toLowerCase() === auth?.user?.email?.toLowerCase() || p.id === auth?.user?.id
+    ) || {
+        id: auth?.user?.id || 4,
+        userId: auth?.user?.id || 4,
+        name: auth?.user?.name || "Patient",
+        email: auth?.user?.email || "patient@healthcare.com"
+    };
+
     const doctor = reduxDoctors.find((d) => d.id === parseInt(doctorId, 10)) || reduxDoctors[0];
 
     const [selectedDate, setSelectedDate] = useState(new Date().toISOString().split("T")[0]);
@@ -90,6 +99,8 @@ function BookAppointment() {
         const newAppointment = {
             id: Date.now(),
             patientId: currentPatient.id,
+            patientName: currentPatient.name || auth?.user?.name || "Patient",
+            patientEmail: currentPatient.email || auth?.user?.email || "",
             doctorId: doctor.id,
             date: selectedDate,
             time: selectedTime,

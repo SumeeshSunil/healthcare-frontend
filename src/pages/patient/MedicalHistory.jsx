@@ -8,10 +8,20 @@ function MedicalHistory() {
     const auth = useSelector((state) => state.auth);
     const reduxRecords = useSelector((state) => state.records?.records || records);
 
-    const currentUserId = auth?.user ? auth.user.id : 4;
-    const currentPatient = patients.find((p) => p.userId === currentUserId) || patients[0];
+    const reduxPatients = useSelector((state) => state.patient?.patients || patients);
 
-    const myRecords = reduxRecords.filter((r) => r.patientId === currentPatient.id);
+    const currentPatient = reduxPatients.find(
+        (p) => p.userId === auth?.user?.id || p.email?.toLowerCase() === auth?.user?.email?.toLowerCase() || p.id === auth?.user?.id
+    ) || {
+        id: auth?.user?.id || 4,
+        userId: auth?.user?.id || 4,
+        name: auth?.user?.name || "Patient",
+        email: auth?.user?.email || "patient@healthcare.com"
+    };
+
+    const myRecords = reduxRecords.filter(
+        (r) => r.patientId === currentPatient.id || r.patientId === auth?.user?.id
+    );
 
     return (
         <Layout>

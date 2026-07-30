@@ -8,14 +8,16 @@ function IssueCertificate() {
     const auth = useSelector((state) => state.auth);
     const doctorObj = dummyDoctors.find((d) => d.name === auth?.user?.name || d.userId === auth?.user?.id) || dummyDoctors[0];
 
-    const [selectedPatientId, setSelectedPatientId] = useState(dummyPatients[0].id);
+    const reduxPatients = useSelector((state) => state.patient?.patients || dummyPatients);
+
+    const [selectedPatientId, setSelectedPatientId] = useState(reduxPatients[0]?.id || dummyPatients[0].id);
     const [certificateType, setCertificateType] = useState("Sick Leave Certificate");
     const [startDate, setStartDate] = useState(new Date().toISOString().split("T")[0]);
     const [endDate, setEndDate] = useState(new Date(Date.now() + 86400000 * 3).toISOString().split("T")[0]);
     const [diagnosisNotes, setDiagnosisNotes] = useState("Patient presented with acute fever and requires complete bed rest.");
     const [isGenerated, setIsGenerated] = useState(false);
 
-    const selectedPatient = dummyPatients.find((p) => p.id === parseInt(selectedPatientId, 10)) || dummyPatients[0];
+    const selectedPatient = reduxPatients.find((p) => p.id === parseInt(selectedPatientId, 10) || p.userId === parseInt(selectedPatientId, 10)) || reduxPatients[0] || dummyPatients[0];
 
     const handleGenerate = (e) => {
         e.preventDefault();

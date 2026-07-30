@@ -1,40 +1,36 @@
 import { useState } from "react";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { useNavigate, Link } from "react-router-dom";
 import { login } from "../../redux/slices/authSlice";
 import dummyUsers from "../../data/dummyUsers.json";
+import { useToast } from "../../components/Toast";
 
 function Login() {
-    const [selectedUserId, setSelectedUserId] = useState(4);
-    const [email, setEmail] = useState("kannan@healthcare.com");
-    const [password, setPassword] = useState("patient123");
+    const [email, setEmail] = useState("");
+    const [password, setPassword] = useState("");
 
     const dispatch = useDispatch();
     const navigate = useNavigate();
+    const toast = useToast();
 
-    const handleSelectPresetUser = (uId) => {
-        const userObj = dummyUsers.find((u) => u.id === parseInt(uId, 10));
-        if (userObj) {
-            setSelectedUserId(userObj.id);
-            setEmail(userObj.email);
-            setPassword(userObj.password);
-        }
-    };
+    const reduxUsers = useSelector((state) => state.users?.users || dummyUsers);
 
     const handleSubmit = (e) => {
         e.preventDefault();
 
-        const userObj = dummyUsers.find((u) => u.email.toLowerCase() === email.toLowerCase()) || {
-            id: selectedUserId,
-            name: email.split("@")[0],
-            email: email,
-            role: "patient"
-        };
+        const cleanEmail = email.trim().toLowerCase();
+        const foundUser = reduxUsers.find((u) => u.email.toLowerCase() === cleanEmail);
 
-        dispatch(login(userObj));
+        if (!foundUser) {
+            toast.error(`No account found matching '${email}'. Please register an account first.`, "Login Failed");
+            return;
+        }
 
-        if (userObj.role === "patient") navigate("/patient/dashboard");
-        else if (userObj.role === "doctor") navigate("/doctor/dashboard");
+        dispatch(login(foundUser));
+        toast.success(`Welcome back, ${foundUser.name}! Signed in as ${foundUser.role.toUpperCase()}.`, "Login Successful");
+
+        if (foundUser.role === "patient") navigate("/patient/dashboard");
+        else if (foundUser.role === "doctor") navigate("/doctor/dashboard");
         else navigate("/admin/dashboard");
     };
 
@@ -51,25 +47,8 @@ function Login() {
                         MEDICO <span className="text-teal-600">PORTAL</span>
                     </h1>
                     <p className="text-xs text-slate-500 font-medium">
-                        Sign in to access your healthcare portal account
+                        Enter your registered credentials to sign in
                     </p>
-                </div>
-
-                <div>
-                    <label className="block font-bold text-slate-700 mb-1.5 text-xs">
-                        Select Portal User
-                    </label>
-                    <select
-                        value={selectedUserId}
-                        onChange={(e) => handleSelectPresetUser(e.target.value)}
-                        className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-slate-800 text-xs font-bold focus:outline-none focus:border-teal-500"
-                    >
-                        {dummyUsers.map((u) => (
-                            <option key={u.id} value={u.id}>
-                                {u.name} ({u.role.toUpperCase()}) — {u.email}
-                            </option>
-                        ))}
-                    </select>
                 </div>
 
                 <form onSubmit={handleSubmit} className="space-y-4 text-xs sm:text-sm">
@@ -77,7 +56,7 @@ function Login() {
                         <label className="block font-bold text-slate-700 mb-1.5">Email Address</label>
                         <input
                             type="email"
-                            placeholder="Enter your registered email..."
+                            placeholder="Enter registered email..."
                             value={email}
                             onChange={(e) => setEmail(e.target.value)}
                             className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-slate-800 focus:outline-none focus:border-teal-500 transition"
@@ -89,7 +68,7 @@ function Login() {
                         <label className="block font-bold text-slate-700 mb-1.5">Security Password</label>
                         <input
                             type="password"
-                            placeholder="••••••••"
+                            placeholder="Enter password..."
                             value={password}
                             onChange={(e) => setPassword(e.target.value)}
                             className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-slate-800 focus:outline-none focus:border-teal-500 transition"
@@ -99,7 +78,7 @@ function Login() {
 
                     <button
                         type="submit"
-                        className="w-full bg-slate-900 hover:bg-teal-600 text-white font-bold py-3.5 rounded-xl transition shadow-lg text-xs tracking-wider uppercase"
+                        className="w-full bg-teal-600 hover:bg-teal-700 text-white font-extrabold py-3.5 rounded-xl transition shadow-lg text-xs tracking-wider uppercase"
                     >
                         Sign In to Account
                     </button>

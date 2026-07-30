@@ -11,6 +11,8 @@ function AdminAppointments() {
     const dispatch = useDispatch();
     const toast = useToast();
     const appointments = useSelector((state) => state.appointment?.appointments || []);
+    const reduxPatients = useSelector((state) => state.patient?.patients || dummyPatients);
+    const reduxDoctors = useSelector((state) => state.doctors?.doctors || dummyDoctors);
 
     const [statusFilter, setStatusFilter] = useState("all");
     const [searchText, setSearchText] = useState("");
@@ -26,11 +28,12 @@ function AdminAppointments() {
     };
 
     const filtered = appointments.filter((a) => {
-        const patient = dummyPatients.find((p) => p.id === a.patientId);
-        const doctor = dummyDoctors.find((d) => d.id === a.doctorId);
+        const patient = reduxPatients.find((p) => p.id === a.patientId || p.userId === a.patientId);
+        const doctor = reduxDoctors.find((d) => d.id === a.doctorId);
+        const patientName = patient?.name || a.patientName || "Patient";
         const matchesStatus = statusFilter === "all" || a.status === statusFilter;
         const matchesSearch = !searchText || (
-            patient?.name?.toLowerCase().includes(searchText.toLowerCase()) ||
+            patientName.toLowerCase().includes(searchText.toLowerCase()) ||
             doctor?.name?.toLowerCase().includes(searchText.toLowerCase()) ||
             a.reason?.toLowerCase().includes(searchText.toLowerCase())
         );
@@ -46,23 +49,28 @@ function AdminAppointments() {
     };
 
     const handleApprove = (app) => {
-        const patient = dummyPatients.find((p) => p.id === app.patientId);
-        const doctor = dummyDoctors.find((d) => d.id === app.doctorId);
+        const patient = reduxPatients.find((p) => p.id === app.patientId || p.userId === app.patientId);
+        const doctor = reduxDoctors.find((d) => d.id === app.doctorId);
+        const patientName = patient?.name || app.patientName || "Patient";
+        const patientUserId = patient?.userId || app.patientId;
+
         dispatch(approveAppointment(app.id));
-        if (patient?.userId) {
+        if (patientUserId) {
             dispatch(addNotification({
                 title: "Appointment Confirmed",
-                message: `Your appointment with ${doctor?.name} on ${app.date} at ${app.time} has been confirmed.`,
+                message: `Your appointment with ${doctor?.name || "your doctor"} on ${app.date} at ${app.time} has been confirmed.`,
                 type: "appointment",
-                userId: patient.userId,
+                userId: patientUserId,
             }));
         }
-        toast.success(`Appointment confirmed for ${patient?.name} with ${doctor?.name}.`, "Approved");
+        toast.success(`${patientName}'s appointment confirmed.`, "Confirmed");
     };
 
     const handleReject = (app) => {
-        const patient = dummyPatients.find((p) => p.id === app.patientId);
-        const doctor = dummyDoctors.find((d) => d.id === app.doctorId);
+        const patient = reduxPatients.find((p) => p.id === app.patientId || p.userId === app.patientId);
+        const doctor = reduxDoctors.find((d) => d.id === app.doctorId);
+        const patientName = patient?.name || app.patientName || "Patient";
+        const patientUserId = patient?.userId || app.patientId;
         dispatch(rejectAppointment(app.id));
         if (patient?.userId) {
             dispatch(addNotification({
@@ -155,8 +163,8 @@ function AdminAppointments() {
                         </div>
 
                         {filtered.map((app) => {
-                            const patient = dummyPatients.find((p) => p.id === app.patientId) || { name: "Unknown Patient", age: "--", gender: "--" };
-                            const doctor = dummyDoctors.find((d) => d.id === app.doctorId) || { name: "Unknown Doctor", specialization: "--" };
+                            const patient = reduxPatients.find((p) => p.id === app.patientId || p.userId === app.patientId) || { name: app.patientName || "Registered Patient", age: 28, gender: "Patient" };
+                            const doctor = reduxDoctors.find((d) => d.id === app.doctorId) || { name: "Unknown Doctor", specialization: "--" };
 
                             return (
                                 <div key={app.id} className="grid grid-cols-1 sm:grid-cols-12 gap-4 px-5 py-4 hover:bg-slate-50/50 transition items-center">

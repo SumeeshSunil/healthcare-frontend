@@ -8,6 +8,7 @@ import patientReducer from "./slices/patientSlice";
 import notificationReducer from "./slices/notificationSlice";
 import messageReducer from "./slices/messageSlice";
 import doctorReducer from "./slices/doctorSlice";
+import usersReducer from "./slices/usersSlice";
 
 export const store = configureStore({
     reducer: {
@@ -19,5 +20,6 @@ export const store = configureStore({
         notifications: notificationReducer,
         messages: messageReducer,
         doctors: doctorReducer,
+        users: usersReducer,
     }
 });
