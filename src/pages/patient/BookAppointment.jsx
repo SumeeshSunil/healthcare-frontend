@@ -2,6 +2,7 @@ import { useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { addAppointment } from "../../redux/slices/appointmentSlice";
+import { addNotification } from "../../redux/slices/notificationSlice";
 import dummyDoctors from "../../data/dummyDoctors.json";
 import patients from "../../data/dummyPatients.json";
 import Layout from "../../components/Layout";
@@ -111,6 +112,13 @@ function BookAppointment() {
         };
 
         dispatch(addAppointment(newAppointment));
+        dispatch(addNotification({
+            title: "Appointment Request Submitted",
+            message: `Your appointment request with ${doctor.name} for ${selectedDate} at ${selectedTime} has been submitted and is pending Admin confirmation.`,
+            type: "appointment",
+            userId: currentPatient.id,
+            userEmail: currentPatient.email || auth?.user?.email
+        }));
         toast.success(`Appointment requested with ${doctor.name} for ${selectedTime} on ${selectedDate}. Pending Admin approval.`, "Request Submitted");
         navigate("/patient/my-appointments");
     };

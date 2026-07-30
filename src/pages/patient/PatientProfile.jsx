@@ -2,13 +2,16 @@ import { useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
 
 import { updatePatientProfile } from "../../redux/slices/patientSlice";
+import { login } from "../../redux/slices/authSlice";
 import patients from "../../data/dummyPatients.json";
 import Layout from "../../components/Layout";
+import { useToast } from "../../components/Toast";
 
 function PatientProfile() {
     const auth = useSelector((state) => state.auth);
     const patientsList = useSelector((state) => state.patient?.patients || patients);
     const dispatch = useDispatch();
+    const toast = useToast();
 
     const currentPatient = patientsList.find(
         (p) => p.userId === auth?.user?.id || p.email?.toLowerCase() === auth?.user?.email?.toLowerCase() || p.id === auth?.user?.id
@@ -27,9 +30,9 @@ function PatientProfile() {
 
     const [isEditing, setIsEditing] = useState(false);
     const [formData, setFormData] = useState({
-        name: currentPatient.name || "",
-        age: currentPatient.age || "",
-        gender: currentPatient.gender || "Male",
+        name: currentPatient.name || auth?.user?.name || "",
+        age: currentPatient.age || "28",
+        gender: currentPatient.gender || "Patient",
         bloodGroup: currentPatient.bloodGroup || "O+",
         phone: currentPatient.phone || "",
         address: currentPatient.address || "",
@@ -46,40 +49,51 @@ function PatientProfile() {
     const handleSubmit = (e) => {
         e.preventDefault();
 
-        dispatch(
-            updatePatientProfile({
-                id: currentPatient.id,
-                ...formData,
-            })
-        );
+        const updatedObj = {
+            id: currentPatient.id || auth?.user?.id,
+            userId: currentPatient.userId || auth?.user?.id,
+            email: currentPatient.email || auth?.user?.email,
+            ...formData
+        };
+
+        dispatch(updatePatientProfile(updatedObj));
+
+        if (auth?.user) {
+            dispatch(login({
+                ...auth.user,
+                name: formData.name,
+                address: formData.address,
+                phone: formData.phone
+            }));
+        }
 
         setIsEditing(false);
-        alert("Patient health profile successfully updated.");
+        toast.success("Patient demographic profile updated successfully.", "Profile Saved");
     };
 
     return (
         <Layout>
-            <div className="max-w-4xl mx-auto bg-white rounded-3xl p-6 sm:p-8 shadow-sm border border-slate-200/80">
-                <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center border-b border-slate-100 pb-6 mb-8 gap-4">
+            <div className="max-w-4xl mx-auto bg-white rounded-3xl p-6 sm:p-8 shadow-sm border border-slate-200/80 space-y-6">
+                <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center border-b border-slate-100 pb-6 gap-4">
                     <div className="flex items-center gap-4 sm:gap-5">
-                        <div className="w-16 h-16 sm:w-20 sm:h-20 rounded-2xl bg-gradient-to-br from-slate-900 to-teal-900 text-teal-300 font-extrabold text-2xl sm:text-3xl flex items-center justify-center border-2 border-white shadow-md shrink-0">
-                            {formData.name ? formData.name.charAt(0).toUpperCase() : "P"}
+                        <div className="w-16 h-16 sm:w-20 sm:h-20 rounded-2xl bg-gradient-to-br from-teal-600 to-teal-800 text-white font-extrabold text-2xl sm:text-3xl flex items-center justify-center border-2 border-white shadow-md shrink-0">
+                            👤
                         </div>
                         <div>
                             <h1 className="text-xl sm:text-2xl font-extrabold text-slate-900 tracking-tight">
-                                {formData.name}
+                                {currentPatient.name}
                             </h1>
-                            <p className="text-[11px] sm:text-xs text-slate-400 font-semibold mt-1">
-                                Electronic Health Record ID: #{currentPatient.id}
+                            <p className="text-xs font-bold text-slate-500 mt-0.5">
+                                Patient ID: #{currentPatient.id} • {currentPatient.email}
                             </p>
                         </div>
                     </div>
 
                     <button
                         onClick={() => setIsEditing(!isEditing)}
-                        className="bg-slate-900 hover:bg-teal-600 text-white px-4 sm:px-5 py-2.5 rounded-xl text-xs font-bold transition shadow w-full sm:w-auto"
+                        className="bg-slate-900 hover:bg-teal-600 text-white px-5 py-2.5 rounded-xl text-xs font-bold transition shadow w-full sm:w-auto"
                     >
-                        {isEditing ? "Cancel Edit" : "Edit Health Profile"}
+                        {isEditing ? "Cancel Edit" : "Edit Profile"}
                     </button>
                 </div>
 
@@ -87,36 +101,36 @@ function PatientProfile() {
                     <form onSubmit={handleSubmit} className="space-y-6 text-xs sm:text-sm">
                         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6">
                             <div>
-                                <label className="block font-bold text-slate-700 mb-2">Full Name</label>
+                                <label className="block font-bold text-slate-700 mb-1.5">Full Name</label>
                                 <input
                                     type="text"
                                     name="name"
                                     value={formData.name}
                                     onChange={handleChange}
-                                    className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 focus:outline-none focus:border-teal-500 focus:bg-white transition text-slate-800"
+                                    className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-slate-800 focus:outline-none focus:border-teal-500 transition"
                                     required
                                 />
                             </div>
 
                             <div>
-                                <label className="block font-bold text-slate-700 mb-2">Age</label>
+                                <label className="block font-bold text-slate-700 mb-1.5">Age</label>
                                 <input
                                     type="number"
                                     name="age"
                                     value={formData.age}
                                     onChange={handleChange}
-                                    className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 focus:outline-none focus:border-teal-500 focus:bg-white transition text-slate-800"
+                                    className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-slate-800 focus:outline-none focus:border-teal-500 transition"
                                     required
                                 />
                             </div>
 
                             <div>
-                                <label className="block font-bold text-slate-700 mb-2">Gender</label>
+                                <label className="block font-bold text-slate-700 mb-1.5">Gender</label>
                                 <select
                                     name="gender"
                                     value={formData.gender}
                                     onChange={handleChange}
-                                    className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 focus:outline-none focus:border-teal-500 focus:bg-white transition text-slate-800"
+                                    className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-slate-800 focus:outline-none focus:border-teal-500 transition"
                                 >
                                     <option value="Male">Male</option>
                                     <option value="Female">Female</option>
@@ -125,66 +139,64 @@ function PatientProfile() {
                             </div>
 
                             <div>
-                                <label className="block font-bold text-slate-700 mb-2">Blood Group</label>
+                                <label className="block font-bold text-slate-700 mb-1.5">Blood Group</label>
                                 <select
                                     name="bloodGroup"
                                     value={formData.bloodGroup}
                                     onChange={handleChange}
-                                    className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 focus:outline-none focus:border-teal-500 focus:bg-white transition text-slate-800"
+                                    className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-slate-800 focus:outline-none focus:border-teal-500 transition"
                                 >
                                     <option value="A+">A+</option>
                                     <option value="A-">A-</option>
                                     <option value="B+">B+</option>
                                     <option value="B-">B-</option>
-                                    <option value="AB+">AB+</option>
-                                    <option value="AB-">AB-</option>
                                     <option value="O+">O+</option>
                                     <option value="O-">O-</option>
+                                    <option value="AB+">AB+</option>
+                                    <option value="AB-">AB-</option>
                                 </select>
                             </div>
 
                             <div>
-                                <label className="block font-bold text-slate-700 mb-2">Phone Number</label>
+                                <label className="block font-bold text-slate-700 mb-1.5">Phone Number</label>
                                 <input
                                     type="text"
                                     name="phone"
                                     value={formData.phone}
                                     onChange={handleChange}
-                                    className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 focus:outline-none focus:border-teal-500 focus:bg-white transition text-slate-800"
+                                    className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-slate-800 focus:outline-none focus:border-teal-500 transition"
                                     required
                                 />
                             </div>
 
                             <div>
-                                <label className="block font-bold text-slate-700 mb-2">Emergency Contact</label>
+                                <label className="block font-bold text-slate-700 mb-1.5">Emergency Contact</label>
                                 <input
                                     type="text"
                                     name="emergencyContact"
                                     value={formData.emergencyContact}
                                     onChange={handleChange}
-                                    className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 focus:outline-none focus:border-teal-500 focus:bg-white transition text-slate-800"
-                                    required
+                                    className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-slate-800 focus:outline-none focus:border-teal-500 transition"
                                 />
                             </div>
 
                             <div className="sm:col-span-2">
-                                <label className="block font-bold text-slate-700 mb-2">Residential Address</label>
-                                <textarea
+                                <label className="block font-bold text-slate-700 mb-1.5">Residential Address</label>
+                                <input
+                                    type="text"
                                     name="address"
                                     value={formData.address}
                                     onChange={handleChange}
-                                    rows="3"
-                                    className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 focus:outline-none focus:border-teal-500 focus:bg-white transition text-slate-800"
-                                    required
-                                ></textarea>
+                                    className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-slate-800 focus:outline-none focus:border-teal-500 transition"
+                                />
                             </div>
                         </div>
 
-                        <div className="pt-4 flex justify-end gap-3">
+                        <div className="flex justify-end gap-3 pt-4 border-t border-slate-100">
                             <button
                                 type="button"
                                 onClick={() => setIsEditing(false)}
-                                className="px-5 py-2.5 rounded-xl border border-slate-200 text-slate-600 hover:bg-slate-50 font-bold transition"
+                                className="bg-slate-100 hover:bg-slate-200 text-slate-700 px-5 py-2.5 rounded-xl font-bold transition"
                             >
                                 Cancel
                             </button>
@@ -192,42 +204,35 @@ function PatientProfile() {
                                 type="submit"
                                 className="bg-teal-600 hover:bg-teal-700 text-white px-6 py-2.5 rounded-xl font-bold transition shadow-md shadow-teal-600/20"
                             >
-                                Save Profile Changes
+                                Save Changes
                             </button>
                         </div>
                     </form>
                 ) : (
-                    <div className="space-y-6">
-                        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
-                            <div className="bg-slate-50 p-4 rounded-2xl border border-slate-100">
-                                <p className="text-[10px] uppercase font-bold text-slate-400 tracking-wider">Age</p>
-                                <p className="text-base font-extrabold text-slate-800 mt-1">{currentPatient.age} years</p>
-                            </div>
-
-                            <div className="bg-slate-50 p-4 rounded-2xl border border-slate-100">
-                                <p className="text-[10px] uppercase font-bold text-slate-400 tracking-wider">Gender</p>
-                                <p className="text-base font-extrabold text-slate-800 mt-1">{currentPatient.gender}</p>
-                            </div>
-
-                            <div className="bg-slate-50 p-4 rounded-2xl border border-slate-100">
-                                <p className="text-[10px] uppercase font-bold text-slate-400 tracking-wider">Blood Group</p>
-                                <p className="text-base font-extrabold text-teal-600 mt-1">{currentPatient.bloodGroup}</p>
-                            </div>
-
-                            <div className="bg-slate-50 p-4 rounded-2xl border border-slate-100 sm:col-span-2 md:col-span-1">
-                                <p className="text-[10px] uppercase font-bold text-slate-400 tracking-wider">Phone</p>
-                                <p className="text-base font-extrabold text-slate-800 mt-1">{currentPatient.phone}</p>
-                            </div>
-
-                            <div className="bg-slate-50 p-4 rounded-2xl border border-slate-100 sm:col-span-2">
-                                <p className="text-[10px] uppercase font-bold text-slate-400 tracking-wider">Emergency Contact</p>
-                                <p className="text-base font-extrabold text-rose-600 mt-1">{currentPatient.emergencyContact}</p>
-                            </div>
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6 text-xs sm:text-sm">
+                        <div className="bg-slate-50 rounded-2xl p-4 border border-slate-200/80">
+                            <p className="text-[10px] font-extrabold text-slate-400 uppercase tracking-wider mb-1">Age &amp; Gender</p>
+                            <p className="font-bold text-slate-800">{currentPatient.age} years old • {currentPatient.gender}</p>
                         </div>
 
-                        <div className="bg-slate-50 p-5 rounded-2xl border border-slate-100">
-                            <p className="text-[10px] uppercase font-bold text-slate-400 tracking-wider">Registered Address</p>
-                            <p className="text-sm font-semibold text-slate-700 mt-1">{currentPatient.address}</p>
+                        <div className="bg-slate-50 rounded-2xl p-4 border border-slate-200/80">
+                            <p className="text-[10px] font-extrabold text-slate-400 uppercase tracking-wider mb-1">Blood Group</p>
+                            <p className="font-bold text-teal-700">{currentPatient.bloodGroup || "O+"}</p>
+                        </div>
+
+                        <div className="bg-slate-50 rounded-2xl p-4 border border-slate-200/80">
+                            <p className="text-[10px] font-extrabold text-slate-400 uppercase tracking-wider mb-1">Contact Phone</p>
+                            <p className="font-bold text-slate-800">{currentPatient.phone}</p>
+                        </div>
+
+                        <div className="bg-slate-50 rounded-2xl p-4 border border-slate-200/80">
+                            <p className="text-[10px] font-extrabold text-slate-400 uppercase tracking-wider mb-1">Emergency Phone</p>
+                            <p className="font-bold text-slate-800">{currentPatient.emergencyContact || "+91 9876543211"}</p>
+                        </div>
+
+                        <div className="sm:col-span-2 bg-slate-50 rounded-2xl p-4 border border-slate-200/80">
+                            <p className="text-[10px] font-extrabold text-slate-400 uppercase tracking-wider mb-1">Address</p>
+                            <p className="font-bold text-slate-800">{currentPatient.address}</p>
                         </div>
                     </div>
                 )}

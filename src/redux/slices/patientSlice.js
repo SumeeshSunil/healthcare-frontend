@@ -9,15 +9,21 @@ const patientSlice = createSlice({
     reducers: {
         addPatient: (state, action) => {
             const newPatient = action.payload;
-            const exists = state.patients.find((p) => p.userId === newPatient.userId || p.email === newPatient.email);
+            const exists = state.patients.find((p) => p.userId === newPatient.userId || p.id === newPatient.id || (newPatient.email && p.email?.toLowerCase() === newPatient.email?.toLowerCase()));
             if (!exists) {
                 state.patients.push(newPatient);
             }
         },
         updatePatientProfile: (state, action) => {
-            const index = state.patients.findIndex((p) => p.id === action.payload.id || p.userId === action.payload.userId);
+            const updated = action.payload;
+            const index = state.patients.findIndex(
+                (p) => p.id === updated.id || p.userId === updated.userId || (updated.email && p.email?.toLowerCase() === updated.email?.toLowerCase())
+            );
+
             if (index !== -1) {
-                state.patients[index] = { ...state.patients[index], ...action.payload };
+                state.patients[index] = { ...state.patients[index], ...updated };
+            } else {
+                state.patients.push(updated);
             }
         }
     }

@@ -8,8 +8,9 @@ function Notifications() {
     const allNotifications = useSelector((state) => state.notifications?.notifications || []);
 
     const currentUserId = auth?.user?.id;
+    const currentUserEmail = auth?.user?.email?.toLowerCase();
     const notificationsList = allNotifications.filter(
-        (n) => !n.userId || n.userId === currentUserId
+        (n) => !n.userId || String(n.userId) === String(currentUserId) || (n.userEmail && n.userEmail.toLowerCase() === currentUserEmail)
     );
 
     const unreadCount = notificationsList.filter((n) => n.unread).length;
