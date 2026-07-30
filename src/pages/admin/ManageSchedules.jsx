@@ -1,14 +1,23 @@
-import { useSelector, useDispatch } from "react";
+import { useSelector, useDispatch } from "react-redux";
+import { useState } from "react";
 import { approveAppointment, rejectAppointment } from "../../redux/slices/appointmentSlice";
+import { addNotification } from "../../redux/slices/notificationSlice";
 import dummyDoctors from "../../data/dummyDoctors.json";
 import dummyPatients from "../../data/dummyPatients.json";
 import Layout from "../../components/Layout";
+import { useToast } from "../../components/Toast";
 
 function ManageSchedules() {
     const dispatch = useDispatch();
+    const toast = useToast();
     const appointments = useSelector((state) => state.appointment?.appointments || []);
 
+    const [allFilter, setAllFilter] = useState("pending");
+
     const pendingAppointments = appointments.filter((a) => a.status === "pending");
+    const filteredAppointments = allFilter === "all"
+        ? appointments
+        : appointments.filter((a) => a.status === allFilter);
 
     const getSlotOccupancy = (doctorId, date, timeSlot) => {
         return appointments.filter(
@@ -16,14 +25,55 @@ function ManageSchedules() {
         ).length;
     };
 
-    const handleApprove = (id) => {
-        dispatch(approveAppointment(id));
-        alert("Appointment confirmed and scheduled!");
+    const handleApprove = (app) => {
+        const patient = dummyPatients.find((p) => p.id === app.patientId);
+        const doctor = dummyDoctors.find((d) => d.id === app.doctorId);
+
+        dispatch(approveAppointment(app.id));
+
+        if (patient?.userId) {
+            dispatch(addNotification({
+                title: "Appointment Confirmed",
+                message: `Your appointment with ${doctor?.name || "your doctor"} on ${app.date} at ${app.time} has been confirmed by Admin.`,
+                type: "appointment",
+                userId: patient.userId,
+            }));
+        }
+
+        toast.success(
+            `${patient?.name || "Patient"}'s appointment with ${doctor?.name} has been confirmed.`,
+            "Appointment Approved"
+        );
     };
 
-    const handleReject = (id) => {
-        if (window.confirm("Reject and cancel this appointment request?")) {
-            dispatch(rejectAppointment(id));
+    const handleReject = (app) => {
+        const patient = dummyPatients.find((p) => p.id === app.patientId);
+        const doctor = dummyDoctors.find((d) => d.id === app.doctorId);
+
+        dispatch(rejectAppointment(app.id));
+
+        if (patient?.userId) {
+            dispatch(addNotification({
+                title: "Appointment Rejected",
+                message: `Your appointment request with ${doctor?.name || "your doctor"} on ${app.date} was declined. Please try another time slot.`,
+                type: "appointment",
+                userId: patient.userId,
+            }));
+        }
+
+        toast.warning(
+            `${patient?.name || "Patient"}'s appointment has been rejected.`,
+            "Appointment Rejected"
+        );
+    };
+
+    const getStatusBadge = (status) => {
+        switch (status) {
+            case "confirmed": return "bg-emerald-50 text-emerald-700 border-emerald-200";
+            case "pending": return "bg-amber-50 text-amber-700 border-amber-200";
+            case "cancelled": return "bg-rose-50 text-rose-700 border-rose-200";
+            case "completed": return "bg-sky-50 text-sky-700 border-sky-200";
+            default: return "bg-slate-50 text-slate-700 border-slate-200";
         }
     };
 
@@ -48,38 +98,48 @@ function ManageSchedules() {
                 </div>
             </div>
 
+            <div className="bg-white rounded-2xl p-4 shadow-sm border border-slate-200/80 flex items-center gap-2 overflow-x-auto">
+                {["pending", "confirmed", "completed", "cancelled", "all"].map((s) => (
+                    <button
+                        key={s}
+                        onClick={() => setAllFilter(s)}
+                        className={`px-4 py-2 rounded-xl text-xs font-bold capitalize transition shrink-0 ${
+                            allFilter === s ? "bg-slate-900 text-white" : "bg-slate-50 text-slate-600 hover:bg-slate-100"
+                        }`}
+                    >
+                        {s} ({s === "all" ? appointments.length : appointments.filter(a => a.status === s).length})
+                    </button>
+                ))}
+            </div>
+
             <div className="bg-white rounded-3xl p-6 shadow-sm border border-slate-200/80 space-y-6">
                 <div className="flex justify-between items-center border-b border-slate-100 pb-4">
                     <div>
                         <h2 className="text-lg font-bold text-slate-900">
-                            Pending Appointment Requests for Approval
+                            {allFilter === "pending" ? "Pending Appointment Requests" : `${allFilter.charAt(0).toUpperCase() + allFilter.slice(1)} Appointments`}
                         </h2>
                         <p className="text-xs text-slate-500 mt-0.5">
-                            Verify schedule capacity before confirming
+                            {allFilter === "pending" ? "Verify schedule capacity before confirming" : "Viewing filtered appointment records"}
                         </p>
                     </div>
                 </div>
 
-                {pendingAppointments.length === 0 ? (
+                {filteredAppointments.length === 0 ? (
                     <div className="p-8 text-center bg-slate-50 rounded-2xl border border-slate-100">
-                        <p className="text-xs font-bold text-slate-500">✓ No pending appointments awaiting approval</p>
+                        <div className="w-12 h-12 rounded-full bg-slate-200 flex items-center justify-center mx-auto mb-3 text-xl">
+                            ✓
+                        </div>
+                        <p className="text-xs font-bold text-slate-500">No appointments in this category</p>
                     </div>
                 ) : (
                     <div className="space-y-4">
-                        {pendingAppointments.map((app) => {
+                        {filteredAppointments.map((app) => {
                             const patient = dummyPatients.find((p) => p.id === app.patientId) || {
-                                name: "Patient Record",
-                                age: 30,
-                                gender: "Male",
-                                phone: "+91 9876543210",
-                                address: "Kerala"
+                                name: "Patient Record", age: 30, gender: "Male", phone: "+91 9876543210", address: "Kerala"
                             };
-
                             const doctor = dummyDoctors.find((d) => d.id === app.doctorId) || {
-                                name: "Attending Doctor",
-                                specialization: "Clinical Specialist"
+                                name: "Attending Doctor", specialization: "Clinical Specialist"
                             };
-
                             const occupancy = getSlotOccupancy(app.doctorId, app.date, app.time);
 
                             return (
@@ -94,9 +154,10 @@ function ManageSchedules() {
 
                                         <div>
                                             <div className="flex flex-wrap items-center gap-2">
-                                                <h3 className="font-extrabold text-slate-900 text-base">
-                                                    {patient.name}
-                                                </h3>
+                                                <h3 className="font-extrabold text-slate-900 text-base">{patient.name}</h3>
+                                                <span className={`px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider border ${getStatusBadge(app.status)}`}>
+                                                    {app.status}
+                                                </span>
                                                 <span className="text-[10px] font-bold uppercase tracking-wider bg-slate-200 text-slate-700 px-2 py-0.5 rounded-full">
                                                     Age: {patient.age} • {patient.gender}
                                                 </span>
@@ -107,9 +168,9 @@ function ManageSchedules() {
                                             </p>
 
                                             <div className="flex flex-wrap items-center gap-3 mt-2 text-xs text-slate-500">
-                                                <span>📅 Date: <strong className="text-slate-800">{app.date}</strong></span>
-                                                <span>🕒 Slot: <strong className="text-slate-800">{app.time}</strong></span>
-                                                <span>📞 Phone: {patient.phone}</span>
+                                                <span>📅 <strong className="text-slate-800">{app.date}</strong></span>
+                                                <span>🕒 <strong className="text-slate-800">{app.time}</strong></span>
+                                                <span>📞 {patient.phone}</span>
                                                 <span className={`font-bold px-2 py-0.5 rounded-md ${
                                                     occupancy >= 4 ? "bg-rose-100 text-rose-700" : "bg-emerald-100 text-emerald-800"
                                                 }`}>
@@ -125,20 +186,22 @@ function ManageSchedules() {
                                         </div>
                                     </div>
 
-                                    <div className="flex items-center gap-2 w-full lg:w-auto shrink-0 pt-3 lg:pt-0 border-t lg:border-t-0 border-slate-200">
-                                        <button
-                                            onClick={() => handleApprove(app.id)}
-                                            className="flex-1 lg:flex-none bg-teal-600 hover:bg-teal-700 text-white px-5 py-2.5 rounded-xl text-xs font-bold transition shadow-md shadow-teal-600/20"
-                                        >
-                                            ✓ Approve & Confirm
-                                        </button>
-                                        <button
-                                            onClick={() => handleReject(app.id)}
-                                            className="flex-1 lg:flex-none bg-rose-50 hover:bg-rose-100 text-rose-700 border border-rose-200 px-4 py-2.5 rounded-xl text-xs font-bold transition"
-                                        >
-                                            ✕ Reject
-                                        </button>
-                                    </div>
+                                    {app.status === "pending" && (
+                                        <div className="flex items-center gap-2 w-full lg:w-auto shrink-0 pt-3 lg:pt-0 border-t lg:border-t-0 border-slate-200">
+                                            <button
+                                                onClick={() => handleApprove(app)}
+                                                className="flex-1 lg:flex-none bg-teal-600 hover:bg-teal-700 text-white px-5 py-2.5 rounded-xl text-xs font-bold transition shadow-md shadow-teal-600/20"
+                                            >
+                                                ✓ Approve & Confirm
+                                            </button>
+                                            <button
+                                                onClick={() => handleReject(app)}
+                                                className="flex-1 lg:flex-none bg-rose-50 hover:bg-rose-100 text-rose-700 border border-rose-200 px-4 py-2.5 rounded-xl text-xs font-bold transition"
+                                            >
+                                                ✕ Reject
+                                            </button>
+                                        </div>
+                                    )}
                                 </div>
                             );
                         })}
@@ -169,7 +232,6 @@ function ManageSchedules() {
                                     </div>
                                 )}
                             </div>
-
                             <span className="bg-emerald-50 text-emerald-700 border border-emerald-200 text-xs font-bold px-3 py-1.5 rounded-xl shrink-0">
                                 Max 4 Patients/Slot Cap Active
                             </span>

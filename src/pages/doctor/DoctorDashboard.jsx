@@ -9,10 +9,10 @@ function DoctorDashboard() {
     const auth = useSelector((state) => state.auth);
     const reduxAppointments = useSelector((state) => state.appointment?.appointments || appointments);
 
-    const doctorProfile = doctors.find((d) => d.name === auth?.user?.name) || doctors[0];
-    const doctorAppointments = reduxAppointments.filter((a) => a.doctorId === doctorProfile.id || true);
+    const doctorProfile = doctors.find((d) => d.name === auth?.user?.name || d.userId === auth?.user?.id) || doctors[0];
+    const doctorAppointments = reduxAppointments.filter((a) => a.doctorId === doctorProfile.id);
 
-    const todayCount = doctorAppointments.length;
+    const todayCount = doctorAppointments.filter((a) => a.status !== "cancelled").length;
     const pendingCount = doctorAppointments.filter((a) => a.status === "pending").length;
     const completedCount = doctorAppointments.filter((a) => a.status === "completed").length;
 

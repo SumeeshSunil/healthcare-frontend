@@ -1,24 +1,73 @@
 import { useState } from "react";
-import { useSelector } from "react-redux";
-import { Link } from "react-router-dom";
-import dummyAppointments from "../../data/dummyAppointments.json";
-import dummyPatients from "../../data/dummyPatients.json";
+import { useSelector, useDispatch } from "react-redux";
+import { Link, useNavigate } from "react-router-dom";
 import dummyDoctors from "../../data/dummyDoctors.json";
+import dummyPatients from "../../data/dummyPatients.json";
 import Layout from "../../components/Layout";
+import { completeAppointment, approveAppointment, rejectAppointment } from "../../redux/slices/appointmentSlice";
+import { addBill } from "../../redux/slices/billingSlice";
+import { addNotification } from "../../redux/slices/notificationSlice";
+import { useToast } from "../../components/Toast";
 
 function DoctorAppointments() {
     const auth = useSelector((state) => state.auth);
-    const reduxAppointments = useSelector((state) => state.appointment?.appointments || dummyAppointments);
+    const reduxAppointments = useSelector((state) => state.appointment?.appointments || []);
+    const dispatch = useDispatch();
+    const toast = useToast();
+    const navigate = useNavigate();
 
     const [statusFilter, setStatusFilter] = useState("all");
 
-    const doctorObj = dummyDoctors.find((d) => d.name === auth?.user?.name || d.userId === auth?.user?.id) || dummyDoctors[0];
-    const doctorAppointments = reduxAppointments.filter((a) => a.doctorId === doctorObj.id || true);
+    const doctorObj = dummyDoctors.find(
+        (d) => d.name === auth?.user?.name || d.userId === auth?.user?.id
+    ) || dummyDoctors[0];
+
+    const doctorAppointments = reduxAppointments.filter(
+        (a) => a.doctorId === doctorObj.id
+    );
 
     const filteredAppointments = doctorAppointments.filter((a) => {
         if (statusFilter === "all") return true;
         return a.status === statusFilter;
     });
+
+    const handleComplete = (appointment) => {
+        const patient = dummyPatients.find((p) => p.id === appointment.patientId);
+        const patientUserId = patient?.userId;
+
+        dispatch(completeAppointment(appointment.id));
+
+        const newBill = {
+            id: Date.now(),
+            patientId: appointment.patientId,
+            doctorId: doctorObj.id,
+            appointmentId: appointment.id,
+            date: new Date().toISOString().split("T")[0],
+            items: [
+                { description: "Consultation Fee", amount: doctorObj.fee || 500 },
+            ],
+            totalAmount: doctorObj.fee || 500,
+            status: "unpaid",
+            paymentMethod: null,
+            paidOn: null,
+            insurance: null,
+        };
+        dispatch(addBill(newBill));
+
+        if (patientUserId) {
+            dispatch(addNotification({
+                title: "Consultation Completed",
+                message: `Your consultation with ${doctorObj.name} is complete. A new invoice of ₹${doctorObj.fee || 500} has been generated.`,
+                type: "billing",
+                userId: patientUserId,
+            }));
+        }
+
+        toast.success(
+            `Consultation completed. Invoice of ₹${doctorObj.fee || 500} generated for ${patient?.name || "patient"}.`,
+            "Appointment Completed"
+        );
+    };
 
     const getStatusBadge = (status) => {
         switch (status) {
@@ -45,8 +94,30 @@ function DoctorAppointments() {
                     Doctor Consultation Queue
                 </h1>
                 <p className="text-slate-300 mt-2 text-xs sm:text-sm leading-relaxed max-w-xl">
-                    Review admin-confirmed patient visits, access EHR records, and communicate with patients.
+                    Review your confirmed patient visits, access EHR records, and mark consultations as complete.
                 </p>
+            </div>
+
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+                {["all", "confirmed", "pending", "completed"].map((s) => {
+                    const count = s === "all" ? doctorAppointments.length : doctorAppointments.filter(a => a.status === s).length;
+                    const colors = {
+                        all: "bg-slate-900 text-white",
+                        confirmed: "bg-emerald-50 text-emerald-700 border border-emerald-200",
+                        pending: "bg-amber-50 text-amber-700 border border-amber-200",
+                        completed: "bg-sky-50 text-sky-700 border border-sky-200",
+                    };
+                    return (
+                        <button
+                            key={s}
+                            onClick={() => setStatusFilter(s)}
+                            className={`p-3 rounded-2xl text-left transition ${statusFilter === s ? "ring-2 ring-teal-500 ring-offset-2" : "opacity-80 hover:opacity-100"} ${colors[s]}`}
+                        >
+                            <p className="text-xs font-bold uppercase tracking-wider opacity-70 capitalize">{s}</p>
+                            <p className="text-2xl font-extrabold mt-1">{count}</p>
+                        </button>
+                    );
+                })}
             </div>
 
             <div className="bg-white rounded-2xl p-4 sm:p-5 shadow-sm border border-slate-200/80 flex items-center gap-2 overflow-x-auto">
@@ -102,30 +173,41 @@ function DoctorAppointments() {
                                             </span>
                                         </div>
                                         <p className="text-xs text-slate-500 mt-0.5">
-                                            {patient.age} yrs • {patient.gender} • Phone: {patient.phone}
+                                            {patient.age} yrs • {patient.gender} • 📞 {patient.phone}
                                         </p>
                                         <div className="flex flex-wrap items-center gap-4 mt-2 text-xs text-slate-600 font-medium">
                                             <span>📅 {appointment.date}</span>
                                             <span>🕒 {appointment.time}</span>
-                                            <span className="text-teal-600 font-bold">Notes: {appointment.notes || appointment.reason || "Checkup"}</span>
+                                            <span className="text-teal-600 font-bold">
+                                                {appointment.reason || appointment.notes || "Checkup"}
+                                            </span>
                                         </div>
                                     </div>
                                 </div>
 
                                 <div className="w-full md:w-auto flex flex-wrap items-center gap-2 pt-3 md:pt-0 border-t md:border-t-0 border-slate-100">
                                     <Link
-                                        to="/patient/messages"
+                                        to="/doctor/messages"
                                         className="bg-teal-50 hover:bg-teal-100 text-teal-700 border border-teal-200 px-3.5 py-2 rounded-xl text-xs font-bold transition"
                                     >
-                                        💬 Message Patient
+                                        💬 Message
                                     </Link>
 
                                     <Link
                                         to="/doctor/patient-records"
-                                        className="bg-slate-900 hover:bg-teal-600 text-white px-3.5 py-2 rounded-xl text-xs font-bold transition shadow-sm"
+                                        className="bg-sky-50 hover:bg-sky-100 text-sky-700 border border-sky-200 px-3.5 py-2 rounded-xl text-xs font-bold transition"
                                     >
                                         📄 EHR Records
                                     </Link>
+
+                                    {appointment.status === "confirmed" && (
+                                        <button
+                                            onClick={() => handleComplete(appointment)}
+                                            className="bg-emerald-600 hover:bg-emerald-700 text-white px-3.5 py-2 rounded-xl text-xs font-bold transition shadow-sm shadow-emerald-600/20"
+                                        >
+                                            ✓ Mark Complete
+                                        </button>
+                                    )}
                                 </div>
                             </div>
                         );

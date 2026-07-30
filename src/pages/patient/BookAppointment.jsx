@@ -5,11 +5,13 @@ import { addAppointment } from "../../redux/slices/appointmentSlice";
 import doctors from "../../data/dummyDoctors.json";
 import patients from "../../data/dummyPatients.json";
 import Layout from "../../components/Layout";
+import { useToast } from "../../components/Toast";
 
 function BookAppointment() {
     const { doctorId } = useParams();
     const navigate = useNavigate();
     const dispatch = useDispatch();
+    const toast = useToast();
     const auth = useSelector((state) => state.auth);
     const appointments = useSelector((state) => state.appointment?.appointments || []);
 
@@ -45,13 +47,13 @@ function BookAppointment() {
     const handleSubmit = (e) => {
         e.preventDefault();
         if (!selectedDate || !selectedTime) {
-            alert("Please select a consultation date and available time slot.");
+            toast.warning("Please select a consultation date and available time slot.");
             return;
         }
 
         const count = getSlotBookingCount(selectedTime);
         if (count >= 4) {
-            alert("Sorry, this time slot has reached its maximum capacity of 4 patients. Please choose another time slot.");
+            toast.error("This time slot has reached its maximum capacity of 4 patients. Please choose another.", "Slot Full");
             return;
         }
 
@@ -68,7 +70,7 @@ function BookAppointment() {
         };
 
         dispatch(addAppointment(newAppointment));
-        alert(`Appointment requested with ${doctor.name} for ${selectedTime}! Your request is now pending Admin approval.`);
+        toast.success(`Appointment requested with ${doctor.name} for ${selectedTime}. Pending Admin approval.`, "Request Submitted");
         navigate("/patient/my-appointments");
     };
 

@@ -28,6 +28,13 @@ const appointmentSlice = createSlice({
                 appointment.status = "cancelled";
             }
         },
+        completeAppointment: (state, action) => {
+            const appointment = state.appointments.find((a) => a.id === action.payload);
+            if (appointment) {
+                appointment.status = "completed";
+                appointment.completedAt = new Date().toISOString().split("T")[0];
+            }
+        },
         updateAppointmentStatus: (state, action) => {
             const { id, status } = action.payload;
             const appointment = state.appointments.find((a) => a.id === id);
@@ -43,6 +50,7 @@ export const {
     cancelAppointment,
     approveAppointment,
     rejectAppointment,
+    completeAppointment,
     updateAppointmentStatus
 } = appointmentSlice.actions;
 
