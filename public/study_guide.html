@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>Healthcare Portal – React Study Guide & Interview Prep</title>
+<title>Healthcare Portal – Complete React & Redux Master Study Guide</title>
 <style>
   @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Fira+Code:wght@400;500&display=swap');
 
@@ -11,1133 +11,673 @@
 
   body {
     font-family: 'Inter', sans-serif;
-    background: #f8fafc;
-    color: #1e293b;
+    background: #0f172a;
+    color: #f1f5f9;
     font-size: 14px;
-    line-height: 1.7;
+    line-height: 1.75;
+    padding: 30px 15px;
   }
 
-  .page {
-    max-width: 900px;
+  .container {
+    max-width: 1000px;
     margin: 0 auto;
-    padding: 40px 48px;
-    background: white;
-    box-shadow: 0 4px 40px rgba(0,0,0,0.08);
-    margin-bottom: 20px;
+    background: #1e293b;
+    border: 1px solid #334155;
+    border-radius: 24px;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.4);
+    padding: 48px 56px;
   }
 
-  /* ── COVER ── */
+  /* COVER HEADER */
   .cover {
-    background: linear-gradient(135deg, #0f172a 0%, #134e4a 50%, #1e3a5f 100%);
-    color: white;
-    min-height: 480px;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    border-radius: 16px;
-    padding: 64px;
-    margin-bottom: 20px;
-    max-width: 900px;
-    margin: 0 auto 20px;
+    background: linear-gradient(135deg, #0d9488 0%, #1e3a5f 50%, #0f172a 100%);
+    border-radius: 20px;
+    padding: 48px;
+    margin-bottom: 40px;
+    border: 1px solid rgba(45,212,191,0.2);
+    box-shadow: 0 10px 30px rgba(13,148,136,0.15);
   }
-  .cover .badge {
+  .badge {
     display: inline-block;
-    background: rgba(20,184,166,0.2);
-    color: #5eead4;
-    border: 1px solid rgba(20,184,166,0.3);
+    background: rgba(45,212,191,0.15);
+    color: #2dd4bf;
+    border: 1px solid rgba(45,212,191,0.3);
     border-radius: 50px;
-    padding: 6px 18px;
+    padding: 5px 16px;
     font-size: 11px;
-    font-weight: 700;
+    font-weight: 800;
     letter-spacing: 2px;
     text-transform: uppercase;
-    margin-bottom: 24px;
-    width: fit-content;
+    margin-bottom: 20px;
   }
   .cover h1 {
-    font-size: 48px;
+    font-size: 42px;
     font-weight: 900;
-    line-height: 1.1;
-    margin-bottom: 20px;
-    letter-spacing: -1px;
+    line-height: 1.15;
+    color: #ffffff;
+    letter-spacing: -0.5px;
+    margin-bottom: 16px;
   }
-  .cover h1 span { color: #5eead4; }
+  .cover h1 span { color: #2dd4bf; }
   .cover p {
     color: #94a3b8;
-    font-size: 16px;
-    max-width: 520px;
-    margin-bottom: 40px;
+    font-size: 15px;
+    max-width: 680px;
+    line-height: 1.7;
+    margin-bottom: 28px;
   }
   .cover-meta {
     display: flex;
-    gap: 32px;
+    flex-wrap: wrap;
+    gap: 24px;
     border-top: 1px solid rgba(255,255,255,0.1);
-    padding-top: 28px;
-    margin-top: 8px;
+    padding-top: 24px;
   }
-  .cover-meta-item { }
-  .cover-meta-item .label { font-size: 10px; color: #64748b; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 4px; }
-  .cover-meta-item .value { font-size: 15px; font-weight: 700; color: #e2e8f0; }
+  .cover-meta-item .label { font-size: 10px; color: #64748b; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; }
+  .cover-meta-item .value { font-size: 14px; font-weight: 700; color: #f1f5f9; }
 
-  /* ── TYPOGRAPHY ── */
+  /* TYPOGRAPHY */
   h2 {
-    font-size: 26px;
+    font-size: 24px;
     font-weight: 800;
-    color: #0f172a;
+    color: #f8fafc;
     margin-top: 48px;
-    margin-bottom: 16px;
-    padding-bottom: 10px;
-    border-bottom: 3px solid #0d9488;
+    margin-bottom: 20px;
+    padding-bottom: 12px;
+    border-bottom: 2px solid #0d9488;
     display: flex;
     align-items: center;
-    gap: 10px;
-    letter-spacing: -0.5px;
+    gap: 12px;
+    letter-spacing: -0.3px;
   }
   h2 .num {
     background: #0d9488;
-    color: white;
-    border-radius: 8px;
-    padding: 2px 10px;
+    color: #ffffff;
+    border-radius: 10px;
+    padding: 3px 12px;
     font-size: 13px;
-    font-weight: 800;
+    font-weight: 900;
   }
   h3 {
     font-size: 17px;
     font-weight: 700;
-    color: #1e293b;
+    color: #2dd4bf;
     margin-top: 28px;
-    margin-bottom: 10px;
+    margin-bottom: 12px;
   }
   h4 {
     font-size: 14px;
     font-weight: 700;
-    color: #334155;
-    margin-top: 18px;
-    margin-bottom: 6px;
+    color: #e2e8f0;
+    margin-top: 16px;
+    margin-bottom: 8px;
   }
-  p { margin-bottom: 12px; color: #475569; }
-  strong { color: #0f172a; }
-  ul, ol { padding-left: 20px; margin-bottom: 12px; }
-  li { color: #475569; margin-bottom: 5px; }
+  p { margin-bottom: 12px; color: #cbd5e1; font-size: 14px; }
+  strong { color: #f8fafc; }
+  ul, ol { padding-left: 22px; margin-bottom: 14px; }
+  li { color: #cbd5e1; margin-bottom: 6px; font-size: 13.5px; }
 
-  /* ── CODE ── */
+  /* CODE & PRE */
   code {
     font-family: 'Fira Code', monospace;
-    background: #f1f5f9;
-    color: #0d9488;
-    padding: 2px 7px;
-    border-radius: 5px;
-    font-size: 12.5px;
-    font-weight: 500;
+    background: #0f172a;
+    color: #2dd4bf;
+    padding: 2px 8px;
+    border-radius: 6px;
+    font-size: 12px;
+    border: 1px solid #334155;
   }
   pre {
-    background: #0f172a;
+    background: #090d16;
     color: #e2e8f0;
-    border-radius: 12px;
+    border-radius: 14px;
     padding: 20px 24px;
-    margin: 16px 0;
+    margin: 18px 0;
     overflow-x: auto;
     font-family: 'Fira Code', monospace;
     font-size: 12.5px;
-    line-height: 1.8;
+    line-height: 1.85;
+    border: 1px solid #334155;
     border-left: 4px solid #0d9488;
   }
-  pre .kw { color: #93c5fd; }   /* keyword */
+  pre .kw { color: #93c5fd; font-weight: 600; }   /* keyword */
   pre .fn { color: #86efac; }   /* function */
   pre .str { color: #fde68a; }  /* string */
-  pre .cm { color: #64748b; font-style: italic; } /* placeholder comment */
-  pre .hook { color: #c4b5fd; } /* hooks */
-  pre .tag { color: #f9a8d4; }  /* JSX tags */
-  pre .num { color: #fb923c; }  /* numbers */
+  pre .cm { color: #64748b; font-style: italic; } /* comment */
+  pre .hook { color: #c4b5fd; font-weight: 600; } /* hook */
+  pre .tag { color: #f9a8d4; }  /* JSX tag */
 
-  /* ── BOXES ── */
+  /* CARDS & BOXES */
   .box {
-    border-radius: 12px;
-    padding: 18px 22px;
-    margin: 16px 0;
+    border-radius: 14px;
+    padding: 20px 24px;
+    margin: 20px 0;
+    border: 1px solid #334155;
   }
-  .box-teal { background: #f0fdfa; border-left: 4px solid #0d9488; }
-  .box-blue { background: #eff6ff; border-left: 4px solid #3b82f6; }
-  .box-amber { background: #fffbeb; border-left: 4px solid #f59e0b; }
-  .box-rose  { background: #fff1f2; border-left: 4px solid #f43f5e; }
-  .box-purple{ background: #faf5ff; border-left: 4px solid #8b5cf6; }
-  .box-slate { background: #f8fafc; border-left: 4px solid #64748b; }
+  .box-teal { background: rgba(13,148,136,0.1); border-left: 4px solid #0d9488; }
+  .box-purple { background: rgba(124,58,237,0.1); border-left: 4px solid #7c3aed; }
+  .box-amber { background: rgba(217,119,6,0.1); border-left: 4px solid #d97706; }
+  .box-blue { background: rgba(37,99,235,0.1); border-left: 4px solid #2563eb; }
 
-  .box .box-title {
+  .box-title {
     font-size: 11px;
     font-weight: 800;
     text-transform: uppercase;
     letter-spacing: 1.5px;
     margin-bottom: 8px;
   }
-  .box-teal .box-title { color: #0d9488; }
-  .box-blue .box-title { color: #3b82f6; }
-  .box-amber .box-title { color: #d97706; }
-  .box-rose .box-title { color: #f43f5e; }
-  .box-purple .box-title { color: #8b5cf6; }
-  .box-slate .box-title { color: #64748b; }
+  .box-teal .box-title { color: #2dd4bf; }
+  .box-purple .box-title { color: #c4b5fd; }
+  .box-amber .box-title { color: #fbbf24; }
+  .box-blue .box-title { color: #60a5fa; }
 
-  /* ── TABLE ── */
+  /* TABLE */
   table {
     width: 100%;
     border-collapse: collapse;
-    margin: 16px 0;
+    margin: 20px 0;
     font-size: 13px;
   }
   th {
     background: #0f172a;
-    color: #e2e8f0;
-    padding: 10px 14px;
+    color: #2dd4bf;
+    padding: 12px 16px;
     text-align: left;
     font-weight: 700;
     font-size: 11px;
     text-transform: uppercase;
-    letter-spacing: 0.5px;
+    letter-spacing: 1px;
+    border-bottom: 2px solid #334155;
   }
   td {
-    padding: 10px 14px;
-    border-bottom: 1px solid #e2e8f0;
-    color: #475569;
-    vertical-align: top;
+    padding: 12px 16px;
+    border-bottom: 1px solid #334155;
+    color: #cbd5e1;
   }
-  tr:nth-child(even) td { background: #f8fafc; }
-  tr:hover td { background: #f0fdfa; }
+  tr:nth-child(even) td { background: rgba(15,23,42,0.4); }
 
-  /* ── WORKFLOW DIAGRAM ── */
-  .flow {
-    display: flex;
-    flex-direction: column;
-    gap: 0;
-    margin: 20px 0;
-  }
+  /* FLOW CHART */
   .flow-step {
+    background: #0f172a;
+    border: 1px solid #334155;
+    border-radius: 14px;
+    padding: 18px 22px;
+    margin-bottom: 12px;
     display: flex;
-    align-items: flex-start;
     gap: 16px;
+    align-items: flex-start;
   }
-  .flow-left {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    width: 40px;
-    flex-shrink: 0;
-  }
-  .flow-circle {
-    width: 40px;
-    height: 40px;
-    border-radius: 50%;
+  .flow-num {
     background: #0d9488;
     color: white;
-    font-weight: 800;
-    font-size: 15px;
+    font-weight: 900;
+    font-size: 14px;
+    width: 32px;
+    height: 32px;
+    border-radius: 10px;
     display: flex;
     align-items: center;
     justify-content: center;
     flex-shrink: 0;
-    z-index: 1;
   }
-  .flow-line {
-    width: 2px;
-    flex: 1;
-    min-height: 24px;
-    background: #cbd5e1;
-    margin: 2px 0;
-  }
-  .flow-content {
-    flex: 1;
-    background: #f8fafc;
-    border: 1px solid #e2e8f0;
-    border-radius: 12px;
-    padding: 14px 18px;
-    margin-bottom: 8px;
-  }
-  .flow-content h4 { margin-top: 0; margin-bottom: 4px; color: #0f172a; font-size: 14px; }
-  .flow-content p { margin: 0; font-size: 12.5px; }
-  .flow-content code { font-size: 11.5px; }
+  .flow-body h4 { margin-top: 0; color: #f8fafc; font-size: 14px; }
+  .flow-body p { margin-bottom: 0; font-size: 13px; color: #94a3b8; }
 
-  /* ── CONCEPT CARD ── */
-  .concept-card {
-    background: white;
-    border: 1px solid #e2e8f0;
-    border-radius: 14px;
-    padding: 20px 22px;
-    margin: 14px 0;
-    box-shadow: 0 1px 4px rgba(0,0,0,0.05);
-  }
-  .concept-card .concept-header {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    margin-bottom: 10px;
-  }
-  .concept-badge {
+  /* Q&A CARDS */
+  .qa-card {
     background: #0f172a;
-    color: #5eead4;
-    font-family: 'Fira Code', monospace;
-    font-size: 13px;
-    font-weight: 600;
-    padding: 4px 12px;
-    border-radius: 6px;
-  }
-  .concept-badge.new {
-    background: #7c3aed;
-    color: #e9d5ff;
-  }
-  .concept-badge.router {
-    background: #1d4ed8;
-    color: #bfdbfe;
-  }
-  .concept-badge.context {
-    background: #b45309;
-    color: #fef3c7;
-  }
-  .concept-type {
-    font-size: 10px;
-    font-weight: 700;
-    text-transform: uppercase;
-    letter-spacing: 1px;
-    color: #94a3b8;
-  }
-
-  /* ── QA SECTION ── */
-  .qa-item {
+    border: 1px solid #334155;
+    border-radius: 16px;
     margin: 20px 0;
-    border-radius: 12px;
     overflow: hidden;
-    border: 1px solid #e2e8f0;
   }
   .qa-q {
-    background: #0f172a;
-    color: #e2e8f0;
-    padding: 14px 18px;
+    background: #1e293b;
+    color: #f8fafc;
+    padding: 16px 20px;
     font-weight: 700;
     font-size: 14px;
+    border-bottom: 1px solid #334155;
   }
-  .qa-q::before { content: "Q. "; color: #5eead4; }
+  .qa-q span { color: #2dd4bf; font-weight: 900; margin-right: 6px; }
   .qa-a {
-    background: #f8fafc;
-    padding: 14px 18px;
-    color: #475569;
+    padding: 18px 20px;
+    color: #cbd5e1;
     font-size: 13.5px;
-    line-height: 1.7;
+    line-height: 1.8;
   }
-  .qa-a::before { content: "A. "; font-weight: 700; color: #0d9488; }
 
-  /* ── TOC ── */
+  /* TOC */
   .toc {
-    background: #f8fafc;
-    border: 1px solid #e2e8f0;
-    border-radius: 14px;
-    padding: 24px 28px;
-    margin: 24px 0;
+    background: #0f172a;
+    border: 1px solid #334155;
+    border-radius: 16px;
+    padding: 28px;
+    margin-bottom: 40px;
   }
   .toc-title {
-    font-size: 13px;
+    font-size: 12px;
     font-weight: 800;
     text-transform: uppercase;
-    letter-spacing: 1.5px;
-    color: #64748b;
+    letter-spacing: 2px;
+    color: #2dd4bf;
     margin-bottom: 16px;
   }
-  .toc ol { list-style: none; padding: 0; }
+  .toc ol { list-style: none; padding-left: 0; }
   .toc li {
-    padding: 6px 0;
-    border-bottom: 1px dashed #e2e8f0;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    font-weight: 500;
-    color: #334155;
+    padding: 8px 0;
+    border-bottom: 1px dashed #334155;
+    color: #cbd5e1;
     font-size: 13.5px;
+    font-weight: 500;
   }
   .toc li:last-child { border-bottom: none; }
   .toc-num { color: #0d9488; font-weight: 800; margin-right: 10px; }
-
-  /* ── PRINT ── */
-  @media print {
-    body { background: white; }
-    .page { box-shadow: none; }
-    h2 { page-break-before: always; }
-    pre, .qa-item, .concept-card { page-break-inside: avoid; }
-  }
-
-  .divider {
-    height: 2px;
-    background: linear-gradient(to right, #0d9488, #3b82f6, transparent);
-    border-radius: 2px;
-    margin: 32px 0;
-  }
-
-  .tag-row { display: flex; flex-wrap: wrap; gap: 8px; margin: 10px 0; }
-  .tag {
-    background: #f1f5f9;
-    border: 1px solid #cbd5e1;
-    color: #475569;
-    padding: 4px 12px;
-    border-radius: 50px;
-    font-size: 12px;
-    font-weight: 600;
-  }
-  .tag.green { background: #f0fdf4; border-color: #86efac; color: #166534; }
-  .tag.purple { background: #faf5ff; border-color: #c4b5fd; color: #6d28d9; }
-  .tag.blue { background: #eff6ff; border-color: #93c5fd; color: #1d4ed8; }
 </style>
 </head>
 <body>
 
-<!-- ═══════════════════════════════════════════════════════ COVER ═════ -->
-<div class="cover">
-  <div class="badge">Interview Study Guide &amp; Project Reference</div>
-  <h1>Healthcare Portal<br /><span>React Deep Dive</span></h1>
-  <p>A complete technical breakdown of every hook, pattern, workflow, and concept used in the healthcare frontend project — written to help you confidently explain it in any interview.</p>
-  <div class="cover-meta">
-    <div class="cover-meta-item">
-      <div class="label">Stack</div>
-      <div class="value">React + Redux Toolkit + Vite</div>
-    </div>
-    <div class="cover-meta-item">
-      <div class="label">Pages</div>
-      <div class="value">20+ Role-based Pages</div>
-    </div>
-    <div class="cover-meta-item">
-      <div class="label">New Hooks</div>
-      <div class="value">6 Beyond Your Knowledge</div>
+<div class="container">
+
+  <!-- COVER -->
+  <div class="cover">
+    <div class="badge">Comprehensive Study Guide &amp; Technical Master Reference</div>
+    <h1>Healthcare Portal<br /><span>React &amp; Redux Architecture</span></h1>
+    <p>Complete breakdown of every React hook, Redux slice, custom context system, persistent messaging architecture, and clinical doctor-patient workflow implemented in this application.</p>
+
+    <div class="cover-meta">
+      <div class="cover-meta-item">
+        <div class="label">Tech Stack</div>
+        <div class="value">React 18 + Redux Toolkit + Vite</div>
+      </div>
+      <div class="cover-meta-item">
+        <div class="label">Redux Slices</div>
+        <div class="value">7 Global State Slices</div>
+      </div>
+      <div class="cover-meta-item">
+        <div class="label">All Actions</div>
+        <div class="value">16 Redux Reducers</div>
+      </div>
+      <div class="cover-meta-item">
+        <div class="label">Role Guards</div>
+        <div class="value">Patient, Doctor, Admin</div>
+      </div>
     </div>
   </div>
-</div>
 
-<!-- ═══════════════════════════════════════════════════════ PAGE 1 ═════ -->
-<div class="page">
-
+  <!-- TOC -->
   <div class="toc">
     <div class="toc-title">Table of Contents</div>
     <ol>
-      <li><span><span class="toc-num">1.</span>Project Overview &amp; Architecture</span></li>
-      <li><span><span class="toc-num">2.</span>Folder Structure Explained</span></li>
-      <li><span><span class="toc-num">3.</span>React Concepts You Already Know</span></li>
-      <li><span><span class="toc-num">4.</span>NEW React Concepts Introduced in This Project</span></li>
-      <li><span><span class="toc-num">5.</span>Redux Toolkit — Deep Dive</span></li>
-      <li><span><span class="toc-num">6.</span>React Router — Every Pattern Used</span></li>
-      <li><span><span class="toc-num">7.</span>React Context API — Toast System</span></li>
-      <li><span><span class="toc-num">8.</span>The Full Appointment Workflow (End-to-End)</span></li>
-      <li><span><span class="toc-num">9.</span>How Each Page Works</span></li>
-      <li><span><span class="toc-num">10.</span>Interview Q&amp;A Prep</span></li>
+      <li><span class="toc-num">1.</span> Project Architecture &amp; Core Systems Overview</li>
+      <li><span class="toc-num">2.</span> Full File &amp; Folder Structure</li>
+      <li><span class="toc-num">3.</span> Every React Hook Used &amp; How They Work</li>
+      <li><span class="toc-num">4.</span> All 7 Redux Slices &amp; Complete Actions Breakdown</li>
+      <li><span class="toc-num">5.</span> Persistent Chat System Architecture (messageSlice)</li>
+      <li><span class="toc-num">6.</span> Complete End-to-End Clinical Consultation Workflow (1-0-1-0 Dosage)</li>
+      <li><span class="toc-num">7.</span> React Context API — Custom Toast Notification System</li>
+      <li><span class="toc-num">8.</span> Role Guards &amp; Protected Navigation (ProtectedRoute)</li>
+      <li><span class="toc-num">9.</span> Detailed Page-by-Page Logic Guide</li>
+      <li><span class="toc-num">10.</span> Complete Technical Interview Q&amp;A Prep (10 Questions &amp; Answers)</li>
     </ol>
   </div>
 
-  <!-- ─── SECTION 1 ─── -->
-  <h2><span class="num">1</span> Project Overview &amp; Architecture</h2>
-
-  <p>This is a <strong>multi-role healthcare management portal</strong> built with React. It simulates the real-world workflow of a clinic:</p>
+  <!-- SECTION 1 -->
+  <h2><span class="num">1</span> Project Architecture &amp; Core Systems Overview</h2>
+  <p>The <strong>Healthcare Portal</strong> is a multi-tenant Single Page Application (SPA) designed to handle clinical operations across three primary user roles:</p>
+  <ul>
+    <li><strong>Patient:</strong> Search doctors, book consultation slots, view medical records (EHR), pay invoices, chat with doctors, and receive notifications.</li>
+    <li><strong>Doctor:</strong> Review patient consultation queues, review past medical history, issue medical certificates, conduct live consultations with <code>1-0-1-0</code> dosage prescriptions, and chat with patients.</li>
+    <li><strong>Admin:</strong> Review and approve/reject patient appointment requests, manage facility slot limits, view system-wide statistics, and oversee clinic operations.</li>
+  </ul>
 
   <div class="box box-teal">
-    <div class="box-title">What does this app do?</div>
-    <ul>
-      <li><strong>Patients</strong> can search for doctors, book appointments, view billing, and receive notifications.</li>
-      <li><strong>Doctors</strong> can view their appointment queue, complete consultations, message patients, and issue certificates.</li>
-      <li><strong>Admins</strong> can approve/reject appointment requests, view all clinic activity, and manage users.</li>
-    </ul>
+    <div class="box-title">Core Architectural Principle</div>
+    <p style="margin:0">All persistent global state is centralized inside the <strong>Redux Store</strong> (`redux/store.js`). Components read data using `useSelector` and mutate state via `useDispatch`. Shared UI feedback (toasts) uses the <strong>React Context API</strong>.</p>
   </div>
 
-  <h3>Tech Stack</h3>
-  <table>
-    <tr><th>Layer</th><th>Technology</th><th>Why it's used</th></tr>
-    <tr><td><strong>UI Framework</strong></td><td>React 18</td><td>Component-based SPA (Single Page App)</td></tr>
-    <tr><td><strong>Build Tool</strong></td><td>Vite</td><td>Fast dev server, instant HMR (Hot Module Replace)</td></tr>
-    <tr><td><strong>State Management</strong></td><td>Redux Toolkit</td><td>Shared global state for appointments, billing, auth, notifications</td></tr>
-    <tr><td><strong>Routing</strong></td><td>React Router v6</td><td>Navigation between pages without page reload</td></tr>
-    <tr><td><strong>Styling</strong></td><td>Tailwind CSS</td><td>Utility-first CSS classes for fast UI building</td></tr>
-    <tr><td><strong>Data</strong></td><td>JSON files (dummy data)</td><td>Simulates a backend/database (no real API)</td></tr>
-  </table>
-
-  <h3>Data Flow Architecture</h3>
-  <pre><span class="cm">User Action (click button)</span>
-      ↓
-<span class="cm">Component calls dispatch(action)</span>
-      ↓
-<span class="cm">Redux Slice reducer updates state</span>
-      ↓
-<span class="cm">useSelector() re-reads updated state</span>
-      ↓
-<span class="cm">React re-renders the component automatically</span></pre>
-
-  <!-- ─── SECTION 2 ─── -->
-  <h2><span class="num">2</span> Folder Structure Explained</h2>
-
+  <!-- SECTION 2 -->
+  <h2><span class="num">2</span> Full File &amp; Folder Structure</h2>
 <pre>src/
-├── components/        <span class="cm">← Reusable UI pieces used across pages</span>
-│   ├── Layout.jsx     <span class="cm">← Wraps every page (Sidebar + content)</span>
-│   ├── Sidebar.jsx    <span class="cm">← Left nav, role-aware links</span>
-│   ├── Navbar.jsx     <span class="cm">← Top bar with user info</span>
-│   └── Toast.jsx      <span class="cm">← Global notification toasts</span>
+├── components/          <span class="cm">← Shared UI components</span>
+│   ├── Layout.jsx       <span class="cm">← Master wrapper (Sidebar + Navbar + Page content)</span>
+│   ├── Sidebar.jsx      <span class="cm">← Role-aware left navigation drawer</span>
+│   ├── Navbar.jsx       <span class="cm">← Top navigation bar with user profile & logout</span>
+│   └── Toast.jsx        <span class="cm">← Custom Context Provider & Toast notification component</span>
 │
-├── pages/             <span class="cm">← Each page = one .jsx file</span>
-│   ├── auth/          <span class="cm">← Login, Register, Unauthorized</span>
-│   ├── patient/       <span class="cm">← Dashboard, BookAppointment, Billing…</span>
-│   ├── doctor/        <span class="cm">← Dashboard, Appointments, Messages…</span>
-│   └── admin/         <span class="cm">← Dashboard, ManageUsers, Schedules…</span>
+├── pages/
+│   ├── auth/            <span class="cm">← Login.jsx, Register.jsx, Unauthorized.jsx</span>
+│   ├── patient/         <span class="cm">← PatientDashboard, DoctorSearch, BookAppointment,</span>
+│   │                    <span class="cm">  MyAppointments, MedicalHistory, PatientBilling,</span>
+│   │                    <span class="cm">  Notifications, Messages, PatientProfile</span>
+│   ├── doctor/          <span class="cm">← DoctorDashboard, DoctorAppointments, DoctorSchedule,</span>
+│   │                    <span class="cm">  DoctorMessages, IssueCertificate, PatientRecordView, DoctorProfile</span>
+│   └── admin/           <span class="cm">← AdminDashboard, ManageUsers, ManageSchedules,</span>
+│                        <span class="cm">  AdminAppointments, AdminReports</span>
 │
 ├── redux/
-│   ├── store.js       <span class="cm">← Combines all reducers</span>
-│   └── slices/        <span class="cm">← Each slice = one feature's state</span>
-│       ├── authSlice.js
-│       ├── appointmentSlice.js
-│       ├── billingSlice.js
-│       ├── notificationSlice.js
-│       ├── recordsSlice.js
-│       └── patientSlice.js
+│   ├── store.js         <span class="cm">← Configures store with all 7 reducers</span>
+│   └── slices/          <span class="cm">← Feature state logic</span>
+│       ├── authSlice.js         <span class="cm">← User session & authentication</span>
+│       ├── appointmentSlice.js  <span class="cm">← Appointments queue & status lifecycle</span>
+│       ├── billingSlice.js      <span class="cm">← Invoices & payment settlement</span>
+│       ├── messageSlice.js      <span class="cm">← Persistent patient ↔ doctor chat</span>
+│       ├── notificationSlice.js <span class="cm">← Live notification feed</span>
+│       ├── recordsSlice.js      <span class="cm">← EHR clinical records & prescriptions</span>
+│       └── patientSlice.js      <span class="cm">← Patient profile records</span>
 │
 ├── routes/
-│   ├── AppRoutes.jsx  <span class="cm">← All route definitions</span>
-│   └── ProtectedRoute.jsx  <span class="cm">← Auth + role guard</span>
+│   ├── AppRoutes.jsx    <span class="cm">← Master route directory</span>
+│   └── ProtectedRoute.jsx<span class="cm">← Role-based route guard</span>
 │
-├── data/              <span class="cm">← Static JSON files (fake database)</span>
-│   ├── dummyUsers.json
-│   ├── dummyDoctors.json
-│   ├── dummyPatients.json
-│   ├── dummyAppointments.json
-│   └── dummyBills.json
-│
-└── main.jsx           <span class="cm">← Entry point, wraps app in providers</span></pre>
+└── main.jsx             <span class="cm">← App entry point with Redux Provider & ToastProvider</span></pre>
 
-  <div class="box box-blue">
-    <div class="box-title">💡 Interview Tip</div>
-    <p style="margin:0">When asked "explain your folder structure" — say: <em>"I separated concerns by feature area. Components are reusable, pages are one per route, slices handle isolated state domains, and data is separate from logic. This makes scaling and debugging easy."</em></p>
+  <!-- SECTION 3 -->
+  <h2><span class="num">3</span> Every React Hook Used &amp; How They Work</h2>
+
+  <table>
+    <tr><th>Hook</th><th>Source</th><th>Purpose in This Project</th></tr>
+    <tr>
+      <td><code>useState</code></td>
+      <td>React</td>
+      <td>Manages component-local state like search inputs, tab selections, modal visibility, and prescription form fields.</td>
+    </tr>
+    <tr>
+      <td><code>useEffect</code></td>
+      <td>React</td>
+      <td>Handles side effects: outside click detection in search dropdowns and auto-dismiss timers in Toast notifications.</td>
+    </tr>
+    <tr>
+      <td><code>useRef</code></td>
+      <td>React</td>
+      <td>Stores a mutable reference to DOM elements (e.g. search box) without causing re-renders when referenced.</td>
+    </tr>
+    <tr>
+      <td><code>useCallback</code></td>
+      <td>React</td>
+      <td>Memoizes functions (like <code>addToast</code> and <code>removeToast</code>) to keep function references stable across re-renders.</td>
+    </tr>
+    <tr>
+      <td><code>useContext</code></td>
+      <td>React</td>
+      <td>Allows components to call <code>useToast()</code> to trigger toast notifications from any page level.</td>
+    </tr>
+    <tr>
+      <td><code>useSelector</code></td>
+      <td>react-redux</td>
+      <td>Subscribes components to specific slices of Redux store state (e.g., appointments, messages, auth).</td>
+    </tr>
+    <tr>
+      <td><code>useDispatch</code></td>
+      <td>react-redux</td>
+      <td>Returns the <code>dispatch</code> function used to execute Redux actions.</td>
+    </tr>
+    <tr>
+      <td><code>useNavigate</code></td>
+      <td>react-router-dom</td>
+      <td>Programmatically redirects users between routes inside event handlers (e.g. after booking an appointment).</td>
+    </tr>
+    <tr>
+      <td><code>useParams</code></td>
+      <td>react-router-dom</td>
+      <td>Extracts dynamic URL route parameters (e.g., <code>:doctorId</code> in <code>/patient/book-appointment/:doctorId</code>).</td>
+    </tr>
+  </table>
+
+  <!-- SECTION 4 -->
+  <h2><span class="num">4</span> All 7 Redux Slices &amp; Complete Actions Breakdown</h2>
+
+  <p>The application manages 7 domain-specific Redux slices:</p>
+
+  <table>
+    <tr><th>Slice</th><th>State Data Managed</th><th>Exported Actions &amp; Description</th></tr>
+    <tr>
+      <td><code>authSlice</code></td>
+      <td><code>isAuthenticated</code>, <code>user</code> profile</td>
+      <td>
+        • <code>login(userObj)</code>: Authenticates session.<br />
+        • <code>logout()</code>: Clears user session.
+      </td>
+    </tr>
+    <tr>
+      <td><code>appointmentSlice</code></td>
+      <td><code>appointments</code> array</td>
+      <td>
+        • <code>addAppointment(payload)</code>: Creates pending appointment.<br />
+        • <code>cancelAppointment(id)</code>: Cancels appointment.<br />
+        • <code>approveAppointment(id)</code>: Admin sets status to <code>confirmed</code>.<br />
+        • <code>rejectAppointment(id)</code>: Admin sets status to <code>cancelled</code>.<br />
+        • <code>completeAppointment(id)</code>: Doctor sets status to <code>completed</code>.
+      </td>
+    </tr>
+    <tr>
+      <td><code>billingSlice</code></td>
+      <td><code>bills</code> array</td>
+      <td>
+        • <code>addBill(payload)</code>: Auto-generates invoice when doctor completes visit.<br />
+        • <code>payBill({billId, paymentMethod})</code>: Sets status to <code>paid</code>.
+      </td>
+    </tr>
+    <tr>
+      <td><code>messageSlice</code></td>
+      <td><code>messages</code> array</td>
+      <td>
+        • <code>sendMessage({patientId, doctorId, sender, text})</code>: Appends message to persistent chat log.
+      </td>
+    </tr>
+    <tr>
+      <td><code>notificationSlice</code></td>
+      <td><code>notifications</code> array</td>
+      <td>
+        • <code>addNotification(payload)</code>: Pushes new system alert.<br />
+        • <code>markRead(id)</code>: Marks single notification as read.<br />
+        • <code>markAllRead({userId})</code>: Clears unread indicators for user.
+      </td>
+    </tr>
+    <tr>
+      <td><code>recordsSlice</code></td>
+      <td><code>records</code> EHR array</td>
+      <td>
+        • <code>addRecord(payload)</code>: Stores new EHR clinical history &amp; prescription details.
+      </td>
+    </tr>
+    <tr>
+      <td><code>patientSlice</code></td>
+      <td><code>patients</code> profile list</td>
+      <td>
+        • <code>updatePatient(payload)</code>: Updates patient demographic information.
+      </td>
+    </tr>
+  </table>
+
+  <!-- SECTION 5 -->
+  <h2><span class="num">5</span> Persistent Chat System Architecture (messageSlice)</h2>
+
+  <div class="box box-purple">
+    <div class="box-title">Why messageSlice was created</div>
+    <p style="margin:0">Initially, messages were kept in component local state, meaning navigating through the sidebar or changing pages erased all messages. By moving message storage to <strong>Redux (`messageSlice.js`)</strong>:</p>
   </div>
 
-</div>
+  <ul>
+    <li><strong>Cross-Role Synchronization:</strong> When a doctor sends a message in <code>DoctorMessages.jsx</code>, it is stored in Redux and immediately appears when logged in as that patient in <code>Messages.jsx</code>.</li>
+    <li><strong>Navigation Persistence:</strong> Users can switch sidebar routes, navigate across pages, and return to chat without losing any sent or received messages.</li>
+  </ul>
 
-<!-- ═══════════════════════════════════════════════════════ PAGE 2 ═════ -->
-<div class="page">
+  <pre><span class="cm">// Sending a message from DoctorMessages.jsx</span>
+<span class="kw">const</span> dispatch = <span class="hook">useDispatch</span>();
 
-  <!-- ─── SECTION 3 ─── -->
-  <h2><span class="num">3</span> React Concepts You Already Know</h2>
-  <p>Here's how each concept you know is actually used in this project:</p>
+dispatch(<span class="fn">sendMessage</span>({
+  patientId: selectedPatientId,
+  doctorId: doctorObj.id,
+  sender: <span class="str">"doctor"</span>,
+  text: newMessage.trim(),
+}));</pre>
 
-  <div class="concept-card">
-    <div class="concept-header">
-      <span class="concept-badge">useState</span>
-      <span class="concept-type">React Hook</span>
-    </div>
-    <p>Stores local component data that changes over time. Used in almost every page.</p>
-    <h4>Example from DoctorSearch.jsx:</h4>
-    <pre><span class="kw">const</span> [searchText, <span class="fn">setSearchText</span>] = <span class="hook">useState</span>(<span class="str">""</span>);
-<span class="kw">const</span> [selectedSpecialization, <span class="fn">setSelectedSpecialization</span>] = <span class="hook">useState</span>(<span class="str">""</span>);
-<span class="kw">const</span> [showSuggestions, <span class="fn">setShowSuggestions</span>] = <span class="hook">useState</span>(<span class="kw">false</span>);</pre>
-    <p><strong>Logic:</strong> When the user types, <code>setSearchText</code> is called → state updates → React re-renders the filtered doctors list automatically.</p>
-  </div>
+  <!-- SECTION 6 -->
+  <h2><span class="num">6</span> Complete End-to-End Clinical Consultation Workflow (1-0-1-0 Dosage)</h2>
 
-  <div class="concept-card">
-    <div class="concept-header">
-      <span class="concept-badge">useEffect</span>
-      <span class="concept-type">React Hook</span>
-    </div>
-    <p>Runs code <em>after</em> the component renders. Used for side-effects like event listeners, API calls, timers.</p>
-    <h4>Example from DoctorSearch.jsx — Close dropdown on outside click:</h4>
-    <pre><span class="hook">useEffect</span>(() => {
-  <span class="kw">const</span> <span class="fn">handleClickOutside</span> = (<span class="kw">event</span>) => {
-    <span class="kw">if</span> (searchRef.current && !searchRef.current.<span class="fn">contains</span>(event.target)) {
-      <span class="fn">setShowSuggestions</span>(<span class="kw">false</span>);
-    }
-  };
-
-  document.<span class="fn">addEventListener</span>(<span class="str">"mousedown"</span>, handleClickOutside);
-
-  <span class="kw">return</span> () => {
-    document.<span class="fn">removeEventListener</span>(<span class="str">"mousedown"</span>, handleClickOutside);
-  };
-}, []);   <span class="cm">← empty array = runs only once on mount</span></pre>
-    <p><strong>The cleanup function</strong> (<code>return () =&gt; ...</code>) removes the event listener when the component unmounts, preventing memory leaks.</p>
-  </div>
-
-  <div class="concept-card">
-    <div class="concept-header">
-      <span class="concept-badge router">Link / NavLink</span>
-      <span class="concept-type">React Router</span>
-    </div>
-    <p>Navigate between routes without a full page reload. <code>NavLink</code> adds an active class automatically when the URL matches.</p>
-    <h4>Sidebar.jsx uses NavLink:</h4>
-    <pre><span class="tag">&lt;NavLink</span>
-  <span class="kw">to</span>=<span class="str">"/patient/my-appointments"</span>
-  className={({ <span class="kw">isActive</span> }) =>
-    isActive ? <span class="str">"bg-teal-500 text-white"</span> : <span class="str">"text-slate-400 hover:text-white"</span>
-  }
-<span class="tag">&gt;</span>
-  My Appointments
-<span class="tag">&lt;/NavLink&gt;</span></pre>
-    <p><strong>Key difference:</strong> <code>Link</code> is a plain link. <code>NavLink</code> knows if it is the current active route.</p>
-  </div>
-
-  <div class="concept-card">
-    <div class="concept-header">
-      <span class="concept-badge router">Routes / Route</span>
-      <span class="concept-type">React Router</span>
-    </div>
-    <h4>AppRoutes.jsx:</h4>
-    <pre><span class="tag">&lt;Routes&gt;</span>
-  <span class="tag">&lt;Route</span> <span class="kw">path</span>=<span class="str">"/"</span> <span class="kw">element</span>={<span class="tag">&lt;DemoHome /&gt;</span>} <span class="tag">/&gt;</span>
-  <span class="tag">&lt;Route</span> <span class="kw">path</span>=<span class="str">"/patient/dashboard"</span> <span class="kw">element</span>={
-    <span class="tag">&lt;ProtectedRoute</span> <span class="kw">allowedRoles</span>={[<span class="str">"patient"</span>]}<span class="tag">&gt;</span>
-      <span class="tag">&lt;PatientDashboard /&gt;</span>
-    <span class="tag">&lt;/ProtectedRoute&gt;</span>
-  } <span class="tag">/&gt;</span>
-<span class="tag">&lt;/Routes&gt;</span></pre>
-    <p><code>Routes</code> looks at the current URL and renders the matching <code>Route</code>'s element.</p>
-  </div>
-
-</div>
-
-<!-- ═══════════════════════════════════════════════════════ PAGE 3 ═════ -->
-<div class="page">
-
-  <!-- ─── SECTION 4 ─── -->
-  <h2><span class="num">4</span> NEW React Concepts in This Project</h2>
-  <p>These are the hooks and patterns <strong>beyond your current knowledge</strong> — study these carefully as they come up in every senior interview.</p>
-
-  <div class="concept-card">
-    <div class="concept-header">
-      <span class="concept-badge new">useSelector</span>
-      <span class="concept-type">Redux Hook — NEW</span>
-    </div>
-    <p><strong>What it does:</strong> Reads (subscribes to) a piece of data from the Redux store. Every time that slice of data changes, the component automatically re-renders.</p>
-    <h4>Syntax:</h4>
-    <pre><span class="kw">const</span> variableName = <span class="hook">useSelector</span>((state) => state.sliceName.propertyName);</pre>
-    <h4>Real usage in this project:</h4>
-    <pre><span class="cm">// In MyAppointments.jsx</span>
-<span class="kw">const</span> auth = <span class="hook">useSelector</span>((state) => state.auth);
-<span class="kw">const</span> appointments = <span class="hook">useSelector</span>((state) => state.appointment?.appointments || []);</pre>
-    <div class="box box-amber">
-      <div class="box-title">Think of it like this</div>
-      <p style="margin:0"><code>useSelector</code> is like "subscribing to a newspaper section." When that section updates, you automatically get the new edition. You don't fetch it manually — React + Redux does it for you.</p>
+  <div class="flow-step">
+    <div class="flow-num">1</div>
+    <div class="flow-body">
+      <h4>Patient Books Appointment</h4>
+      <p>Patient selects a doctor, date, and time slot → Dispatches <code>addAppointment()</code> with status <code>pending</code>.</p>
     </div>
   </div>
 
-  <div class="concept-card">
-    <div class="concept-header">
-      <span class="concept-badge new">useDispatch</span>
-      <span class="concept-type">Redux Hook — NEW</span>
-    </div>
-    <p><strong>What it does:</strong> Returns the <code>dispatch</code> function. You call <code>dispatch(action)</code> to send a command to the Redux store to update state.</p>
-    <h4>Pattern:</h4>
-    <pre><span class="kw">const</span> dispatch = <span class="hook">useDispatch</span>();
-
-<span class="cm">// When user clicks a button:</span>
-dispatch(<span class="fn">cancelAppointment</span>(appointment.id));</pre>
-    <h4>Full flow in MyAppointments.jsx:</h4>
-    <pre><span class="kw">const</span> dispatch = <span class="hook">useDispatch</span>();
-
-<span class="kw">const</span> <span class="fn">handleCancel</span> = (appointment) => {
-  dispatch(<span class="fn">cancelAppointment</span>(appointment.id));
-  <span class="cm">// Redux store updates → useSelector re-reads → UI updates</span>
-};</pre>
-    <div class="box box-teal">
-      <div class="box-title">useSelector vs useDispatch</div>
-      <p style="margin:0"><code>useSelector</code> = READ from store. <code>useDispatch</code> = WRITE to store.</p>
+  <div class="flow-step">
+    <div class="flow-num">2</div>
+    <div class="flow-body">
+      <h4>Admin Reviews &amp; Approves Slot</h4>
+      <p>Admin views slot occupancy in <code>ManageSchedules.jsx</code> → Clicks Approve → Dispatches <code>approveAppointment()</code> (status becomes <code>confirmed</code>) and <code>addNotification()</code> to alert patient.</p>
     </div>
   </div>
 
-  <div class="concept-card">
-    <div class="concept-header">
-      <span class="concept-badge router">useNavigate</span>
-      <span class="concept-type">React Router Hook — NEW</span>
+  <div class="flow-step">
+    <div class="flow-num">3</div>
+    <div class="flow-body">
+      <h4>Doctor Conducts Consultation &amp; Prescribes (1-0-1-0 Timing)</h4>
+      <p>Doctor sees confirmed appointment in <code>DoctorAppointments.jsx</code> → Clicks <strong>"🩺 Consult &amp; Prescribe"</strong> → Opens consultation modal showing patient EHR history, chief complaint input, and dynamic medication prescription with 1-click <code>1-0-1-0</code> dosage timing buttons (Morning - Noon - Evening - Night).</p>
     </div>
-    <p><strong>What it does:</strong> Gives you a function to <em>programmatically</em> navigate to a route — useful after form submit, button click, or any logic-driven redirect.</p>
-    <h4>Usage in BookAppointment.jsx:</h4>
-    <pre><span class="kw">const</span> navigate = <span class="hook">useNavigate</span>();
-
-<span class="kw">const</span> <span class="fn">handleSubmit</span> = (e) => {
-  e.<span class="fn">preventDefault</span>();
-  dispatch(<span class="fn">addAppointment</span>(newAppointment));
-  <span class="fn">navigate</span>(<span class="str">"/patient/my-appointments"</span>);  <span class="cm">← go to page after submit</span>
-};</pre>
-    <p><strong>Difference from Link:</strong> <code>Link</code> = clickable element. <code>useNavigate</code> = navigate from inside JavaScript logic.</p>
   </div>
 
-  <div class="concept-card">
-    <div class="concept-header">
-      <span class="concept-badge router">useParams</span>
-      <span class="concept-type">React Router Hook — NEW</span>
-    </div>
-    <p><strong>What it does:</strong> Extracts dynamic URL parameters from the current route path.</p>
-    <h4>Route definition in AppRoutes.jsx:</h4>
-    <pre><span class="tag">&lt;Route</span> <span class="kw">path</span>=<span class="str">"/patient/book-appointment/<strong>:doctorId</strong>"</span> ... <span class="tag">/&gt;</span></pre>
-    <h4>Then in BookAppointment.jsx:</h4>
-    <pre><span class="kw">const</span> { <span class="fn">doctorId</span> } = <span class="hook">useParams</span>();
-<span class="cm">// If URL is /patient/book-appointment/2, then doctorId = "2"</span>
-
-<span class="kw">const</span> doctor = doctors.<span class="fn">find</span>((d) => d.id === <span class="fn">parseInt</span>(doctorId));</pre>
-    <p>The colon <code>:</code> in the route path marks it as a variable segment that useParams can read.</p>
-  </div>
-
-  <div class="concept-card">
-    <div class="concept-header">
-      <span class="concept-badge new">useRef</span>
-      <span class="concept-type">React Hook — NEW</span>
-    </div>
-    <p><strong>What it does:</strong> Creates a mutable reference to a DOM element or any value that <strong>persists across re-renders without causing a re-render</strong> when it changes.</p>
-    <h4>Used in DoctorSearch.jsx to detect outside clicks:</h4>
-    <pre><span class="kw">const</span> searchRef = <span class="hook">useRef</span>(<span class="kw">null</span>);
-
-<span class="cm">// Attach to a DOM element:</span>
-<span class="tag">&lt;div</span> <span class="kw">ref</span>={searchRef}<span class="tag">&gt;</span>  ← React puts the real DOM node here
-
-<span class="cm">// Use it in logic:</span>
-<span class="kw">if</span> (searchRef.current && !searchRef.current.<span class="fn">contains</span>(event.target)) {
-  <span class="fn">setShowSuggestions</span>(<span class="kw">false</span>);
-}</pre>
-    <div class="box box-blue">
-      <div class="box-title">useState vs useRef</div>
-      <ul style="margin:0">
-        <li><code>useState</code> — changes trigger a re-render</li>
-        <li><code>useRef</code> — changes do NOT trigger a re-render; it just holds a reference</li>
+  <div class="flow-step">
+    <div class="flow-num">4</div>
+    <div class="flow-body">
+      <h4>Save &amp; Complete (Multi-Slice Dispatch)</h4>
+      <p>Doctor clicks <strong>"Save Prescription &amp; Complete Consultation"</strong>, triggering 4 automatic operations:</p>
+      <ul>
+        <li><code>completeAppointment(id)</code>: Sets status to <code>completed</code> in <code>appointmentSlice</code>.</li>
+        <li><code>addRecord(newEhrRecord)</code>: Saves diagnosis, clinical notes, and medication list with <code>1-0-1-0</code> schedules into <code>recordsSlice</code> (viewable under Patient's <code>MedicalHistory.jsx</code>).</li>
+        <li><code>addBill(newInvoice)</code>: Creates unpaid invoice in <code>billingSlice</code>.</li>
+        <li><code>addNotification(alert)</code>: Notifies patient that consultation is complete and prescription is issued.</li>
       </ul>
     </div>
   </div>
 
-  <div class="concept-card">
-    <div class="concept-header">
-      <span class="concept-badge new">useCallback</span>
-      <span class="concept-type">React Hook — NEW</span>
-    </div>
-    <p><strong>What it does:</strong> Memoizes (caches) a function so it isn't recreated on every re-render. Used for performance optimization and stable function references.</p>
-    <h4>Used in Toast.jsx:</h4>
-    <pre><span class="kw">const</span> removeToast = <span class="hook">useCallback</span>((id) => {
-  <span class="fn">setToasts</span>((prev) => prev.<span class="fn">filter</span>((t) => t.id !== id));
-}, []);  <span class="cm">← empty array = same function instance forever</span>
-
-<span class="kw">const</span> addToast = <span class="hook">useCallback</span>((message, type, title, duration) => {
-  <span class="kw">const</span> id = Date.<span class="fn">now</span>() + Math.<span class="fn">random</span>();
-  <span class="fn">setToasts</span>((prev) => [...prev, { id, message, type, title, duration }]);
-}, []);</pre>
-    <div class="box box-amber">
-      <div class="box-title">Why use it here?</div>
-      <p style="margin:0">If <code>removeToast</code> was a plain function, it would be a new object on every render. Since it's passed as a prop to child <code>ToastItem</code>, the child would re-render unnecessarily. <code>useCallback</code> keeps it stable.</p>
+  <div class="flow-step">
+    <div class="flow-num">5</div>
+    <div class="flow-body">
+      <h4>Patient Pays Invoice</h4>
+      <p>Patient navigates to <code>PatientBilling.jsx</code> → Selects payment method → Dispatches <code>payBill()</code> → Bill status updates to <code>paid</code>.</p>
     </div>
   </div>
 
-  <div class="concept-card">
-    <div class="concept-header">
-      <span class="concept-badge new">Navigate (component)</span>
-      <span class="concept-type">React Router — NEW</span>
-    </div>
-    <p><strong>What it does:</strong> Renders a redirect as JSX — when React renders <code>&lt;Navigate to="/login" /&gt;</code>, it immediately redirects the user.</p>
-    <h4>Used in ProtectedRoute.jsx:</h4>
-    <pre><span class="kw">if</span> (!isAuthenticated) {
-  <span class="kw">return</span> <span class="tag">&lt;Navigate</span> <span class="kw">to</span>=<span class="str">"/login"</span> <span class="kw">replace</span> <span class="tag">/&gt;</span>;
-}
-<span class="cm">// replace = don't add to browser history (no back button loop)</span></pre>
-    <p><strong>Difference from useNavigate:</strong> <code>Navigate</code> is a JSX element (used inside return). <code>useNavigate</code> is a hook (used inside functions/event handlers).</p>
-  </div>
+  <!-- SECTION 7 -->
+  <h2><span class="num">7</span> React Context API — Custom Toast Notification System</h2>
+  <p>Instead of intrusive <code>window.alert()</code> popups, the app uses a custom Toast notification system powered by React Context API in <code>components/Toast.jsx</code>:</p>
 
-</div>
-
-<!-- ═══════════════════════════════════════════════════════ PAGE 4 ═════ -->
-<div class="page">
-
-  <!-- ─── SECTION 5 ─── -->
-  <h2><span class="num">5</span> Redux Toolkit — Deep Dive</h2>
-
-  <p>Redux is used for <strong>global state</strong> — data that multiple components across different pages need to share and update.</p>
-
-  <h3>The 3 Core Building Blocks</h3>
-
-  <table>
-    <tr><th>Concept</th><th>What it is</th><th>Where it lives</th></tr>
-    <tr><td><strong>Store</strong></td><td>The single source of truth — holds all state</td><td><code>redux/store.js</code></td></tr>
-    <tr><td><strong>Slice</strong></td><td>A feature's state + its reducers bundled together</td><td><code>redux/slices/*.js</code></td></tr>
-    <tr><td><strong>Reducer</strong></td><td>A pure function that takes state + action and returns new state</td><td>Inside each slice</td></tr>
-    <tr><td><strong>Action</strong></td><td>An object describing what happened: <code>{type: "...", payload: ...}</code></td><td>Auto-created by createSlice</td></tr>
-  </table>
-
-  <h3>How a Slice is Built — appointmentSlice.js</h3>
-  <pre><span class="kw">import</span> { <span class="fn">createSlice</span> } <span class="kw">from</span> <span class="str">"@reduxjs/toolkit"</span>;
-<span class="kw">import</span> appointmentsData <span class="kw">from</span> <span class="str">"../../data/dummyAppointments.json"</span>;
-
-<span class="kw">const</span> appointmentSlice = <span class="fn">createSlice</span>({
-  name: <span class="str">"appointment"</span>,            <span class="cm">← slice name (used in store)</span>
-  initialState: {
-    appointments: appointmentsData  <span class="cm">← starting data from JSON file</span>
-  },
-  reducers: {
-    <span class="fn">addAppointment</span>: (state, action) => {
-      state.appointments.<span class="fn">push</span>(action.payload);
-    },
-    <span class="fn">cancelAppointment</span>: (state, action) => {
-      <span class="kw">const</span> appt = state.appointments.<span class="fn">find</span>((a) => a.id === action.payload);
-      <span class="kw">if</span> (appt) appt.status = <span class="str">"cancelled"</span>;
-    },
-    <span class="fn">completeAppointment</span>: (state, action) => {
-      <span class="kw">const</span> appt = state.appointments.<span class="fn">find</span>((a) => a.id === action.payload);
-      <span class="kw">if</span> (appt) {
-        appt.status = <span class="str">"completed"</span>;
-        appt.completedAt = <span class="kw">new</span> Date().<span class="fn">toISOString</span>().<span class="fn">split</span>(<span class="str">"T"</span>)[<span class="num">0</span>];
-      }
-    }
-  }
-});
-
-<span class="kw">export const</span> { addAppointment, cancelAppointment, completeAppointment } = appointmentSlice.actions;
-<span class="kw">export default</span> appointmentSlice.reducer;</pre>
-
-  <div class="box box-purple">
-    <div class="box-title">Immer under the hood</div>
-    <p style="margin:0">Redux Toolkit uses a library called <strong>Immer</strong> internally. That's why you can write <code>state.appointments.push(...)</code> — normally mutating state directly is illegal in Redux. Immer wraps it safely and creates a new state object behind the scenes.</p>
-  </div>
-
-  <h3>Registering All Slices in store.js</h3>
-  <pre><span class="kw">import</span> { <span class="fn">configureStore</span> } <span class="kw">from</span> <span class="str">"@reduxjs/toolkit"</span>;
-<span class="kw">import</span> authReducer <span class="kw">from</span> <span class="str">"./slices/authSlice"</span>;
-<span class="kw">import</span> appointmentReducer <span class="kw">from</span> <span class="str">"./slices/appointmentSlice"</span>;
-<span class="kw">import</span> billingReducer <span class="kw">from</span> <span class="str">"./slices/billingSlice"</span>;
-<span class="kw">import</span> notificationReducer <span class="kw">from</span> <span class="str">"./slices/notificationSlice"</span>;
-
-<span class="kw">export const</span> store = <span class="fn">configureStore</span>({
-  reducer: {
-    auth: authReducer,
-    appointment: appointmentReducer,
-    billing: billingReducer,
-    notifications: notificationReducer
-  }
-});</pre>
-
-  <h3>Connecting the Store to React in main.jsx</h3>
-  <pre><span class="kw">import</span> { Provider } <span class="kw">from</span> <span class="str">"react-redux"</span>;
-<span class="kw">import</span> { store } <span class="kw">from</span> <span class="str">"./redux/store"</span>;
-
-createRoot(document.<span class="fn">getElementById</span>(<span class="str">"root"</span>)).<span class="fn">render</span>(
-  <span class="tag">&lt;Provider</span> <span class="kw">store</span>={store}<span class="tag">&gt;</span>   <span class="cm">← makes store available to ALL components</span>
-    <span class="tag">&lt;App /&gt;</span>
-  <span class="tag">&lt;/Provider&gt;</span>
-);</pre>
-
-  <h3>All 6 Slices in This Project</h3>
-  <table>
-    <tr><th>Slice</th><th>State it manages</th><th>Key actions</th></tr>
-    <tr><td><code>authSlice</code></td><td>Logged-in user info, role, isAuthenticated</td><td>login, logout</td></tr>
-    <tr><td><code>appointmentSlice</code></td><td>All appointments array</td><td>addAppointment, cancelAppointment, approveAppointment, rejectAppointment, completeAppointment</td></tr>
-    <tr><td><code>billingSlice</code></td><td>Patient bills array</td><td>addBill, payBill</td></tr>
-    <tr><td><code>notificationSlice</code></td><td>Notification messages</td><td>addNotification, markRead, markAllRead</td></tr>
-    <tr><td><code>recordsSlice</code></td><td>Medical records / EHR</td><td>addRecord, updateRecord</td></tr>
-    <tr><td><code>patientSlice</code></td><td>Patient profiles</td><td>updatePatient</td></tr>
-  </table>
-
-</div>
-
-<!-- ═══════════════════════════════════════════════════════ PAGE 5 ═════ -->
-<div class="page">
-
-  <!-- ─── SECTION 6 ─── -->
-  <h2><span class="num">6</span> React Router — Every Pattern Used</h2>
-
-  <h3>Pattern 1: BrowserRouter (set up in App.jsx)</h3>
-  <pre><span class="kw">import</span> { BrowserRouter } <span class="kw">from</span> <span class="str">"react-router-dom"</span>;
-
-<span class="tag">&lt;BrowserRouter&gt;</span>
-  <span class="tag">&lt;AppRoutes /&gt;</span>
-<span class="tag">&lt;/BrowserRouter&gt;</span></pre>
-  <p>BrowserRouter enables HTML5 history-based routing. The URL changes without page reloads.</p>
-
-  <h3>Pattern 2: Dynamic Routes with :param</h3>
-  <pre><span class="cm">// Route definition</span>
-<span class="tag">&lt;Route</span> <span class="kw">path</span>=<span class="str">"/patient/book-appointment/:doctorId"</span> <span class="kw">element</span>={...} <span class="tag">/&gt;</span>
-
-<span class="cm">// Navigate to it with the ID</span>
-<span class="fn">navigate</span>(`/patient/book-appointment/${doctor.id}`);
-
-<span class="cm">// Extract it in the destination page</span>
-<span class="kw">const</span> { doctorId } = <span class="hook">useParams</span>();</pre>
-
-  <h3>Pattern 3: Protected Route (Custom Guard Component)</h3>
-  <pre><span class="kw">function</span> <span class="fn">ProtectedRoute</span>({ children, allowedRoles }) {
-  <span class="kw">const</span> { isAuthenticated, user } = <span class="hook">useSelector</span>((state) => state.auth);
-
-  <span class="kw">if</span> (!isAuthenticated) <span class="kw">return</span> <span class="tag">&lt;Navigate</span> <span class="kw">to</span>=<span class="str">"/login"</span> <span class="kw">replace</span> <span class="tag">/&gt;</span>;
-  <span class="kw">if</span> (allowedRoles && !allowedRoles.<span class="fn">includes</span>(user.role))
-    <span class="kw">return</span> <span class="tag">&lt;Navigate</span> <span class="kw">to</span>=<span class="str">"/unauthorized"</span> <span class="kw">replace</span> <span class="tag">/&gt;</span>;
-
-  <span class="kw">return</span> children;
-}
-
-<span class="cm">// Usage — wraps any route that needs protection:</span>
-<span class="tag">&lt;Route</span> <span class="kw">path</span>=<span class="str">"/admin/dashboard"</span> <span class="kw">element</span>={
-  <span class="tag">&lt;ProtectedRoute</span> <span class="kw">allowedRoles</span>={[<span class="str">"admin"</span>]}<span class="tag">&gt;</span>
-    <span class="tag">&lt;AdminDashboard /&gt;</span>
-  <span class="tag">&lt;/ProtectedRoute&gt;</span>
-} <span class="tag">/&gt;</span></pre>
-
-  <div class="box box-teal">
-    <div class="box-title">How ProtectedRoute works — step by step</div>
-    <ol>
-      <li>React tries to render the route's element</li>
-      <li>ProtectedRoute reads the Redux auth state</li>
-      <li>If not logged in → redirects to <code>/login</code> instead of rendering children</li>
-      <li>If wrong role → redirects to <code>/unauthorized</code></li>
-      <li>Only if both checks pass → renders the actual page (<code>children</code>)</li>
-    </ol>
-  </div>
-
-  <h3>Pattern 4: NavLink with Active Class</h3>
-  <pre><span class="tag">&lt;NavLink</span>
-  <span class="kw">to</span>=<span class="str">"/patient/dashboard"</span>
-  className={({ <span class="kw">isActive</span> }) =>
-    `flex items-center gap-3 px-3 py-2.5 rounded-xl transition
-    ${isActive
-      ? <span class="str">"bg-teal-500/20 text-teal-300 font-bold"</span>
-      : <span class="str">"text-slate-400 hover:text-white"</span>
-    }`
-  }
-<span class="tag">&gt;</span>
-  Dashboard
-<span class="tag">&lt;/NavLink&gt;</span></pre>
-  <p><code>NavLink</code> passes an <code>isActive</code> boolean into the <code>className</code> function, letting you style the active link differently.</p>
-
-  <!-- ─── SECTION 7 ─── -->
-  <h2><span class="num">7</span> React Context API — Toast System</h2>
-
-  <p>The Toast (popup notification) system uses the <strong>Context API</strong> — a built-in React way to share data globally without passing props through every component layer.</p>
-
-  <h3>Why Context? The Problem it Solves</h3>
-  <div class="box box-rose">
-    <div class="box-title">Without Context — Prop Drilling</div>
-    <pre style="margin:0"><span class="cm">App → Layout → Page → Button → needs toast()</span>
-<span class="cm">You'd have to pass "toast" as a prop through every layer = messy</span></pre>
-  </div>
-  <div class="box box-teal">
-    <div class="box-title">With Context — Direct Access</div>
-    <pre style="margin:0"><span class="cm">Any component anywhere → const toast = useToast() → done!</span></pre>
-  </div>
-
-  <h3>How it's Built in Toast.jsx</h3>
-  <pre><span class="cm">Step 1: Create the context</span>
+<pre><span class="cm">// In Toast.jsx</span>
 <span class="kw">const</span> ToastContext = <span class="fn">createContext</span>(<span class="kw">null</span>);
 
-<span class="cm">Step 2: Create a hook to consume it</span>
 <span class="kw">export function</span> <span class="fn">useToast</span>() {
   <span class="kw">return</span> <span class="hook">useContext</span>(ToastContext);
 }
 
-<span class="cm">Step 3: Create the Provider that holds the state</span>
-<span class="kw">export function</span> <span class="fn">ToastProvider</span>({ children }) {
-  <span class="kw">const</span> [toasts, <span class="fn">setToasts</span>] = <span class="hook">useState</span>([]);
+<span class="cm">// In any page:</span>
+<span class="kw">const</span> toast = <span class="hook">useToast</span>();
+toast.<span class="fn">success</span>(<span class="str">"Prescription saved & consultation completed!"</span>, <span class="str">"Complete"</span>);
+toast.<span class="fn">warning</span>(<span class="str">"Slot capacity reached!"</span>);</pre>
 
-  <span class="kw">const</span> toast = {
-    <span class="fn">success</span>: (msg) => <span class="fn">addToast</span>(msg, <span class="str">"success"</span>),
-    <span class="fn">error</span>:   (msg) => <span class="fn">addToast</span>(msg, <span class="str">"error"</span>),
-    ...
-  };
+  <!-- SECTION 8 -->
+  <h2><span class="num">8</span> Role Guards &amp; Protected Navigation (ProtectedRoute)</h2>
+  <p>Security and role isolation are implemented via <code>ProtectedRoute.jsx</code>:</p>
 
-  <span class="kw">return</span> (
-    <span class="tag">&lt;ToastContext.Provider</span> <span class="kw">value</span>={toast}<span class="tag">&gt;</span>
-      {children}
-    <span class="tag">&lt;/ToastContext.Provider&gt;</span>
-  );
+<pre><span class="kw">function</span> <span class="fn">ProtectedRoute</span>({ children, allowedRoles }) {
+  <span class="kw">const</span> { isAuthenticated, user } = <span class="hook">useSelector</span>((state) => state.auth);
+
+  <span class="kw">if</span> (!isAuthenticated || !user) {
+    <span class="kw">return</span> <span class="tag">&lt;Navigate</span> <span class="kw">to</span>=<span class="str">"/login"</span> <span class="kw">replace</span> <span class="tag">/&gt;</span>;
+  }
+
+  <span class="kw">if</span> (allowedRoles && !allowedRoles.<span class="fn">includes</span>(user.role)) {
+    <span class="kw">return</span> <span class="tag">&lt;Navigate</span> <span class="kw">to</span>=<span class="str">"/unauthorized"</span> <span class="kw">replace</span> <span class="tag">/&gt;</span>;
+  }
+
+  <span class="kw">return</span> children;
 }</pre>
 
-  <h3>How to Use it in Any Component</h3>
-  <pre><span class="kw">import</span> { <span class="fn">useToast</span> } <span class="kw">from</span> <span class="str">"../../components/Toast"</span>;
-
-<span class="kw">function</span> <span class="fn">MyComponent</span>() {
-  <span class="kw">const</span> toast = <span class="hook">useToast</span>();
-
-  <span class="kw">const</span> <span class="fn">handleSave</span> = () => {
-    toast.<span class="fn">success</span>(<span class="str">"Record saved successfully!"</span>, <span class="str">"Saved"</span>);
-    toast.<span class="fn">error</span>(<span class="str">"Something went wrong"</span>, <span class="str">"Error"</span>);
-    toast.<span class="fn">warning</span>(<span class="str">"Slot is almost full"</span>);
-  };
-}</pre>
-
-</div>
-
-<!-- ═══════════════════════════════════════════════════════ PAGE 6 ═════ -->
-<div class="page">
-
-  <!-- ─── SECTION 8 ─── -->
-  <h2><span class="num">8</span> The Full Appointment Workflow (End-to-End)</h2>
-
-  <p>This is the most important logic to explain in an interview. Walk the interviewer through this step-by-step:</p>
-
-  <div class="flow">
-    <div class="flow-step">
-      <div class="flow-left">
-        <div class="flow-circle">1</div>
-        <div class="flow-line"></div>
-      </div>
-      <div class="flow-content">
-        <h4>Patient Searches for a Doctor — DoctorSearch.jsx</h4>
-        <p>Patient types in search box → <code>useState</code> tracks the text → doctors JSON is filtered in real-time using <code>.filter()</code> → results rendered as cards. Clicking a doctor calls <code>navigate(`/patient/book-appointment/${doctor.id}`)</code>.</p>
-      </div>
-    </div>
-
-    <div class="flow-step">
-      <div class="flow-left">
-        <div class="flow-circle">2</div>
-        <div class="flow-line"></div>
-      </div>
-      <div class="flow-content">
-        <h4>Patient Books Appointment — BookAppointment.jsx</h4>
-        <p><code>useParams()</code> extracts <code>doctorId</code> from the URL → doctor data loaded → patient selects date + time + reason → on submit: <code>dispatch(addAppointment({...}))</code> → appointment added to Redux store with <code>status: "pending"</code>. Toast shows success.</p>
-      </div>
-    </div>
-
-    <div class="flow-step">
-      <div class="flow-left">
-        <div class="flow-circle">3</div>
-        <div class="flow-line"></div>
-      </div>
-      <div class="flow-content">
-        <h4>Admin Approves — ManageSchedules.jsx</h4>
-        <p>Admin sees all pending appointments from Redux state via <code>useSelector</code>. Clicks "Approve" → <code>dispatch(approveAppointment(id))</code> → status becomes <code>"confirmed"</code> → <code>dispatch(addNotification(...))</code> sends real-time notification to patient.</p>
-      </div>
-    </div>
-
-    <div class="flow-step">
-      <div class="flow-left">
-        <div class="flow-circle">4</div>
-        <div class="flow-line"></div>
-      </div>
-      <div class="flow-content">
-        <h4>Doctor Marks Complete — DoctorAppointments.jsx</h4>
-        <p>Doctor sees only <em>their own</em> confirmed appointments (filtered by <code>doctorId</code>). Clicks "Mark Complete" → dispatches 3 actions in sequence: <code>completeAppointment(id)</code> + <code>addBill({...})</code> + <code>addNotification({...})</code>. Bill auto-generated. Patient notified.</p>
-      </div>
-    </div>
-
-    <div class="flow-step">
-      <div class="flow-left">
-        <div class="flow-circle">5</div>
-      </div>
-      <div class="flow-content">
-        <h4>Patient Pays Bill — PatientBilling.jsx</h4>
-        <p>Patient sees the new bill from <code>useSelector(state => state.billing.bills)</code>. Selects payment method → <code>dispatch(payBill({billId, paymentMethod}))</code> → bill status changes to <code>"paid"</code>.</p>
-      </div>
-    </div>
-  </div>
-
-  <div class="box box-purple">
-    <div class="box-title">The 3 dispatches on Mark Complete — memorize this!</div>
-    <pre style="margin:0"><span class="fn">dispatch</span>(<span class="fn">completeAppointment</span>(appointment.id));   <span class="cm">← updates appointmentSlice</span>
-<span class="fn">dispatch</span>(<span class="fn">addBill</span>({ patientId, doctorId, ... }));  <span class="cm">← updates billingSlice</span>
-<span class="fn">dispatch</span>(<span class="fn">addNotification</span>({ title, message, ... })); <span class="cm">← updates notificationSlice</span></pre>
-    <p style="margin-top:8px;margin-bottom:0">One user action (button click) → three slice updates → all connected components re-render automatically.</p>
-  </div>
-
-  <!-- ─── SECTION 9 ─── -->
-  <h2><span class="num">9</span> How Each Page Works</h2>
+  <!-- SECTION 9 -->
+  <h2><span class="num">9</span> Detailed Page-by-Page Logic Guide</h2>
 
   <h3>Patient Pages</h3>
-  <table>
-    <tr><th>Page</th><th>Key Logic</th><th>Hooks/Concepts Used</th></tr>
-    <tr><td><strong>PatientDashboard</strong></td><td>Shows summary stats (upcoming appointments, unpaid bills). Reads from Redux.</td><td>useSelector, useNavigate</td></tr>
-    <tr><td><strong>DoctorSearch</strong></td><td>Filters doctor list by name/specialization. Shows dropdown suggestions. Closes on outside click.</td><td>useState, useEffect, useRef, useNavigate</td></tr>
-    <tr><td><strong>BookAppointment</strong></td><td>Loads doctor from URL param. Checks slot capacity. Dispatches new appointment to Redux.</td><td>useParams, useSelector, useDispatch, useNavigate, useToast</td></tr>
-    <tr><td><strong>MyAppointments</strong></td><td>Filters all appointments by current patient's ID. Cancel button dispatches status change.</td><td>useSelector, useDispatch, useToast</td></tr>
-    <tr><td><strong>PatientBilling</strong></td><td>Shows all bills for this patient. Pay button opens modal with payment method selection.</td><td>useSelector, useDispatch</td></tr>
-    <tr><td><strong>Notifications</strong></td><td>Reads from notificationSlice. Click marks as read. "Mark all read" dispatches to Redux.</td><td>useSelector, useDispatch</td></tr>
-  </table>
+  <ul>
+    <li><strong>DoctorSearch.jsx:</strong> Search filter by name &amp; specialization, auto-complete dropdown, click outside handler using <code>useRef</code>.</li>
+    <li><strong>BookAppointment.jsx:</strong> Reads <code>:doctorId</code> from URL, checks max 4-patient slot cap, dispatches <code>addAppointment</code>.</li>
+    <li><strong>MyAppointments.jsx:</strong> Shows patient's booked appointments with status badges (pending, confirmed, completed, cancelled) and cancel action.</li>
+    <li><strong>MedicalHistory.jsx:</strong> Displays patient's EHR records, diagnoses, physician notes, and prescribed medications with <code>1-0-1-0</code> dosage schedules.</li>
+    <li><strong>PatientBilling.jsx:</strong> Invoice settlement screen. Select payment method to dispatch <code>payBill</code>.</li>
+    <li><strong>Notifications.jsx:</strong> Real-time feed connected to <code>notificationSlice</code> with unread badges and click-to-read triggers.</li>
+  </ul>
 
   <h3>Doctor Pages</h3>
-  <table>
-    <tr><th>Page</th><th>Key Logic</th><th>Hooks/Concepts Used</th></tr>
-    <tr><td><strong>DoctorDashboard</strong></td><td>Shows only this doctor's appointments (filtered by doctorId). Quick action links.</td><td>useSelector</td></tr>
-    <tr><td><strong>DoctorAppointments</strong></td><td>Filtered queue. "Mark Complete" triggers 3 dispatches: complete + bill + notification.</td><td>useSelector, useDispatch, useToast</td></tr>
-    <tr><td><strong>DoctorMessages</strong></td><td>Local conversation state. Select patient = see thread. Send = adds message to local state.</td><td>useState</td></tr>
-    <tr><td><strong>IssueCertificate</strong></td><td>Doctor selects patient + certificate type + dates → generates printable preview in same page.</td><td>useState, useSelector</td></tr>
-    <tr><td><strong>DoctorSchedule</strong></td><td>Weekly slot grid. Toggle day on/off updates local state array.</td><td>useState</td></tr>
-  </table>
+  <ul>
+    <li><strong>DoctorDashboard.jsx:</strong> Summary metrics for doctor's daily consultations, pending requests, and completed visits.</li>
+    <li><strong>DoctorAppointments.jsx:</strong> Doctor queue with status filter, EHR history preview, and interactive prescription modal with <code>1-0-1-0</code> schedule buttons.</li>
+    <li><strong>DoctorMessages.jsx:</strong> Doctor-side chat connected to Redux <code>messageSlice</code>.</li>
+    <li><strong>IssueCertificate.jsx:</strong> Generator for medical leave / fitness certificates with printable preview.</li>
+  </ul>
 
   <h3>Admin Pages</h3>
-  <table>
-    <tr><th>Page</th><th>Key Logic</th><th>Hooks/Concepts Used</th></tr>
-    <tr><td><strong>AdminDashboard</strong></td><td>Aggregated stats across all slices (total patients, appointments, revenue).</td><td>useSelector</td></tr>
-    <tr><td><strong>ManageSchedules</strong></td><td>Shows pending + all appointments. Approve/reject dispatches status change + notification.</td><td>useSelector, useDispatch, useToast</td></tr>
-    <tr><td><strong>AdminAppointments</strong></td><td>Full searchable, filterable table of all appointments. Approve/reject from this view too.</td><td>useState, useSelector, useDispatch</td></tr>
-    <tr><td><strong>ManageUsers</strong></td><td>Lists all users. Reads from dummyUsers JSON. Role badge display.</td><td>useState</td></tr>
-  </table>
+  <ul>
+    <li><strong>ManageSchedules.jsx:</strong> Admin verification panel for approving or rejecting pending patient appointment requests.</li>
+    <li><strong>AdminAppointments.jsx:</strong> System-wide searchable table of all appointments across all doctors and statuses.</li>
+    <li><strong>AdminDashboard.jsx:</strong> Clinic-wide analytics (total revenue, active doctors, total patients, appointment stats).</li>
+  </ul>
 
-</div>
+  <!-- SECTION 10 -->
+  <h2><span class="num">10</span> Complete Technical Interview Q&amp;A Prep</h2>
 
-<!-- ═══════════════════════════════════════════════════════ PAGE 7 ═════ -->
-<div class="page">
-
-  <!-- ─── SECTION 10 ─── -->
-  <h2><span class="num">10</span> Interview Q&amp;A Prep</h2>
-  <p>These are real questions interviewers ask for React + Redux roles. Memorize the logic, not just the words.</p>
-
-  <div class="qa-item">
-    <div class="qa-q">What is the difference between local state (useState) and global state (Redux)?</div>
-    <div class="qa-a">Local state with <code>useState</code> lives inside a single component and is lost when the component unmounts. It's used for UI-only data like form inputs, toggle states, or dropdown visibility. Global state with Redux lives in the store, persists across navigation, and is accessible by any component in the tree. In this project, appointment data is in Redux because both the patient, doctor, and admin pages all read and update it. A form input like the search text box is just <code>useState</code> because no other page needs it.</div>
+  <div class="qa-card">
+    <div class="qa-q"><span>Q1.</span> How is state managed in this healthcare application?</div>
+    <div class="qa-a">State is divided cleanly between local state (`useState`) for transient UI inputs (like search text or tab selections), Context API for global Toast alerts, and Redux Toolkit (`configureStore`) for core domain entities like appointments, billing, notifications, EHR records, and persistent chat messages.</div>
   </div>
 
-  <div class="qa-item">
-    <div class="qa-q">How does the appointment booking flow work end-to-end?</div>
-    <div class="qa-a">The patient navigates to DoctorSearch, clicks a doctor which pushes the doctor's ID into the URL (<code>/book-appointment/:doctorId</code>). BookAppointment reads that ID with <code>useParams()</code>, loads the doctor from JSON, and shows available time slots. On submit, it dispatches <code>addAppointment()</code> to the Redux store with status "pending". The admin then sees this in ManageSchedules via <code>useSelector</code>, clicks Approve which dispatches <code>approveAppointment()</code> and <code>addNotification()</code>. The doctor sees it in their queue, marks it complete which dispatches <code>completeAppointment()</code>, <code>addBill()</code>, and another notification. The patient then sees the bill in PatientBilling and pays it with <code>payBill()</code>.</div>
+  <div class="qa-card">
+    <div class="qa-q"><span>Q2.</span> How does the complete appointment lifecycle work from booking to payment?</div>
+    <div class="qa-a">1. Patient books appointment → Dispatches `addAppointment` (status: `pending`).<br />
+    2. Admin verifies slot capacity &amp; approves → Dispatches `approveAppointment` (status: `confirmed`) &amp; `addNotification`.<br />
+    3. Doctor opens consultation workspace → Enters diagnosis &amp; `1-0-1-0` medication prescription → Dispatches `completeAppointment` (status: `completed`), `addRecord` (EHR), `addBill` (invoice), &amp; `addNotification`.<br />
+    4. Patient views invoice in `PatientBilling.jsx` → Dispatches `payBill` (status: `paid`).</div>
   </div>
 
-  <div class="qa-item">
-    <div class="qa-q">What is ProtectedRoute and how does it work?</div>
-    <div class="qa-a">ProtectedRoute is a custom wrapper component that reads the auth slice from Redux using <code>useSelector</code>. If the user is not authenticated, it returns <code>&lt;Navigate to="/login" /&gt;</code> instead of the children, immediately redirecting. If the user is authenticated but has the wrong role (e.g., a patient trying to access an admin route), it redirects to <code>/unauthorized</code>. Only when both checks pass does it render <code>children</code> — the actual page. It's used by wrapping every route in AppRoutes with it, passing the allowed roles as a prop.</div>
+  <div class="qa-card">
+    <div class="qa-q"><span>Q3.</span> Why was a Redux `messageSlice` created instead of using local component state for messaging?</div>
+    <div class="qa-a">Local state is unmounted when a user navigates away or switches sidebar links, which erased chat history. Creating `messageSlice` in Redux persists conversation logs globally. When a doctor sends a message, it is stored in Redux and immediately available when switching to the patient view or navigating across pages.</div>
   </div>
 
-  <div class="qa-item">
-    <div class="qa-q">What is the Context API and why did you use it for Toast instead of Redux?</div>
-    <div class="qa-a">The Context API is React's built-in way to share data globally without prop drilling. I used it for the Toast system because toast notifications are UI-only ephemeral state — they appear for 4 seconds and disappear. They don't need to be persisted in the Redux store, synced with the backend, or shared after the toast disappears. Redux is heavier and best suited for persistent application data. Context is lighter and perfect for transient UI state. The pattern is: create a context, wrap the app in a Provider, and any component calls <code>useToast()</code> to get the toast functions.</div>
+  <div class="qa-card">
+    <div class="qa-q"><span>Q4.</span> How does ProtectedRoute restrict unauthorized access?</div>
+    <div class="qa-a">`ProtectedRoute` is a higher-order guard component wrapping protected routes in `AppRoutes.jsx`. It reads the Redux auth state. If the user is unauthenticated, it renders `<Navigate to="/login" replace />`. If `allowedRoles` is passed and the logged-in user's role is not included, it renders `<Navigate to="/unauthorized" replace />`.</div>
   </div>
 
-  <div class="qa-item">
-    <div class="qa-q">What is useRef and when should you use it instead of useState?</div>
-    <div class="qa-a">Use <code>useRef</code> when you need to access a DOM element directly or store a value that should persist between renders without triggering a re-render. In this project, I used it in DoctorSearch to reference the search container div. When the user clicks anywhere outside that div, the <code>mousedown</code> event fires and I check <code>searchRef.current.contains(event.target)</code> to decide if the click was inside or outside. If I had used <code>useState</code> for this, updating it would cause a re-render. <code>useRef</code> keeps it as a stable reference with no re-render cost.</div>
+  <div class="qa-card">
+    <div class="qa-q"><span>Q5.</span> What is the purpose of `useRef` in `DoctorSearch.jsx`?</div>
+    <div class="qa-a">`useRef` is used to attach a direct reference to the search container DOM element. Inside a `useEffect` event listener for `mousedown`, we check if `searchRef.current.contains(event.target)`. If the click occurred outside the container, `setShowSuggestions(false)` is called. `useRef` holds this DOM reference without causing extra re-renders when updated.</div>
   </div>
 
-  <div class="qa-item">
-    <div class="qa-q">What is useCallback and when is it needed?</div>
-    <div class="qa-a"><code>useCallback</code> memoizes a function — it returns the same function instance between renders unless the dependencies change. It's used in the Toast system for <code>removeToast</code> and <code>addToast</code> because these functions are passed as props to child components. Without useCallback, every re-render of ToastProvider would create a new function reference, causing every ToastItem child to re-render unnecessarily. With useCallback and an empty dependency array, the function stays the same reference forever.</div>
+  <div class="qa-card">
+    <div class="qa-q"><span>Q6.</span> How does Redux Toolkit simplify Redux development compared to classic Redux?</div>
+    <div class="qa-a">Redux Toolkit's `createSlice` automatically generates action creators and action types from reducer function names, eliminating string constants. It also integrates Immer internally, allowing developers to write direct state mutation syntax (like `state.push()`) safely while producing immutable state updates behind the scenes.</div>
   </div>
 
-  <div class="qa-item">
-    <div class="qa-q">What is the difference between useNavigate and the Navigate component?</div>
-    <div class="qa-a"><code>useNavigate</code> is a hook that returns a function you call imperatively from inside event handlers or logic: <code>navigate("/path")</code>. You use it when navigation happens as a result of some logic — like after a form submit. <code>&lt;Navigate /&gt;</code> is a JSX component that causes an immediate redirect when rendered. You use it in conditional rendering — like in ProtectedRoute where you return <code>&lt;Navigate to="/login" /&gt;</code> if the user is not logged in. Think of it as: hook = use in functions, component = use in return JSX.</div>
+  <div class="qa-card">
+    <div class="qa-q"><span>Q7.</span> How does the Toast notification system work using Context API?</div>
+    <div class="qa-a">In `Toast.jsx`, a `ToastContext` is created with `createContext(null)`. `ToastProvider` wraps the entire app in `main.jsx` and maintains the list of active toast popups. The `useToast()` custom hook calls `useContext(ToastContext)`, giving any component instant access to helper methods like `toast.success()`, `toast.error()`, and `toast.warning()`.</div>
   </div>
 
-  <div class="qa-item">
-    <div class="qa-q">How does Redux Toolkit's createSlice differ from traditional Redux?</div>
-    <div class="qa-a">Traditional Redux requires you to write action type constants (<code>const ADD_APPOINTMENT = "ADD_APPOINTMENT"</code>), action creator functions, and a separate reducer with a switch statement — all in different files. Redux Toolkit's <code>createSlice</code> combines all of this into one object. It auto-generates action creators from the reducer function names, uses Immer internally so you can write mutating syntax, and exports both the reducer and actions from the same file. It reduces boilerplate by about 70%.</div>
+  <div class="qa-card">
+    <div class="qa-q"><span>Q8.</span> What is the difference between `useNavigate` and `<Navigate />` in React Router v6?</div>
+    <div class="qa-a">`useNavigate` is a React hook that returns a function for programmatic navigation inside event handlers or side effects (e.g. `navigate('/patient/my-appointments')` after form submission). `<Navigate />` is a React JSX component used in conditional rendering (e.g., returning `<Navigate to="/login" />` inside `ProtectedRoute` when not authenticated).</div>
   </div>
 
-  <div class="qa-item">
-    <div class="qa-q">How does the notification system work in this project?</div>
-    <div class="qa-a">There is a <code>notificationSlice</code> in Redux with an array of notification objects. Each object has a <code>userId</code> to link it to the correct patient. When an appointment is approved by admin, the code dispatches <code>addNotification({title, message, type, userId})</code> — this pushes a new notification into the slice. The patient's Notifications page uses <code>useSelector</code> to read all notifications and filters them by the current user's ID. When the patient clicks a notification, <code>markRead(id)</code> is dispatched, setting <code>unread: false</code> for that item, which removes the unread dot indicator.</div>
+  <div class="qa-card">
+    <div class="qa-q"><span>Q9.</span> How is the 1-0-1-0 prescription schedule stored and displayed?</div>
+    <div class="qa-a">During consultation in `DoctorAppointments.jsx`, the doctor selects dosage schedule presets like `1-0-1-0` (Morning - Noon - Evening - Night). On save, this is dispatched inside an array of prescription objects to `recordsSlice`. `MedicalHistory.jsx` reads this slice using `useSelector` and displays the medication name, dosage timing (`1-0-1-0`), and duration under the patient's EHR records.</div>
   </div>
 
-  <div class="divider"></div>
-
-  <h3>Key Concepts Summary — Quick Reference</h3>
-  <table>
-    <tr><th>Hook / Concept</th><th>From</th><th>What it does</th><th>When you use it</th></tr>
-    <tr><td><code>useState</code></td><td>React</td><td>Local component state</td><td>Any UI data that changes</td></tr>
-    <tr><td><code>useEffect</code></td><td>React</td><td>Side effects after render</td><td>Event listeners, timers, fetch</td></tr>
-    <tr><td><code>useRef</code></td><td>React</td><td>DOM reference / stable value</td><td>Outside click, focus, timers</td></tr>
-    <tr><td><code>useCallback</code></td><td>React</td><td>Memoize a function</td><td>Prevent child re-renders</td></tr>
-    <tr><td><code>useContext</code></td><td>React</td><td>Read from Context</td><td>Global UI state (toast, theme)</td></tr>
-    <tr><td><code>createContext</code></td><td>React</td><td>Create a context object</td><td>Define a shared data channel</td></tr>
-    <tr><td><code>useSelector</code></td><td>react-redux</td><td>Read from Redux store</td><td>Any component needing global state</td></tr>
-    <tr><td><code>useDispatch</code></td><td>react-redux</td><td>Dispatch actions to store</td><td>Update global state</td></tr>
-    <tr><td><code>createSlice</code></td><td>@reduxjs/toolkit</td><td>Define state + reducers</td><td>Each feature's state management</td></tr>
-    <tr><td><code>configureStore</code></td><td>@reduxjs/toolkit</td><td>Combine all slices</td><td>App entry point (store.js)</td></tr>
-    <tr><td><code>useNavigate</code></td><td>react-router-dom</td><td>Navigate programmatically</td><td>After form submit / logic</td></tr>
-    <tr><td><code>useParams</code></td><td>react-router-dom</td><td>Get URL params</td><td>Dynamic routes like :doctorId</td></tr>
-    <tr><td><code>Link</code></td><td>react-router-dom</td><td>Client-side anchor</td><td>Static nav links</td></tr>
-    <tr><td><code>NavLink</code></td><td>react-router-dom</td><td>Link with active class</td><td>Sidebar/nav with active state</td></tr>
-    <tr><td><code>Navigate</code></td><td>react-router-dom</td><td>Redirect in JSX</td><td>ProtectedRoute, auth guards</td></tr>
-    <tr><td><code>Routes/Route</code></td><td>react-router-dom</td><td>Render components by URL</td><td>App router setup</td></tr>
-  </table>
-
-  <div class="box box-teal" style="margin-top:32px">
-    <div class="box-title">🎯 Final Interview Tip</div>
-    <p style="margin-bottom:8px">When explaining this project, use this 3-part formula for any feature:</p>
-    <ol>
-      <li><strong>What the user sees</strong> — "The admin clicks Approve on a pending appointment"</li>
-      <li><strong>What happens in code</strong> — "It calls <code>dispatch(approveAppointment(id))</code> and <code>dispatch(addNotification(...))</code>"</li>
-      <li><strong>What the user sees next</strong> — "The appointment status immediately changes to confirmed in the UI, and the patient gets a notification"</li>
-    </ol>
+  <div class="qa-card">
+    <div class="qa-q"><span>Q10.</span> How does `useCallback` optimize performance in `Toast.jsx`?</div>
+    <div class="qa-a">`useCallback` memoizes the `addToast` and `removeToast` functions so their reference memory addresses remain identical across re-renders. Because these functions are passed to child components, memoizing them prevents child components from re-rendering unnecessarily.</div>
   </div>
 
 </div>

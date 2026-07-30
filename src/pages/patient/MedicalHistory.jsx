@@ -23,7 +23,7 @@ function MedicalHistory() {
                     Clinical Medical History
                 </h1>
                 <p className="text-slate-300 mt-2 sm:mt-3 text-xs sm:text-sm leading-relaxed max-w-2xl">
-                    Comprehensive chronological record of medical diagnoses, clinical observations, prescribed medications, and physician notes.
+                    Comprehensive chronological record of medical diagnoses, clinical observations, prescribed medications with dosage timing schedules, and physician notes.
                 </p>
             </div>
 
@@ -42,6 +42,8 @@ function MedicalHistory() {
                             name: "Attending Physician",
                             specialization: "General Medicine"
                         };
+
+                        const prescriptionsList = record.prescriptions || record.prescription || [];
 
                         return (
                             <div
@@ -80,32 +82,37 @@ function MedicalHistory() {
                                             Clinical Notes & Symptoms
                                         </p>
                                         <p className="text-xs text-slate-700 leading-relaxed font-medium">
-                                            {record.notes || "Patient presented with standard clinical indicators. Prescribed targeted treatment plan and recommended follow-up as required."}
+                                            {record.notes || "Patient presented with standard clinical indicators. Prescribed targeted treatment plan."}
                                         </p>
                                     </div>
                                 </div>
 
-                                {record.prescriptions && record.prescriptions.length > 0 && (
+                                {prescriptionsList.length > 0 && (
                                     <div className="border-t border-slate-100 pt-5">
                                         <h4 className="text-xs font-bold text-slate-900 uppercase tracking-wider mb-3">
-                                            💊 Prescribed Medications
+                                            💊 Prescribed Medications & Dosage Schedule
                                         </h4>
                                         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
-                                            {record.prescriptions.map((med, idx) => (
+                                            {prescriptionsList.map((med, idx) => (
                                                 <div
                                                     key={idx}
-                                                    className="bg-teal-50/50 border border-teal-100 p-3.5 rounded-xl flex items-center gap-3"
+                                                    className="bg-teal-50/50 border border-teal-100 p-4 rounded-xl flex items-start gap-3"
                                                 >
-                                                    <span className="w-8 h-8 rounded-lg bg-teal-600 text-white flex items-center justify-center font-bold text-xs shrink-0">
+                                                    <span className="w-8 h-8 rounded-lg bg-teal-600 text-white flex items-center justify-center font-bold text-xs shrink-0 mt-0.5">
                                                         Rx
                                                     </span>
                                                     <div>
                                                         <p className="font-bold text-slate-900 text-xs">
                                                             {med.medicine || med.name || med}
                                                         </p>
-                                                        <p className="text-[10px] text-teal-700 font-medium">
-                                                            {med.dosage || "1 tablet daily"}
+                                                        <p className="text-[11px] text-teal-800 font-extrabold mt-0.5">
+                                                            Timing: {med.dosage || "1-0-1-0"}
                                                         </p>
+                                                        {med.duration && (
+                                                            <p className="text-[10px] text-slate-500 font-medium mt-0.5">
+                                                                Duration: {med.duration}
+                                                            </p>
+                                                        )}
                                                     </div>
                                                 </div>
                                             ))}
