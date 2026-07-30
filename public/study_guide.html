@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>Healthcare Portal – Complete React & Redux Master Study Guide</title>
+<title>Healthcare Portal – Complete End-to-End System Execution & Data Flow Study Guide</title>
 <style>
   @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Fira+Code:wght@400;500&display=swap');
 
@@ -11,28 +11,28 @@
 
   body {
     font-family: 'Inter', sans-serif;
-    background: #0f172a;
+    background: #090d16;
     color: #f1f5f9;
     font-size: 14px;
-    line-height: 1.75;
+    line-height: 1.8;
     padding: 30px 15px;
   }
 
   .container {
-    max-width: 1000px;
+    max-width: 1050px;
     margin: 0 auto;
     background: #1e293b;
     border: 1px solid #334155;
     border-radius: 24px;
-    box-shadow: 0 20px 60px rgba(0,0,0,0.4);
-    padding: 48px 56px;
+    box-shadow: 0 25px 70px rgba(0,0,0,0.5);
+    padding: 56px;
   }
 
   /* COVER HEADER */
   .cover {
     background: linear-gradient(135deg, #0d9488 0%, #1e3a5f 50%, #0f172a 100%);
     border-radius: 20px;
-    padding: 48px;
+    padding: 52px;
     margin-bottom: 40px;
     border: 1px solid rgba(45,212,191,0.2);
     box-shadow: 0 10px 30px rgba(13,148,136,0.15);
@@ -62,14 +62,14 @@
   .cover p {
     color: #94a3b8;
     font-size: 15px;
-    max-width: 680px;
-    line-height: 1.7;
+    max-width: 740px;
+    line-height: 1.75;
     margin-bottom: 28px;
   }
   .cover-meta {
     display: flex;
     flex-wrap: wrap;
-    gap: 24px;
+    gap: 28px;
     border-top: 1px solid rgba(255,255,255,0.1);
     padding-top: 24px;
   }
@@ -81,8 +81,8 @@
     font-size: 24px;
     font-weight: 800;
     color: #f8fafc;
-    margin-top: 48px;
-    margin-bottom: 20px;
+    margin-top: 52px;
+    margin-bottom: 22px;
     padding-bottom: 12px;
     border-bottom: 2px solid #0d9488;
     display: flex;
@@ -99,25 +99,98 @@
     font-weight: 900;
   }
   h3 {
-    font-size: 17px;
+    font-size: 18px;
     font-weight: 700;
     color: #2dd4bf;
-    margin-top: 28px;
-    margin-bottom: 12px;
+    margin-top: 32px;
+    margin-bottom: 14px;
   }
   h4 {
     font-size: 14px;
     font-weight: 700;
     color: #e2e8f0;
-    margin-top: 16px;
+    margin-top: 18px;
     margin-bottom: 8px;
   }
-  p { margin-bottom: 12px; color: #cbd5e1; font-size: 14px; }
+  p { margin-bottom: 14px; color: #cbd5e1; font-size: 14px; }
   strong { color: #f8fafc; }
-  ul, ol { padding-left: 22px; margin-bottom: 14px; }
-  li { color: #cbd5e1; margin-bottom: 6px; font-size: 13.5px; }
+  ul, ol { padding-left: 22px; margin-bottom: 16px; }
+  li { color: #cbd5e1; margin-bottom: 8px; font-size: 13.5px; }
 
-  /* CODE & PRE */
+  /* VISUAL FLOW DIAGRAM BOXES */
+  .flow-diagram {
+    background: #090d16;
+    border: 1px solid #334155;
+    border-radius: 18px;
+    padding: 24px;
+    margin: 24px 0;
+  }
+  .flow-diagram-title {
+    font-size: 12px;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    color: #2dd4bf;
+    margin-bottom: 18px;
+  }
+  .node-chain {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+  }
+  .node-card {
+    background: #1e293b;
+    border: 1px solid #334155;
+    border-radius: 14px;
+    padding: 16px 20px;
+    display: flex;
+    gap: 16px;
+    align-items: flex-start;
+  }
+  .node-step {
+    background: #0d9488;
+    color: #ffffff;
+    font-weight: 900;
+    font-size: 13px;
+    width: 30px;
+    height: 30px;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+  .node-content h5 {
+    color: #f8fafc;
+    font-size: 14px;
+    font-weight: 700;
+    margin-bottom: 4px;
+  }
+  .node-content p {
+    color: #94a3b8;
+    font-size: 13px;
+    margin-bottom: 6px;
+  }
+  .node-tech {
+    font-family: 'Fira Code', monospace;
+    font-size: 11.5px;
+    color: #2dd4bf;
+    background: rgba(13,148,136,0.15);
+    padding: 2px 8px;
+    border-radius: 6px;
+    display: inline-block;
+    border: 1px solid rgba(45,212,191,0.2);
+  }
+
+  .arrow-connector {
+    text-align: center;
+    color: #0d9488;
+    font-weight: 900;
+    font-size: 16px;
+    margin: -4px 0;
+  }
+
+  /* CODE PRE */
   code {
     font-family: 'Fira Code', monospace;
     background: #0f172a;
@@ -128,11 +201,11 @@
     border: 1px solid #334155;
   }
   pre {
-    background: #090d16;
+    background: #060911;
     color: #e2e8f0;
     border-radius: 14px;
-    padding: 20px 24px;
-    margin: 18px 0;
+    padding: 22px 26px;
+    margin: 20px 0;
     overflow-x: auto;
     font-family: 'Fira Code', monospace;
     font-size: 12.5px;
@@ -150,8 +223,8 @@
   /* CARDS & BOXES */
   .box {
     border-radius: 14px;
-    padding: 20px 24px;
-    margin: 20px 0;
+    padding: 22px 26px;
+    margin: 22px 0;
     border: 1px solid #334155;
   }
   .box-teal { background: rgba(13,148,136,0.1); border-left: 4px solid #0d9488; }
@@ -171,80 +244,28 @@
   .box-amber .box-title { color: #fbbf24; }
   .box-blue .box-title { color: #60a5fa; }
 
-  /* TABLE */
-  table {
-    width: 100%;
-    border-collapse: collapse;
-    margin: 20px 0;
-    font-size: 13px;
-  }
-  th {
-    background: #0f172a;
-    color: #2dd4bf;
-    padding: 12px 16px;
-    text-align: left;
-    font-weight: 700;
-    font-size: 11px;
-    text-transform: uppercase;
-    letter-spacing: 1px;
-    border-bottom: 2px solid #334155;
-  }
-  td {
-    padding: 12px 16px;
-    border-bottom: 1px solid #334155;
-    color: #cbd5e1;
-  }
-  tr:nth-child(even) td { background: rgba(15,23,42,0.4); }
-
-  /* FLOW CHART */
-  .flow-step {
-    background: #0f172a;
-    border: 1px solid #334155;
-    border-radius: 14px;
-    padding: 18px 22px;
-    margin-bottom: 12px;
-    display: flex;
-    gap: 16px;
-    align-items: flex-start;
-  }
-  .flow-num {
-    background: #0d9488;
-    color: white;
-    font-weight: 900;
-    font-size: 14px;
-    width: 32px;
-    height: 32px;
-    border-radius: 10px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    flex-shrink: 0;
-  }
-  .flow-body h4 { margin-top: 0; color: #f8fafc; font-size: 14px; }
-  .flow-body p { margin-bottom: 0; font-size: 13px; color: #94a3b8; }
-
   /* Q&A CARDS */
   .qa-card {
     background: #0f172a;
     border: 1px solid #334155;
     border-radius: 16px;
-    margin: 20px 0;
+    margin: 22px 0;
     overflow: hidden;
   }
   .qa-q {
     background: #1e293b;
     color: #f8fafc;
-    padding: 16px 20px;
+    padding: 18px 22px;
     font-weight: 700;
     font-size: 14px;
     border-bottom: 1px solid #334155;
   }
   .qa-q span { color: #2dd4bf; font-weight: 900; margin-right: 6px; }
   .qa-a {
-    padding: 18px 20px;
+    padding: 20px 22px;
     color: #cbd5e1;
     font-size: 13.5px;
-    line-height: 1.8;
+    line-height: 1.85;
   }
 
   /* TOC */
@@ -252,7 +273,7 @@
     background: #0f172a;
     border: 1px solid #334155;
     border-radius: 16px;
-    padding: 28px;
+    padding: 30px;
     margin-bottom: 40px;
   }
   .toc-title {
@@ -261,11 +282,11 @@
     text-transform: uppercase;
     letter-spacing: 2px;
     color: #2dd4bf;
-    margin-bottom: 16px;
+    margin-bottom: 18px;
   }
   .toc ol { list-style: none; padding-left: 0; }
   .toc li {
-    padding: 8px 0;
+    padding: 9px 0;
     border-bottom: 1px dashed #334155;
     color: #cbd5e1;
     font-size: 13.5px;
@@ -281,9 +302,9 @@
 
   <!-- COVER -->
   <div class="cover">
-    <div class="badge">Comprehensive Study Guide &amp; Technical Master Reference</div>
-    <h1>Healthcare Portal<br /><span>React &amp; Redux Architecture</span></h1>
-    <p>Complete breakdown of every React hook, Redux slice, custom context system, persistent messaging architecture, dynamic doctor schedule filtering, and clinical doctor-patient workflow implemented in this application.</p>
+    <div class="badge">End-to-End System Execution &amp; Data Flow Masterclass</div>
+    <h1>Healthcare Portal<br /><span>Complete Application Flow Architecture</span></h1>
+    <p>A comprehensive step-by-step guide showing exactly how data, user actions, Redux dispatches, route transitions, and UI re-renders move through every feature in the application.</p>
 
     <div class="cover-meta">
       <div class="cover-meta-item">
@@ -291,12 +312,12 @@
         <div class="value">React 18 + Redux Toolkit + Vite</div>
       </div>
       <div class="cover-meta-item">
-        <div class="label">Redux Slices</div>
-        <div class="value">8 Global State Slices</div>
+        <div class="label">Flow Diagrams</div>
+        <div class="value">7 Complete Lifecycle Flows</div>
       </div>
       <div class="cover-meta-item">
-        <div class="label">All Actions</div>
-        <div class="value">18 Redux Reducers</div>
+        <div class="label">Redux Slices</div>
+        <div class="value">8 Slices (18 Reducers)</div>
       </div>
       <div class="cover-meta-item">
         <div class="label">Role Guards</div>
@@ -309,313 +330,476 @@
   <div class="toc">
     <div class="toc-title">Table of Contents</div>
     <ol>
-      <li><span class="toc-num">1.</span> Project Architecture &amp; Core Systems Overview</li>
-      <li><span class="toc-num">2.</span> Full File &amp; Folder Structure</li>
-      <li><span class="toc-num">3.</span> Every React Hook Used &amp; How They Work</li>
-      <li><span class="toc-num">4.</span> All 8 Redux Slices &amp; Complete Actions Breakdown</li>
-      <li><span class="toc-num">5.</span> Dynamic Doctor Schedule &amp; Date Availability Filtering (doctorSlice)</li>
-      <li><span class="toc-num">6.</span> Persistent Chat System Architecture (messageSlice)</li>
-      <li><span class="toc-num">7.</span> Complete End-to-End Clinical Consultation Workflow (1-0-1-0 Dosage)</li>
-      <li><span class="toc-num">8.</span> React Context API — Custom Toast Notification System</li>
-      <li><span class="toc-num">9.</span> Role Guards &amp; Protected Navigation (ProtectedRoute)</li>
-      <li><span class="toc-num">10.</span> Detailed Page-by-Page Logic Guide</li>
-      <li><span class="toc-num">11.</span> Complete Technical Interview Q&amp;A Prep (11 Questions &amp; Answers)</li>
+      <li><span class="toc-num">1.</span> FLOW 1: Authentication &amp; Role-Based Redirection Flow</li>
+      <li><span class="toc-num">2.</span> FLOW 2: Doctor Working Schedule Setup Flow</li>
+      <li><span class="toc-num">3.</span> FLOW 3: Patient Doctor Search &amp; Dynamic Slot Booking Flow</li>
+      <li><span class="toc-num">4.</span> FLOW 4: Admin Verification &amp; Appointment Approval Flow</li>
+      <li><span class="toc-num">5.</span> FLOW 5: Doctor Consultation, 1-0-1-0 Prescription &amp; Multi-Slice Dispatch Flow</li>
+      <li><span class="toc-num">6.</span> FLOW 6: Patient Invoice Checkout &amp; Billing Settlement Flow</li>
+      <li><span class="toc-num">7.</span> FLOW 7: Persistent Cross-Role Chat Messaging Flow</li>
+      <li><span class="toc-num">8.</span> Master Code &amp; Hook Reference</li>
+      <li><span class="toc-num">9.</span> 12 Real-World Technical Interview Q&amp;A Prep</li>
     </ol>
   </div>
 
   <!-- SECTION 1 -->
-  <h2><span class="num">1</span> Project Architecture &amp; Core Systems Overview</h2>
-  <p>The <strong>Healthcare Portal</strong> is a multi-tenant Single Page Application (SPA) designed to handle clinical operations across three primary user roles:</p>
-  <ul>
-    <li><strong>Patient:</strong> Search doctors, book consultation slots with dynamic weekday availability checks, view medical records (EHR), pay invoices, chat with doctors, and receive notifications.</li>
-    <li><strong>Doctor:</strong> Configure weekly working days &amp; time slots, review patient consultation queues, review past medical history, issue medical certificates, conduct live consultations with <code>1-0-1-0</code> dosage prescriptions, and chat with patients.</li>
-    <li><strong>Admin:</strong> Review and approve/reject patient appointment requests, manage facility slot limits, view system-wide statistics, and oversee clinic operations.</li>
-  </ul>
+  <h2><span class="num">1</span> FLOW 1: Authentication &amp; Role-Based Redirection Flow</h2>
 
-  <div class="box box-teal">
-    <div class="box-title">Core Architectural Principle</div>
-    <p style="margin:0">All persistent global state is centralized inside the <strong>Redux Store</strong> (`redux/store.js`). Components read data using `useSelector` and mutate state via `useDispatch`. Shared UI feedback (toasts) uses the <strong>React Context API</strong>.</p>
+  <div class="flow-diagram">
+    <div class="flow-diagram-title">System Execution Sequence: Login &rarr; Guard &rarr; Dashboard</div>
+    <div class="node-chain">
+
+      <div class="node-card">
+        <div class="node-step">1</div>
+        <div class="node-content">
+          <h5>User Selects Role &amp; Clicks Sign In</h5>
+          <p>On `Login.jsx`, user selects role (e.g. Patient / Doctor / Admin) and submits the login form.</p>
+          <div class="node-tech">Component: Login.jsx &rarr; onSubmit handler</div>
+        </div>
+      </div>
+
+      <div class="arrow-connector">&darr;</div>
+
+      <div class="node-card">
+        <div class="node-step">2</div>
+        <div class="node-content">
+          <h5>Dispatch Login Action to Redux</h5>
+          <p>Dispatches `login({ name, email, role, id })` to `authSlice` in Redux, setting `isAuthenticated = true` and storing user info.</p>
+          <div class="node-tech">Redux Dispatch: dispatch(login(userObj)) &rarr; authSlice.js</div>
+        </div>
+      </div>
+
+      <div class="arrow-connector">&darr;</div>
+
+      <div class="node-card">
+        <div class="node-step">3</div>
+        <div class="node-content">
+          <h5>Programmatic Navigation to Dashboard Route</h5>
+          <p>`useNavigate` redirects user to their role-specific dashboard path (e.g., `/patient/dashboard`, `/doctor/dashboard`, or `/admin/dashboard`).</p>
+          <div class="node-tech">Router Hook: navigate('/patient/dashboard')</div>
+        </div>
+      </div>
+
+      <div class="arrow-connector">&darr;</div>
+
+      <div class="node-card">
+        <div class="node-step">4</div>
+        <div class="node-content">
+          <h5>ProtectedRoute Security Verification</h5>
+          <p>`ProtectedRoute.jsx` reads `state.auth`. Checks if user is authenticated and if `user.role` matches `allowedRoles`. Grants access to render dashboard.</p>
+          <div class="node-tech">Guard: ProtectedRoute allowedRoles={["patient"]}</div>
+        </div>
+      </div>
+
+      <div class="arrow-connector">&darr;</div>
+
+      <div class="node-card">
+        <div class="node-step">5</div>
+        <div class="node-content">
+          <h5>Sidebar Navigation Renders Role-Aware Links</h5>
+          <p>`Sidebar.jsx` reads `state.auth.user.role` via `useSelector` and renders role-specific sidebar navigation items.</p>
+          <div class="node-tech">UI Update: Sidebar.jsx nav list re-renders</div>
+        </div>
+      </div>
+
+    </div>
   </div>
 
   <!-- SECTION 2 -->
-  <h2><span class="num">2</span> Full File &amp; Folder Structure</h2>
-<pre>src/
-├── components/          <span class="cm">← Shared UI components</span>
-│   ├── Layout.jsx       <span class="cm">← Master wrapper (Sidebar + Navbar + Page content)</span>
-│   ├── Sidebar.jsx      <span class="cm">← Role-aware left navigation drawer</span>
-│   ├── Navbar.jsx       <span class="cm">← Top navigation bar with user profile & logout</span>
-│   └── Toast.jsx        <span class="cm">← Custom Context Provider & Toast notification component</span>
-│
-├── pages/
-│   ├── auth/            <span class="cm">← Login.jsx, Register.jsx, Unauthorized.jsx</span>
-│   ├── patient/         <span class="cm">← PatientDashboard, DoctorSearch, BookAppointment,</span>
-│   │                    <span class="cm">  MyAppointments, MedicalHistory, PatientBilling,</span>
-│   │                    <span class="cm">  Notifications, Messages, PatientProfile</span>
-│   ├── doctor/          <span class="cm">← DoctorDashboard, DoctorAppointments, DoctorSchedule,</span>
-│   │                    <span class="cm">  DoctorMessages, IssueCertificate, PatientRecordView, DoctorProfile</span>
-│   └── admin/           <span class="cm">← AdminDashboard, ManageUsers, ManageSchedules,</span>
-│                        <span class="cm">  AdminAppointments, AdminReports</span>
-│
-├── redux/
-│   ├── store.js         <span class="cm">← Configures store with all 8 reducers</span>
-│   └── slices/          <span class="cm">← Feature state logic</span>
-│       ├── authSlice.js         <span class="cm">← User session & authentication</span>
-│       ├── appointmentSlice.js  <span class="cm">← Appointments queue & status lifecycle</span>
-│       ├── billingSlice.js      <span class="cm">← Invoices & payment settlement</span>
-│       ├── doctorSlice.js       <span class="cm">← Doctor profiles & weekly schedule availability</span>
-│       ├── messageSlice.js      <span class="cm">← Persistent patient ↔ doctor chat</span>
-│       ├── notificationSlice.js <span class="cm">← Live notification feed</span>
-│       ├── recordsSlice.js      <span class="cm">← EHR clinical records & prescriptions</span>
-│       └── patientSlice.js      <span class="cm">← Patient profile records</span>
-│
-├── routes/
-│   ├── AppRoutes.jsx    <span class="cm">← Master route directory</span>
-│   └── ProtectedRoute.jsx<span class="cm">← Role-based route guard</span>
-│
-└── main.jsx             <span class="cm">← App entry point with Redux Provider & ToastProvider</span></pre>
+  <h2><span class="num">2</span> FLOW 2: Doctor Working Schedule Setup Flow</h2>
+
+  <div class="flow-diagram">
+    <div class="flow-diagram-title">System Execution Sequence: Doctor Schedule Configuration</div>
+    <div class="node-chain">
+
+      <div class="node-card">
+        <div class="node-step">1</div>
+        <div class="node-content">
+          <h5>Doctor Opens Schedule Management</h5>
+          <p>Doctor navigates to `DoctorSchedule.jsx`. Reads existing doctor availability from Redux store (`state.doctors.doctors`).</p>
+          <div class="node-tech">Redux Selector: useSelector(state =&gt; state.doctors.doctors)</div>
+        </div>
+      </div>
+
+      <div class="arrow-connector">&darr;</div>
+
+      <div class="node-card">
+        <div class="node-step">2</div>
+        <div class="node-content">
+          <h5>Doctor Toggles Working Day On / Off</h5>
+          <p>Doctor clicks "Enable Day" or "Set Off Duty" on any weekday (e.g., setting Tuesday to Off Duty).</p>
+          <div class="node-tech">Event Handler: toggleDayActive(index)</div>
+        </div>
+      </div>
+
+      <div class="arrow-connector">&darr;</div>
+
+      <div class="node-card">
+        <div class="node-step">3</div>
+        <div class="node-content">
+          <h5>Dispatch Schedule Update to Redux</h5>
+          <p>Dispatches `updateDoctorSchedule({ doctorId, availability })` to `doctorSlice.js`, updating global doctor availability array in Redux.</p>
+          <div class="node-tech">Redux Dispatch: dispatch(updateDoctorSchedule({...}))</div>
+        </div>
+      </div>
+
+      <div class="arrow-connector">&darr;</div>
+
+      <div class="node-card">
+        <div class="node-step">4</div>
+        <div class="node-content">
+          <h5>Toast Confirmation Feedback</h5>
+          <p>Triggers Toast notification informing doctor that weekday working status has been saved in Redux.</p>
+          <div class="node-tech">Toast Context: toast.info('Tuesday status set to Off Duty')</div>
+        </div>
+      </div>
+
+    </div>
+  </div>
 
   <!-- SECTION 3 -->
-  <h2><span class="num">3</span> Every React Hook Used &amp; How They Work</h2>
+  <h2><span class="num">3</span> FLOW 3: Patient Doctor Search &amp; Dynamic Slot Booking Flow</h2>
 
-  <table>
-    <tr><th>Hook</th><th>Source</th><th>Purpose in This Project</th></tr>
-    <tr>
-      <td><code>useState</code></td>
-      <td>React</td>
-      <td>Manages component-local state like search inputs, date picks, tab selections, modal visibility, and prescription form fields.</td>
-    </tr>
-    <tr>
-      <td><code>useEffect</code></td>
-      <td>React</td>
-      <td>Handles side effects: outside click detection in search dropdowns and auto-dismiss timers in Toast notifications.</td>
-    </tr>
-    <tr>
-      <td><code>useRef</code></td>
-      <td>React</td>
-      <td>Stores a mutable reference to DOM elements (e.g. search box) without causing re-renders when referenced.</td>
-    </tr>
-    <tr>
-      <td><code>useCallback</code></td>
-      <td>React</td>
-      <td>Memoizes functions (like <code>addToast</code> and <code>removeToast</code>) to keep function references stable across re-renders.</td>
-    </tr>
-    <tr>
-      <td><code>useContext</code></td>
-      <td>React</td>
-      <td>Allows components to call <code>useToast()</code> to trigger toast notifications from any page level.</td>
-    </tr>
-    <tr>
-      <td><code>useSelector</code></td>
-      <td>react-redux</td>
-      <td>Subscribes components to specific slices of Redux store state (e.g., appointments, doctors, messages, auth).</td>
-    </tr>
-    <tr>
-      <td><code>useDispatch</code></td>
-      <td>react-redux</td>
-      <td>Returns the <code>dispatch</code> function used to execute Redux actions.</td>
-    </tr>
-    <tr>
-      <td><code>useNavigate</code></td>
-      <td>react-router-dom</td>
-      <td>Programmatically redirects users between routes inside event handlers (e.g. after booking an appointment).</td>
-    </tr>
-    <tr>
-      <td><code>useParams</code></td>
-      <td>react-router-dom</td>
-      <td>Extracts dynamic URL route parameters (e.g., <code>:doctorId</code> in <code>/patient/book-appointment/:doctorId</code>).</td>
-    </tr>
-  </table>
+  <div class="flow-diagram">
+    <div class="flow-diagram-title">System Execution Sequence: Search &rarr; Weekday Filter &rarr; Book</div>
+    <div class="node-chain">
+
+      <div class="node-card">
+        <div class="node-step">1</div>
+        <div class="node-content">
+          <h5>Patient Searches for Doctor</h5>
+          <p>On `DoctorSearch.jsx`, patient types doctor name or specialization. `useRef` handles click-outside dropdown closing.</p>
+          <div class="node-tech">Component: DoctorSearch.jsx with useRef &amp; useState</div>
+        </div>
+      </div>
+
+      <div class="arrow-connector">&darr;</div>
+
+      <div class="node-card">
+        <div class="node-step">2</div>
+        <div class="node-content">
+          <h5>Patient Selects Doctor &amp; Routes to Booking Page</h5>
+          <p>Patient clicks "Book Appointment" on a doctor card. Navigates to `/patient/book-appointment/:doctorId` with dynamic URL parameter.</p>
+
+          <div class="node-tech">Route Parameter: useParams() extracts doctorId</div>
+        </div>
+      </div>
+
+      <div class="arrow-connector">&darr;</div>
+
+      <div class="node-card">
+        <div class="node-step">3</div>
+        <div class="node-content">
+          <h5>Patient Selects Consultation Date &amp; Dynamic Weekday Check</h5>
+          <p>Patient picks date (e.g., `2026-07-28`). Code converts date to weekday string (`"Tuesday"`). Reads doctor's active schedule from `doctorSlice` in Redux.</p>
+          <div class="node-tech">Logic: getDayNameFromDate(date) &rarr; getAvailableSlotsForDate()</div>
+        </div>
+      </div>
+
+      <div class="arrow-connector">&darr;</div>
+
+      <div class="node-card">
+        <div class="node-step">4</div>
+        <div class="node-content">
+          <h5>Dynamic Time Slot Rendering OR Off-Duty Guard</h5>
+          <p>If doctor is off-duty on Tuesdays: displays red notice (`🚫 Off-Duty on Tuesdays`) and disables submit. If working: renders ONLY configured time slots.</p>
+          <div class="node-tech">UI Condition: availableSlots.length === 0 ? OffDutyAlert : SlotGrid</div>
+        </div>
+      </div>
+
+      <div class="arrow-connector">&darr;</div>
+
+      <div class="node-card">
+        <div class="node-step">5</div>
+        <div class="node-content">
+          <h5>Submit Booking &amp; Dispatch to Redux</h5>
+          <p>Patient picks slot &amp; enters chief complaint. Dispatches `addAppointment(...)` with status `"pending"` to `appointmentSlice` in Redux. Toast success pops up.</p>
+          <div class="node-tech">Redux Dispatch: dispatch(addAppointment({...})) &rarr; navigate('/patient/my-appointments')</div>
+        </div>
+      </div>
+
+    </div>
+  </div>
 
   <!-- SECTION 4 -->
-  <h2><span class="num">4</span> All 8 Redux Slices &amp; Complete Actions Breakdown</h2>
+  <h2><span class="num">4</span> FLOW 4: Admin Verification &amp; Appointment Approval Flow</h2>
 
-  <p>The application manages 8 domain-specific Redux slices:</p>
+  <div class="flow-diagram">
+    <div class="flow-diagram-title">System Execution Sequence: Admin Approval &rarr; Notification</div>
+    <div class="node-chain">
 
-  <table>
-    <tr><th>Slice</th><th>State Data Managed</th><th>Exported Actions &amp; Description</th></tr>
-    <tr>
-      <td><code>authSlice</code></td>
-      <td><code>isAuthenticated</code>, <code>user</code> profile</td>
-      <td>
-        • <code>login(userObj)</code>: Authenticates session.<br />
-        • <code>logout()</code>: Clears user session.
-      </td>
-    </tr>
-    <tr>
-      <td><code>doctorSlice</code></td>
-      <td><code>doctors</code> array &amp; weekly schedule availability</td>
-      <td>
-        • <code>updateDoctorSchedule({doctorId, availability})</code>: Updates active working days &amp; time slots.<br />
-        • <code>updateDoctorProfile({doctorId, updatedData})</code>: Updates specialization or fee.
-      </td>
-    </tr>
-    <tr>
-      <td><code>appointmentSlice</code></td>
-      <td><code>appointments</code> array</td>
-      <td>
-        • <code>addAppointment(payload)</code>: Creates pending appointment.<br />
-        • <code>cancelAppointment(id)</code>: Cancels appointment.<br />
-        • <code>approveAppointment(id)</code>: Admin sets status to <code>confirmed</code>.<br />
-        • <code>rejectAppointment(id)</code>: Admin sets status to <code>cancelled</code>.<br />
-        • <code>completeAppointment(id)</code>: Doctor sets status to <code>completed</code>.
-      </td>
-    </tr>
-    <tr>
-      <td><code>billingSlice</code></td>
-      <td><code>bills</code> array</td>
-      <td>
-        • <code>addBill(payload)</code>: Auto-generates invoice when doctor completes visit.<br />
-        • <code>payBill({billId, paymentMethod})</code>: Sets status to <code>paid</code>.
-      </td>
-    </tr>
-    <tr>
-      <td><code>messageSlice</code></td>
-      <td><code>messages</code> array</td>
-      <td>
-        • <code>sendMessage({patientId, doctorId, sender, text})</code>: Appends message to persistent chat log.
-      </td>
-    </tr>
-    <tr>
-      <td><code>notificationSlice</code></td>
-      <td><code>notifications</code> array</td>
-      <td>
-        • <code>addNotification(payload)</code>: Pushes new system alert.<br />
-        • <code>markRead(id)</code>: Marks single notification as read.<br />
-        • <code>markAllRead({userId})</code>: Clears unread indicators for user.
-      </td>
-    </tr>
-    <tr>
-      <td><code>recordsSlice</code></td>
-      <td><code>records</code> EHR array</td>
-      <td>
-        • <code>addRecord(payload)</code>: Stores new EHR clinical history &amp; prescription details.
-      </td>
-    </tr>
-    <tr>
-      <td><code>patientSlice</code></td>
-      <td><code>patients</code> profile list</td>
-      <td>
-        • <code>updatePatient(payload)</code>: Updates patient demographic information.
-      </td>
-    </tr>
-  </table>
+      <div class="node-card">
+        <div class="node-step">1</div>
+        <div class="node-content">
+          <h5>Admin Views Pending Verification Queue</h5>
+          <p>Admin logs in and opens `ManageSchedules.jsx`. `useSelector` reads all `appointments` from Redux where `status === "pending"`.</p>
+          <div class="node-tech">Redux Selector: useSelector(state =&gt; state.appointment.appointments)</div>
+        </div>
+      </div>
+
+      <div class="arrow-connector">&darr;</div>
+
+      <div class="node-card">
+        <div class="node-step">2</div>
+        <div class="node-content">
+          <h5>Admin Verifies Capacity &amp; Clicks "Approve &amp; Confirm"</h5>
+          <p>Admin checks slot occupancy (max 4 cap). Clicks Approve on the patient's request.</p>
+          <div class="node-tech">Event Handler: handleApprove(appointment)</div>
+        </div>
+      </div>
+
+      <div class="arrow-connector">&darr;</div>
+
+      <div class="node-card">
+        <div class="node-step">3</div>
+        <div class="node-content">
+          <h5>Dispatch Status Update &amp; Patient Notification</h5>
+          <p>Dispatches `approveAppointment(id)` (status updates to `"confirmed"`) AND dispatches `addNotification(...)` to `notificationSlice` for the patient's user ID.</p>
+          <div class="node-tech">Redux Dispatch: approveAppointment + addNotification</div>
+        </div>
+      </div>
+
+      <div class="arrow-connector">&darr;</div>
+
+      <div class="node-card">
+        <div class="node-step">4</div>
+        <div class="node-content">
+          <h5>Patient Feed Updates &amp; Toast Success</h5>
+          <p>Toast confirms approval to Admin. When Patient views `Notifications.jsx`, `useSelector` re-reads state and displays the unread confirmation alert.</p>
+          <div class="node-tech">UI Update: Patient's Notifications feed shows unread badge</div>
+        </div>
+      </div>
+
+    </div>
+  </div>
 
   <!-- SECTION 5 -->
-  <h2><span class="num">5</span> Dynamic Doctor Schedule &amp; Date Availability Filtering (doctorSlice)</h2>
+  <h2><span class="num">5</span> FLOW 5: Doctor Consultation, 1-0-1-0 Prescription &amp; Multi-Slice Dispatch Flow</h2>
 
-  <div class="box box-amber">
-    <div class="box-title">How Dynamic Doctor Schedule Filtering Works</div>
-    <p style="margin:0">Previously, booking an appointment showed static time slots for any date. Now, Doctor Schedule configuration in `DoctorSchedule.jsx` is connected to `doctorSlice` in Redux and dynamically filters `BookAppointment.jsx`:</p>
+  <div class="flow-diagram">
+    <div class="flow-diagram-title">System Execution Sequence: Doctor Consultation &rarr; 4 Redux Dispatches</div>
+    <div class="node-chain">
+
+      <div class="node-card">
+        <div class="node-step">1</div>
+        <div class="node-content">
+          <h5>Doctor Views Confirmed Patient Visit</h5>
+          <p>Doctor opens `DoctorAppointments.jsx`. `useSelector` filters appointments matching `doctorId` and `status === "confirmed"`.</p>
+          <div class="node-tech">Redux Selector: doctorAppointments.filter(a =&gt; a.status === 'confirmed')</div>
+        </div>
+      </div>
+
+      <div class="arrow-connector">&darr;</div>
+
+      <div class="node-card">
+        <div class="node-step">2</div>
+        <div class="node-content">
+          <h5>Doctor Opens Consultation Workspace Modal</h5>
+          <p>Doctor clicks **"🩺 Consult &amp; Prescribe"**. Modal opens displaying patient demographics and past EHR records from `recordsSlice`.</p>
+          <div class="node-tech">UI State: openConsultationModal(appointment)</div>
+        </div>
+      </div>
+
+      <div class="arrow-connector">&darr;</div>
+
+      <div class="node-card">
+        <div class="node-step">3</div>
+        <div class="node-content">
+          <h5>Doctor Enters Diagnosis &amp; Selects 1-0-1-0 Dosage Timings</h5>
+          <p>Doctor inputs chief complaint, physician observations, and adds medications with 1-click `1-0-1-0` timing schedule presets (Morning - Noon - Evening - Night).</p>
+          <div class="node-tech">Modal State: medicines.map(...) with 1-0-1-0 schedule presets</div>
+        </div>
+      </div>
+
+      <div class="arrow-connector">&darr;</div>
+
+      <div class="node-card">
+        <div class="node-step">4</div>
+        <div class="node-content">
+          <h5>Multi-Slice Execution on "Save &amp; Complete"</h5>
+          <p>Doctor clicks **"Save Prescription &amp; Complete Consultation"**, executing 4 Redux dispatches simultaneously:</p>
+          <ul>
+            <li><code>completeAppointment(id)</code> &rarr; Sets status to `completed` in `appointmentSlice`.</li>
+            <li><code>addRecord(ehrRecord)</code> &rarr; Saves prescription &amp; `1-0-1-0` schedules in `recordsSlice`.</li>
+            <li><code>addBill(invoice)</code> &rarr; Creates unpaid invoice in `billingSlice`.</li>
+            <li><code>addNotification(alert)</code> &rarr; Notifies patient in `notificationSlice`.</li>
+          </ul>
+          <div class="node-tech">Redux Dispatch: 4 Slices Updated simultaneously</div>
+        </div>
+      </div>
+
+      <div class="arrow-connector">&darr;</div>
+
+      <div class="node-card">
+        <div class="node-step">5</div>
+        <div class="node-content">
+          <h5>Patient EHR &amp; Medical History Updates</h5>
+          <p>Patient opens `MedicalHistory.jsx`. `useSelector` re-reads `recordsSlice` and displays the newly saved diagnosis, notes, and `1-0-1-0` dosage timing cards.</p>
+          <div class="node-tech">UI Update: MedicalHistory.jsx re-renders EHR cards</div>
+        </div>
+      </div>
+
+    </div>
   </div>
-
-  <ul>
-    <li><strong>Doctor Configures Working Days:</strong> Doctor sets working days (e.g. Dr. Arjun is available Monday, Wednesday, Friday). Setting a day off-duty dispatches <code>updateDoctorSchedule()</code> to Redux.</li>
-    <li><strong>Patient Picks Date:</strong> In <code>BookAppointment.jsx</code>, picking a date (e.g. <code>2026-07-28</code>) calculates the weekday (e.g. <em>Tuesday</em>).</li>
-    <li><strong>Off-Duty Guard:</strong> If doctor is off-duty on Tuesdays, the UI displays a clear notification: <code>🚫 Dr. Arjun Menon is Off-Duty on Tuesdays. Working days: Monday, Wednesday, Friday.</code> and disables time slot selection.</li>
-    <li><strong>Dynamic Time Slots:</strong> If doctor IS working on that day, it displays <strong>ONLY the specific time slots</strong> configured for that day.</li>
-  </ul>
 
   <!-- SECTION 6 -->
-  <h2><span class="num">6</span> Persistent Chat System Architecture (messageSlice)</h2>
+  <h2><span class="num">6</span> FLOW 6: Patient Invoice Checkout &amp; Billing Settlement Flow</h2>
 
-  <div class="box box-purple">
-    <div class="box-title">Why messageSlice was created</div>
-    <p style="margin:0">Initially, messages were kept in component local state, meaning navigating through the sidebar or changing pages erased all messages. By moving message storage to <strong>Redux (`messageSlice.js`)</strong>:</p>
+  <div class="flow-diagram">
+    <div class="flow-diagram-title">System Execution Sequence: Patient Billing Settlement</div>
+    <div class="node-chain">
+
+      <div class="node-card">
+        <div class="node-step">1</div>
+        <div class="node-content">
+          <h5>Patient Views Outstanding Balance</h5>
+          <p>Patient navigates to `PatientBilling.jsx`. `useSelector` calculates total unpaid invoice amount from `billingSlice`.</p>
+          <div class="node-tech">Redux Selector: reduxBills.filter(b =&gt; b.status === 'unpaid')</div>
+        </div>
+      </div>
+
+      <div class="arrow-connector">&darr;</div>
+
+      <div class="node-card">
+        <div class="node-step">2</div>
+        <div class="node-content">
+          <h5>Patient Clicks "Pay via UPI / Card"</h5>
+          <p>Checkout modal opens displaying invoice line items, patient name, and payment method options (UPI / GPay, Credit/Debit Card, Net Banking).</p>
+          <div class="node-tech">UI State: setActivePayBill(bill)</div>
+        </div>
+      </div>
+
+      <div class="arrow-connector">&darr;</div>
+
+      <div class="node-card">
+        <div class="node-step">3</div>
+        <div class="node-content">
+          <h5>Confirm Checkout &amp; Dispatch Normalized Payload</h5>
+          <p>Patient selects payment method and clicks Confirm. Dispatches `payBill({ billId, paymentMethod })` to `billingSlice` in Redux.</p>
+          <div class="node-tech">Redux Dispatch: dispatch(payBill({ billId, paymentMethod }))</div>
+        </div>
+      </div>
+
+      <div class="arrow-connector">&darr;</div>
+
+      <div class="node-card">
+        <div class="node-step">4</div>
+        <div class="node-content">
+          <h5>Redux Reducer Updates Status &amp; UI Re-renders</h5>
+          <p>`billingSlice` reducer matches bill ID, sets `bill.status = "paid"`, records `paidOn` timestamp, and attaches payment method. Toast success pops up.</p>
+          <div class="node-tech">Redux State: bill.status = 'paid' &rarr; Toast.success()</div>
+        </div>
+      </div>
+
+    </div>
   </div>
-
-  <ul>
-    <li><strong>Cross-Role Synchronization:</strong> When a doctor sends a message in <code>DoctorMessages.jsx</code>, it is stored in Redux and immediately appears when logged in as that patient in <code>Messages.jsx</code>.</li>
-    <li><strong>Navigation Persistence:</strong> Users can switch sidebar routes, navigate across pages, and return to chat without losing any sent or received messages.</li>
-  </ul>
 
   <!-- SECTION 7 -->
-  <h2><span class="num">7</span> Complete End-to-End Clinical Consultation Workflow (1-0-1-0 Dosage)</h2>
+  <h2><span class="num">7</span> FLOW 7: Persistent Cross-Role Chat Messaging Flow</h2>
 
-  <div class="flow-step">
-    <div class="flow-num">1</div>
-    <div class="flow-body">
-      <h4>Patient Books Appointment with Date Availability Check</h4>
-      <p>Patient selects a doctor, picks an active working date and time slot → Dispatches <code>addAppointment()</code> with status <code>pending</code>.</p>
-    </div>
-  </div>
+  <div class="flow-diagram">
+    <div class="flow-diagram-title">System Execution Sequence: Cross-Role Real-Time Messaging</div>
+    <div class="node-chain">
 
-  <div class="flow-step">
-    <div class="flow-num">2</div>
-    <div class="flow-body">
-      <h4>Admin Reviews &amp; Approves Slot</h4>
-      <p>Admin views slot occupancy in <code>ManageSchedules.jsx</code> → Clicks Approve → Dispatches <code>approveAppointment()</code> (status becomes <code>confirmed</code>) and <code>addNotification()</code> to alert patient.</p>
-    </div>
-  </div>
+      <div class="node-card">
+        <div class="node-step">1</div>
+        <div class="node-content">
+          <h5>Sender Types Message &amp; Clicks Send</h5>
+          <p>In `DoctorMessages.jsx` or `Messages.jsx`, sender types message text and submits form.</p>
+          <div class="node-tech">Event Handler: handleSend()</div>
+        </div>
+      </div>
 
-  <div class="flow-step">
-    <div class="flow-num">3</div>
-    <div class="flow-body">
-      <h4>Doctor Conducts Consultation &amp; Prescribes (1-0-1-0 Timing)</h4>
-      <p>Doctor sees confirmed appointment in <code>DoctorAppointments.jsx</code> → Clicks <strong>"🩺 Consult &amp; Prescribe"</strong> → Opens consultation modal showing patient EHR history, chief complaint input, and dynamic medication prescription with 1-click <code>1-0-1-0</code> dosage timing buttons (Morning - Noon - Evening - Night).</p>
-    </div>
-  </div>
+      <div class="arrow-connector">&darr;</div>
 
-  <div class="flow-step">
-    <div class="flow-num">4</div>
-    <div class="flow-body">
-      <h4>Save &amp; Complete (Multi-Slice Dispatch)</h4>
-      <p>Doctor clicks <strong>"Save Prescription &amp; Complete Consultation"</strong>, triggering 4 automatic operations:</p>
-      <ul>
-        <li><code>completeAppointment(id)</code>: Sets status to <code>completed</code> in <code>appointmentSlice</code>.</li>
-        <li><code>addRecord(newEhrRecord)</code>: Saves diagnosis, clinical notes, and medication list with <code>1-0-1-0</code> schedules into <code>recordsSlice</code> (viewable under Patient's <code>MedicalHistory.jsx</code>).</li>
-        <li><code>addBill(newInvoice)</code>: Creates unpaid invoice in <code>billingSlice</code>.</li>
-        <li><code>addNotification(alert)</code>: Notifies patient that consultation is complete and prescription is issued.</li>
-      </ul>
-    </div>
-  </div>
+      <div class="node-card">
+        <div class="node-step">2</div>
+        <div class="node-content">
+          <h5>Dispatch Message to Redux messageSlice</h5>
+          <p>Dispatches `sendMessage({ patientId, doctorId, sender, text })` to `messageSlice` in Redux.</p>
+          <div class="node-tech">Redux Dispatch: dispatch(sendMessage({...}))</div>
+        </div>
+      </div>
 
-  <div class="flow-step">
-    <div class="flow-num">5</div>
-    <div class="flow-body">
-      <h4>Patient Pays Invoice</h4>
-      <p>Patient navigates to <code>PatientBilling.jsx</code> → Selects payment method → Dispatches <code>payBill()</code> → Bill status updates to <code>paid</code>.</p>
+      <div class="arrow-connector">&darr;</div>
+
+      <div class="node-card">
+        <div class="node-step">3</div>
+        <div class="node-content">
+          <h5>Redux Store Appends Message</h5>
+          <p>`messageSlice` appends message object with timestamp &amp; date to global state array.</p>
+          <div class="node-tech">Redux State: state.messages.push(newMsg)</div>
+        </div>
+      </div>
+
+      <div class="arrow-connector">&darr;</div>
+
+      <div class="node-card">
+        <div class="node-step">4</div>
+        <div class="node-content">
+          <h5>Automatic UI Re-render &amp; Route Persistence</h5>
+          <p>Both Patient and Doctor views subscribe to `state.messages.messages`. The chat bubble immediately renders. Navigating away via Sidebar retains full conversation history.</p>
+          <div class="node-tech">UI Update: Chat thread re-renders instantly across routes</div>
+        </div>
+      </div>
+
     </div>
   </div>
 
   <!-- SECTION 8 -->
-  <h2><span class="num">8</span> React Context API — Custom Toast Notification System</h2>
-  <p>Instead of intrusive <code>window.alert()</code> popups, the app uses a custom Toast notification system powered by React Context API in <code>components/Toast.jsx</code>.</p>
+  <h2><span class="num">8</span> Master Code &amp; Hook Reference</h2>
+
+  <table>
+    <tr><th>Hook</th><th>Syntax Pattern</th><th>When &amp; Why to Use</th></tr>
+    <tr>
+      <td><code>useState</code></td>
+      <td><code>const [state, setState] = useState(initial)</code></td>
+      <td>Component-local interactive data (inputs, form values, toggle states). Triggers re-render.</td>
+    </tr>
+    <tr>
+      <td><code>useEffect</code></td>
+      <td><code>useEffect(() =&gt; { ... return () =&gt; cleanup }, [deps])</code></td>
+      <td>Side effects (event listeners, timers). Cleanup function removes event listeners on unmount.</td>
+    </tr>
+    <tr>
+      <td><code>useRef</code></td>
+      <td><code>const ref = useRef(null)</code></td>
+      <td>DOM reference (e.g. click outside detection). Changing `.current` does NOT trigger a re-render.</td>
+    </tr>
+    <tr>
+      <td><code>useCallback</code></td>
+      <td><code>const fn = useCallback(() =&gt; {}, [deps])</code></td>
+      <td>Function memoization. Keeps function reference identical across re-renders to prevent child re-renders.</td>
+    </tr>
+    <tr>
+      <td><code>useContext</code></td>
+      <td><code>const val = useContext(MyContext)</code></td>
+      <td>Reads Context API data (e.g. `useToast()`) without prop drilling.</td>
+    </tr>
+    <tr>
+      <td><code>useSelector</code></td>
+      <td><code>const val = useSelector(state =&gt; state.slice.val)</code></td>
+      <td>Subscribes to global Redux state. Re-renders component when selected data changes.</td>
+    </tr>
+    <tr>
+      <td><code>useDispatch</code></td>
+      <td><code>const dispatch = useDispatch()</code></td>
+      <td>Dispatches actions to Redux reducers to mutate global state.</td>
+    </tr>
+    <tr>
+      <td><code>useNavigate</code></td>
+      <td><code>const navigate = useNavigate()</code></td>
+      <td>Programmatic route navigation inside JS functions/event handlers.</td>
+    </tr>
+    <tr>
+      <td><code>useParams</code></td>
+      <td><code>const { id } = useParams()</code></td>
+      <td>Extracts dynamic URL path parameters (`:id`).</td>
+    </tr>
+  </table>
 
   <!-- SECTION 9 -->
-  <h2><span class="num">9</span> Role Guards &amp; Protected Navigation (ProtectedRoute)</h2>
-  <p>Security and role isolation are implemented via <code>ProtectedRoute.jsx</code>.</p>
-
-  <!-- SECTION 10 -->
-  <h2><span class="num">10</span> Detailed Page-by-Page Logic Guide</h2>
-
-  <h3>Patient Pages</h3>
-  <ul>
-    <li><strong>DoctorSearch.jsx:</strong> Search filter by name &amp; specialization, auto-complete dropdown, click outside handler using <code>useRef</code>.</li>
-    <li><strong>BookAppointment.jsx:</strong> Dynamically calculates date weekday, filters doctor availability, checks max 4-patient slot cap, dispatches <code>addAppointment</code>.</li>
-    <li><strong>MyAppointments.jsx:</strong> Shows patient's booked appointments with status badges (pending, confirmed, completed, cancelled) and cancel action.</li>
-    <li><strong>MedicalHistory.jsx:</strong> Displays patient's EHR records, diagnoses, physician notes, and prescribed medications with <code>1-0-1-0</code> dosage schedules.</li>
-    <li><strong>PatientBilling.jsx:</strong> Invoice settlement screen. Select payment method to dispatch <code>payBill</code>.</li>
-    <li><strong>Notifications.jsx:</strong> Real-time feed connected to <code>notificationSlice</code> with unread badges and click-to-read triggers.</li>
-  </ul>
-
-  <h3>Doctor Pages</h3>
-  <ul>
-    <li><strong>DoctorDashboard.jsx:</strong> Summary metrics for doctor's daily consultations, pending requests, and completed visits.</li>
-    <li><strong>DoctorAppointments.jsx:</strong> Doctor queue with status filter, EHR history preview, and interactive prescription modal with <code>1-0-1-0</code> schedule buttons.</li>
-    <li><strong>DoctorSchedule.jsx:</strong> Weekly consultation hours configuration connected to Redux <code>doctorSlice</code>.</li>
-    <li><strong>DoctorMessages.jsx:</strong> Doctor-side chat connected to Redux <code>messageSlice</code>.</li>
-    <li><strong>IssueCertificate.jsx:</strong> Generator for medical leave / fitness certificates with printable preview.</li>
-  </ul>
-
-  <h3>Admin Pages</h3>
-  <ul>
-    <li><strong>ManageSchedules.jsx:</strong> Admin verification panel for approving or rejecting pending patient appointment requests.</li>
-    <li><strong>AdminAppointments.jsx:</strong> System-wide searchable table of all appointments across all doctors and statuses.</li>
-    <li><strong>AdminDashboard.jsx:</strong> Clinic-wide analytics (total revenue, active doctors, total patients, appointment stats).</li>
-  </ul>
-
-  <!-- SECTION 11 -->
-  <h2><span class="num">11</span> Complete Technical Interview Q&amp;A Prep</h2>
+  <h2><span class="num">9</span> 12 Real-World Technical Interview Q&amp;A Prep</h2>
 
   <div class="qa-card">
     <div class="qa-q"><span>Q1.</span> How is state managed in this healthcare application?</div>
@@ -673,6 +857,11 @@
   <div class="qa-card">
     <div class="qa-q"><span>Q11.</span> How does `useCallback` optimize performance in `Toast.jsx`?</div>
     <div class="qa-a">`useCallback` memoizes the `addToast` and `removeToast` functions so their reference memory addresses remain identical across re-renders. Because these functions are passed to child components, memoizing them prevents child components from re-rendering unnecessarily.</div>
+  </div>
+
+  <div class="qa-card">
+    <div class="qa-q"><span>Q12.</span> What was the payload parsing bug in `billingSlice.js` and how was it fixed?</div>
+    <div class="qa-a">The `payBill` reducer previously expected an object `{ billId, paymentMethod }`. When a primitive number `billId` was passed, destructuring failed, resulting in `undefined` and preventing invoice status from updating to `paid`. The reducer was updated with a payload type check (`typeof payload === "object" ? payload.billId : payload`) to normalize both formats safely.</div>
   </div>
 
 </div>

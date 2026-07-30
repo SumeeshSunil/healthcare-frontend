@@ -11,8 +11,11 @@ const billingSlice = createSlice({
             state.bills.push(action.payload);
         },
         payBill: (state, action) => {
-            const { billId, paymentMethod } = action.payload;
-            const bill = state.bills.find((b) => b.id === billId);
+            const payload = action.payload;
+            const billId = typeof payload === "object" ? payload.billId : payload;
+            const paymentMethod = typeof payload === "object" && payload.paymentMethod ? payload.paymentMethod : "UPI";
+
+            const bill = state.bills.find((b) => Number(b.id) === Number(billId));
             if (bill) {
                 bill.status = "paid";
                 bill.paymentMethod = paymentMethod;

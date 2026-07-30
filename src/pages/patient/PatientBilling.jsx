@@ -1,16 +1,21 @@
 import { useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { payBill } from "../../redux/slices/billingSlice";
+import { addNotification } from "../../redux/slices/notificationSlice";
 import bills from "../../data/dummyBills.json";
 import patients from "../../data/dummyPatients.json";
 import Layout from "../../components/Layout";
+import { useToast } from "../../components/Toast";
 
 function PatientBilling() {
     const dispatch = useDispatch();
+    const toast = useToast();
     const auth = useSelector((state) => state.auth);
     const reduxBills = useSelector((state) => state.billing?.bills || bills);
 
     const [selectedTab, setSelectedTab] = useState("all");
+    const [activePayBill, setActivePayBill] = useState(null);
+    const [paymentMethod, setPaymentMethod] = useState("UPI / GPay");
 
     const currentUserId = auth?.user ? auth.user.id : 4;
     const currentPatient = patients.find((p) => p.userId === currentUserId) || patients[0];
@@ -26,11 +31,31 @@ function PatientBilling() {
         .filter((b) => b.status === "unpaid")
         .reduce((sum, b) => sum + (b.totalAmount || b.amount || 0), 0);
 
-    const handlePay = (billId) => {
-        if (window.confirm("Proceed to pay invoice statement via UPI / Card?")) {
-            dispatch(payBill(billId));
-            alert("Payment processed successfully via Indian Payment Gateway.");
-        }
+    const handleConfirmPayment = (e) => {
+        e.preventDefault();
+        if (!activePayBill) return;
+
+        const bill = activePayBill;
+        const amount = bill.totalAmount || bill.amount || 0;
+
+        dispatch(payBill({
+            billId: bill.id,
+            paymentMethod: paymentMethod
+        }));
+
+        dispatch(addNotification({
+            title: "Payment Receipt Issued",
+            message: `Payment of ₹${amount.toLocaleString("en-IN")} for Invoice #${bill.id} was processed via ${paymentMethod}.`,
+            type: "billing",
+            userId: currentUserId
+        }));
+
+        toast.success(
+            `Invoice #${bill.id} settled for ₹${amount.toLocaleString("en-IN")} via ${paymentMethod}.`,
+            "Payment Successful"
+        );
+
+        setActivePayBill(null);
     };
 
     return (
@@ -113,7 +138,7 @@ function PatientBilling() {
                                             </span>
                                         </div>
                                         <p className="text-xs text-slate-500 font-medium mt-1">
-                                            Service: {bill.description || "Clinical Consultation & Diagnostics"}
+                                            Service: {bill.description || "Clinical Consultation & Medical Care"}
                                         </p>
                                         <p className="text-[11px] text-slate-400 mt-1">
                                             Issue Date: {bill.date || "2026-07-20"} {bill.paymentMethod ? `• Paid via ${bill.paymentMethod}` : ""}
@@ -129,7 +154,7 @@ function PatientBilling() {
 
                                     {bill.status === "unpaid" ? (
                                         <button
-                                            onClick={() => handlePay(bill.id)}
+                                            onClick={() => setActivePayBill(bill)}
                                             className="bg-teal-600 hover:bg-teal-700 text-white px-5 py-2.5 rounded-xl text-xs font-bold transition shadow-md shadow-teal-600/20"
                                         >
                                             Pay via UPI / Card
@@ -145,6 +170,94 @@ function PatientBilling() {
                     })
                 )}
             </div>
+
+            {activePayBill && (
+                <div className="fixed inset-0 bg-slate-900/70 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+                    <div className="bg-white rounded-3xl max-w-md w-full shadow-2xl border border-slate-200 p-6 sm:p-8 space-y-6">
+                        <div className="flex justify-between items-start border-b border-slate-100 pb-4">
+                            <div>
+                                <span className="text-[10px] font-bold text-teal-600 uppercase tracking-wider">
+                                    Secure Gateway Checkout
+                                </span>
+                                <h2 className="text-xl font-extrabold text-slate-900 mt-1">
+                                    Settle Invoice #{activePayBill.id}
+                                </h2>
+                            </div>
+                            <button
+                                onClick={() => setActivePayBill(null)}
+                                className="w-8 h-8 rounded-full bg-slate-100 text-slate-500 hover:bg-slate-200 flex items-center justify-center text-sm font-bold"
+                            >
+                                ✕
+                            </button>
+                        </div>
+
+                        <div className="bg-slate-50 p-4 rounded-2xl border border-slate-200 text-xs space-y-1">
+                            <div className="flex justify-between font-medium text-slate-600">
+                                <span>Patient:</span>
+                                <strong className="text-slate-900">{currentPatient.name}</strong>
+                            </div>
+                            <div className="flex justify-between font-medium text-slate-600">
+                                <span>Service:</span>
+                                <span className="text-slate-800">{activePayBill.description || "Consultation Fee"}</span>
+                            </div>
+                            <div className="flex justify-between font-bold text-slate-900 pt-2 border-t border-slate-200 text-sm">
+                                <span>Total Amount:</span>
+                                <span className="text-teal-700">₹{(activePayBill.totalAmount || activePayBill.amount || 0).toLocaleString("en-IN")}</span>
+                            </div>
+                        </div>
+
+                        <form onSubmit={handleConfirmPayment} className="space-y-4">
+                            <div>
+                                <label className="block text-xs font-bold text-slate-700 mb-2">
+                                    Select Payment Method
+                                </label>
+                                <div className="space-y-2">
+                                    {[
+                                        { id: "UPI / GPay", label: "📱 UPI (Google Pay / PhonePe / Paytm)" },
+                                        { id: "Credit/Debit Card", label: "💳 Credit / Debit Card" },
+                                        { id: "Net Banking", label: "🏦 Net Banking (HDFC, SBI, ICICI)" }
+                                    ].map((m) => (
+                                        <label
+                                            key={m.id}
+                                            className={`flex items-center gap-3 p-3 rounded-xl border text-xs font-semibold cursor-pointer transition ${
+                                                paymentMethod === m.id
+                                                    ? "bg-teal-50 border-teal-500 text-teal-900"
+                                                    : "bg-white border-slate-200 hover:bg-slate-50 text-slate-700"
+                                            }`}
+                                        >
+                                            <input
+                                                type="radio"
+                                                name="payMethod"
+                                                value={m.id}
+                                                checked={paymentMethod === m.id}
+                                                onChange={(e) => setPaymentMethod(e.target.value)}
+                                                className="accent-teal-600"
+                                            />
+                                            {m.label}
+                                        </label>
+                                    ))}
+                                </div>
+                            </div>
+
+                            <div className="flex items-center justify-end gap-3 border-t border-slate-100 pt-4">
+                                <button
+                                    type="button"
+                                    onClick={() => setActivePayBill(null)}
+                                    className="bg-slate-100 hover:bg-slate-200 text-slate-700 px-4 py-2.5 rounded-xl text-xs font-bold transition"
+                                >
+                                    Cancel
+                                </button>
+                                <button
+                                    type="submit"
+                                    className="bg-teal-600 hover:bg-teal-700 text-white px-6 py-2.5 rounded-xl text-xs font-extrabold transition shadow-lg shadow-teal-600/20"
+                                >
+                                    Confirm &amp; Pay ₹{(activePayBill.totalAmount || activePayBill.amount || 0).toLocaleString("en-IN")}
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            )}
         </Layout>
     );
 }

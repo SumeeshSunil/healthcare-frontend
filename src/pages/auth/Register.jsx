@@ -4,10 +4,18 @@ import { useNavigate, Link } from "react-router-dom";
 import { login } from "../../redux/slices/authSlice";
 
 function Register() {
+    const [role, setRole] = useState("patient");
     const [name, setName] = useState("");
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
-    const [role, setRole] = useState("patient");
+
+    const [address, setAddress] = useState("");
+    const [mobile, setMobile] = useState("");
+    const [dob, setDob] = useState("");
+
+    const [specialization, setSpecialization] = useState("");
+    const [experience, setExperience] = useState("");
+    const [qualification, setQualification] = useState("");
 
     const dispatch = useDispatch();
     const navigate = useNavigate();
@@ -19,7 +27,10 @@ function Register() {
             id: Date.now(),
             name: name || "New User",
             email: email,
-            role: role
+            role: role,
+            ...(role === "patient"
+                ? { address, mobile, dob }
+                : { specialization, experience, qualification })
         };
 
         dispatch(login(newUser));
@@ -33,7 +44,7 @@ function Register() {
         <div className="min-h-screen bg-slate-900 flex items-center justify-center p-4 sm:p-6 relative overflow-hidden">
             <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top_right,_var(--tw-gradient-stops))] from-teal-900/40 via-slate-900 to-slate-950 pointer-events-none"></div>
 
-            <div className="max-w-md w-full bg-white rounded-3xl p-6 sm:p-8 shadow-2xl border border-slate-800 relative z-10 space-y-6">
+            <div className="max-w-lg w-full bg-white rounded-3xl p-6 sm:p-8 shadow-2xl border border-slate-800 relative z-10 space-y-6">
                 <div className="text-center space-y-2">
                     <div className="w-14 h-14 rounded-2xl bg-gradient-to-tr from-blue-700 via-teal-600 to-teal-400 text-white flex items-center justify-center font-black text-2xl mx-auto shadow-lg shadow-teal-500/20">
                         ✚
@@ -42,7 +53,7 @@ function Register() {
                         CREATE <span className="text-teal-600">ACCOUNT</span>
                     </h1>
                     <p className="text-xs text-slate-500 font-medium">
-                        Join the integrated clinical healthcare network
+                        Register as a Patient or Attending Doctor
                     </p>
                 </div>
 
@@ -55,13 +66,13 @@ function Register() {
                                     type="button"
                                     key={r}
                                     onClick={() => setRole(r)}
-                                    className={`py-2 rounded-xl text-xs font-bold capitalize transition border ${
+                                    className={`py-2.5 rounded-xl text-xs font-extrabold capitalize transition border ${
                                         role === r
                                             ? "bg-teal-600 text-white border-teal-600 shadow-md shadow-teal-600/20"
                                             : "bg-slate-50 text-slate-700 border-slate-200 hover:bg-slate-100"
                                     }`}
                                 >
-                                    {r}
+                                    {r === "patient" ? "👤 Patient" : "🩺 Doctor"}
                                 </button>
                             ))}
                         </div>
@@ -71,7 +82,7 @@ function Register() {
                         <label className="block font-bold text-slate-700 mb-1.5">Full Name</label>
                         <input
                             type="text"
-                            placeholder="John Doe"
+                            placeholder="Enter your full name"
                             value={name}
                             onChange={(e) => setName(e.target.value)}
                             className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-slate-800 focus:outline-none focus:border-teal-500 transition"
@@ -83,7 +94,7 @@ function Register() {
                         <label className="block font-bold text-slate-700 mb-1.5">Email Address</label>
                         <input
                             type="email"
-                            placeholder="john@example.com"
+                            placeholder="Enter your email"
                             value={email}
                             onChange={(e) => setEmail(e.target.value)}
                             className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-slate-800 focus:outline-none focus:border-teal-500 transition"
@@ -95,7 +106,7 @@ function Register() {
                         <label className="block font-bold text-slate-700 mb-1.5">Password</label>
                         <input
                             type="password"
-                            placeholder="Create strong password..."
+                            placeholder="Enter your password"
                             value={password}
                             onChange={(e) => setPassword(e.target.value)}
                             className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-slate-800 focus:outline-none focus:border-teal-500 transition"
@@ -103,9 +114,90 @@ function Register() {
                         />
                     </div>
 
+                    {role === "patient" && (
+                        <div className="space-y-4 pt-2 border-t border-slate-100">
+                            <p className="text-[11px] font-bold text-teal-600 uppercase tracking-wider">Patient Demographic Details</p>
+
+                            <div>
+                                <label className="block font-bold text-slate-700 mb-1.5">Residential Address</label>
+                                <input
+                                    type="text"
+                                    placeholder="Enter your address"
+                                    value={address}
+                                    onChange={(e) => setAddress(e.target.value)}
+                                    className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-slate-800 focus:outline-none focus:border-teal-500 transition"
+                                />
+                            </div>
+
+                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                                <div>
+                                    <label className="block font-bold text-slate-700 mb-1.5">Mobile Number</label>
+                                    <input
+                                        type="tel"
+                                        placeholder="+91 9876543210"
+                                        value={mobile}
+                                        onChange={(e) => setMobile(e.target.value)}
+                                        className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-slate-800 focus:outline-none focus:border-teal-500 transition"
+                                    />
+                                </div>
+
+                                <div>
+                                    <label className="block font-bold text-slate-700 mb-1.5">Date of Birth</label>
+                                    <input
+                                        type="date"
+                                        value={dob}
+                                        onChange={(e) => setDob(e.target.value)}
+                                        className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-slate-800 focus:outline-none focus:border-teal-500 transition"
+                                    />
+                                </div>
+                            </div>
+                        </div>
+                    )}
+
+                    {role === "doctor" && (
+                        <div className="space-y-4 pt-2 border-t border-slate-100">
+                            <p className="text-[11px] font-bold text-teal-600 uppercase tracking-wider">Medical Professional Credentials</p>
+
+                            <div>
+                                <label className="block font-bold text-slate-700 mb-1.5">Specialization</label>
+                                <input
+                                    type="text"
+                                    placeholder="e.g. Cardiology, Dermatology"
+                                    value={specialization}
+                                    onChange={(e) => setSpecialization(e.target.value)}
+                                    className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-slate-800 focus:outline-none focus:border-teal-500 transition"
+                                />
+                            </div>
+
+                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                                <div>
+                                    <label className="block font-bold text-slate-700 mb-1.5">Years of Experience</label>
+                                    <input
+                                        type="number"
+                                        placeholder="e.g. 10"
+                                        value={experience}
+                                        onChange={(e) => setExperience(e.target.value)}
+                                        className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-slate-800 focus:outline-none focus:border-teal-500 transition"
+                                    />
+                                </div>
+
+                                <div>
+                                    <label className="block font-bold text-slate-700 mb-1.5">Qualification</label>
+                                    <input
+                                        type="text"
+                                        placeholder="e.g. MBBS, MD"
+                                        value={qualification}
+                                        onChange={(e) => setQualification(e.target.value)}
+                                        className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-slate-800 focus:outline-none focus:border-teal-500 transition"
+                                    />
+                                </div>
+                            </div>
+                        </div>
+                    )}
+
                     <button
                         type="submit"
-                        className="w-full bg-teal-600 hover:bg-teal-700 text-white font-bold py-3.5 rounded-xl transition shadow-lg text-xs tracking-wider uppercase"
+                        className="w-full bg-teal-600 hover:bg-teal-700 text-white font-extrabold py-3.5 rounded-xl transition shadow-lg text-xs tracking-wider uppercase"
                     >
                         Register Account
                     </button>
