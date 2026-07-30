@@ -1,8 +1,21 @@
 import { useState } from "react";
+import { useSelector, useDispatch } from "react-redux";
 import Layout from "../../components/Layout";
+import dummyDoctors from "../../data/dummyDoctors.json";
+import { updateDoctorSchedule } from "../../redux/slices/doctorSlice";
+import { useToast } from "../../components/Toast";
 
 function DoctorSchedule() {
-    const [scheduleSlots, setScheduleSlots] = useState([
+    const dispatch = useDispatch();
+    const toast = useToast();
+    const auth = useSelector((state) => state.auth);
+    const reduxDoctors = useSelector((state) => state.doctors?.doctors || dummyDoctors);
+
+    const doctorObj = reduxDoctors.find(
+        (d) => d.name === auth?.user?.name || d.userId === auth?.user?.id
+    ) || reduxDoctors[0];
+
+    const defaultSchedule = [
         { day: "Monday", slots: ["09:00 AM", "10:30 AM", "01:00 PM", "03:00 PM"], active: true },
         { day: "Tuesday", slots: ["09:00 AM", "11:00 AM", "02:00 PM", "04:00 PM"], active: true },
         { day: "Wednesday", slots: ["09:00 AM", "10:30 AM", "01:00 PM"], active: true },
@@ -10,12 +23,39 @@ function DoctorSchedule() {
         { day: "Friday", slots: ["09:00 AM", "11:30 AM", "02:30 PM"], active: true },
         { day: "Saturday", slots: ["10:00 AM", "12:00 PM"], active: false },
         { day: "Sunday", slots: [], active: false }
-    ]);
+    ];
+
+    const getInitialSchedule = () => {
+        if (!doctorObj.availability) return defaultSchedule;
+        return defaultSchedule.map((d) => {
+            const found = doctorObj.availability.find((a) => a.day === d.day);
+            if (found) {
+                return { day: d.day, slots: found.slots, active: found.slots.length > 0 };
+            }
+            return { day: d.day, slots: d.slots, active: false };
+        });
+    };
+
+    const [scheduleSlots, setScheduleSlots] = useState(getInitialSchedule());
 
     const toggleDayActive = (index) => {
         const updated = [...scheduleSlots];
         updated[index].active = !updated[index].active;
         setScheduleSlots(updated);
+
+        const newAvailability = updated
+            .filter((s) => s.active && s.slots.length > 0)
+            .map((s) => ({ day: s.day, slots: s.slots }));
+
+        dispatch(updateDoctorSchedule({
+            doctorId: doctorObj.id,
+            availability: newAvailability
+        }));
+
+        toast.info(
+            `${updated[index].day} status set to ${updated[index].active ? "Available" : "Off Duty"}.`,
+            "Schedule Updated"
+        );
     };
 
     return (
@@ -46,7 +86,7 @@ function DoctorSchedule() {
                                 <span className={`px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase ${
                                     daySlot.active ? "bg-emerald-50 text-emerald-700 border border-emerald-200" : "bg-slate-200 text-slate-600"
                                 }`}>
-                                    {daySlot.active ? "Available" : "Off Duty"}
+                                    {daySlot.active ? "Available for Patients" : "Off Duty"}
                                 </span>
                             </div>
 

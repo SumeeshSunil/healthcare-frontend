@@ -283,7 +283,7 @@
   <div class="cover">
     <div class="badge">Comprehensive Study Guide &amp; Technical Master Reference</div>
     <h1>Healthcare Portal<br /><span>React &amp; Redux Architecture</span></h1>
-    <p>Complete breakdown of every React hook, Redux slice, custom context system, persistent messaging architecture, and clinical doctor-patient workflow implemented in this application.</p>
+    <p>Complete breakdown of every React hook, Redux slice, custom context system, persistent messaging architecture, dynamic doctor schedule filtering, and clinical doctor-patient workflow implemented in this application.</p>
 
     <div class="cover-meta">
       <div class="cover-meta-item">
@@ -292,11 +292,11 @@
       </div>
       <div class="cover-meta-item">
         <div class="label">Redux Slices</div>
-        <div class="value">7 Global State Slices</div>
+        <div class="value">8 Global State Slices</div>
       </div>
       <div class="cover-meta-item">
         <div class="label">All Actions</div>
-        <div class="value">16 Redux Reducers</div>
+        <div class="value">18 Redux Reducers</div>
       </div>
       <div class="cover-meta-item">
         <div class="label">Role Guards</div>
@@ -312,13 +312,14 @@
       <li><span class="toc-num">1.</span> Project Architecture &amp; Core Systems Overview</li>
       <li><span class="toc-num">2.</span> Full File &amp; Folder Structure</li>
       <li><span class="toc-num">3.</span> Every React Hook Used &amp; How They Work</li>
-      <li><span class="toc-num">4.</span> All 7 Redux Slices &amp; Complete Actions Breakdown</li>
-      <li><span class="toc-num">5.</span> Persistent Chat System Architecture (messageSlice)</li>
-      <li><span class="toc-num">6.</span> Complete End-to-End Clinical Consultation Workflow (1-0-1-0 Dosage)</li>
-      <li><span class="toc-num">7.</span> React Context API — Custom Toast Notification System</li>
-      <li><span class="toc-num">8.</span> Role Guards &amp; Protected Navigation (ProtectedRoute)</li>
-      <li><span class="toc-num">9.</span> Detailed Page-by-Page Logic Guide</li>
-      <li><span class="toc-num">10.</span> Complete Technical Interview Q&amp;A Prep (10 Questions &amp; Answers)</li>
+      <li><span class="toc-num">4.</span> All 8 Redux Slices &amp; Complete Actions Breakdown</li>
+      <li><span class="toc-num">5.</span> Dynamic Doctor Schedule &amp; Date Availability Filtering (doctorSlice)</li>
+      <li><span class="toc-num">6.</span> Persistent Chat System Architecture (messageSlice)</li>
+      <li><span class="toc-num">7.</span> Complete End-to-End Clinical Consultation Workflow (1-0-1-0 Dosage)</li>
+      <li><span class="toc-num">8.</span> React Context API — Custom Toast Notification System</li>
+      <li><span class="toc-num">9.</span> Role Guards &amp; Protected Navigation (ProtectedRoute)</li>
+      <li><span class="toc-num">10.</span> Detailed Page-by-Page Logic Guide</li>
+      <li><span class="toc-num">11.</span> Complete Technical Interview Q&amp;A Prep (11 Questions &amp; Answers)</li>
     </ol>
   </div>
 
@@ -326,8 +327,8 @@
   <h2><span class="num">1</span> Project Architecture &amp; Core Systems Overview</h2>
   <p>The <strong>Healthcare Portal</strong> is a multi-tenant Single Page Application (SPA) designed to handle clinical operations across three primary user roles:</p>
   <ul>
-    <li><strong>Patient:</strong> Search doctors, book consultation slots, view medical records (EHR), pay invoices, chat with doctors, and receive notifications.</li>
-    <li><strong>Doctor:</strong> Review patient consultation queues, review past medical history, issue medical certificates, conduct live consultations with <code>1-0-1-0</code> dosage prescriptions, and chat with patients.</li>
+    <li><strong>Patient:</strong> Search doctors, book consultation slots with dynamic weekday availability checks, view medical records (EHR), pay invoices, chat with doctors, and receive notifications.</li>
+    <li><strong>Doctor:</strong> Configure weekly working days &amp; time slots, review patient consultation queues, review past medical history, issue medical certificates, conduct live consultations with <code>1-0-1-0</code> dosage prescriptions, and chat with patients.</li>
     <li><strong>Admin:</strong> Review and approve/reject patient appointment requests, manage facility slot limits, view system-wide statistics, and oversee clinic operations.</li>
   </ul>
 
@@ -356,11 +357,12 @@
 │                        <span class="cm">  AdminAppointments, AdminReports</span>
 │
 ├── redux/
-│   ├── store.js         <span class="cm">← Configures store with all 7 reducers</span>
+│   ├── store.js         <span class="cm">← Configures store with all 8 reducers</span>
 │   └── slices/          <span class="cm">← Feature state logic</span>
 │       ├── authSlice.js         <span class="cm">← User session & authentication</span>
 │       ├── appointmentSlice.js  <span class="cm">← Appointments queue & status lifecycle</span>
 │       ├── billingSlice.js      <span class="cm">← Invoices & payment settlement</span>
+│       ├── doctorSlice.js       <span class="cm">← Doctor profiles & weekly schedule availability</span>
 │       ├── messageSlice.js      <span class="cm">← Persistent patient ↔ doctor chat</span>
 │       ├── notificationSlice.js <span class="cm">← Live notification feed</span>
 │       ├── recordsSlice.js      <span class="cm">← EHR clinical records & prescriptions</span>
@@ -380,7 +382,7 @@
     <tr>
       <td><code>useState</code></td>
       <td>React</td>
-      <td>Manages component-local state like search inputs, tab selections, modal visibility, and prescription form fields.</td>
+      <td>Manages component-local state like search inputs, date picks, tab selections, modal visibility, and prescription form fields.</td>
     </tr>
     <tr>
       <td><code>useEffect</code></td>
@@ -405,7 +407,7 @@
     <tr>
       <td><code>useSelector</code></td>
       <td>react-redux</td>
-      <td>Subscribes components to specific slices of Redux store state (e.g., appointments, messages, auth).</td>
+      <td>Subscribes components to specific slices of Redux store state (e.g., appointments, doctors, messages, auth).</td>
     </tr>
     <tr>
       <td><code>useDispatch</code></td>
@@ -425,9 +427,9 @@
   </table>
 
   <!-- SECTION 4 -->
-  <h2><span class="num">4</span> All 7 Redux Slices &amp; Complete Actions Breakdown</h2>
+  <h2><span class="num">4</span> All 8 Redux Slices &amp; Complete Actions Breakdown</h2>
 
-  <p>The application manages 7 domain-specific Redux slices:</p>
+  <p>The application manages 8 domain-specific Redux slices:</p>
 
   <table>
     <tr><th>Slice</th><th>State Data Managed</th><th>Exported Actions &amp; Description</th></tr>
@@ -437,6 +439,14 @@
       <td>
         • <code>login(userObj)</code>: Authenticates session.<br />
         • <code>logout()</code>: Clears user session.
+      </td>
+    </tr>
+    <tr>
+      <td><code>doctorSlice</code></td>
+      <td><code>doctors</code> array &amp; weekly schedule availability</td>
+      <td>
+        • <code>updateDoctorSchedule({doctorId, availability})</code>: Updates active working days &amp; time slots.<br />
+        • <code>updateDoctorProfile({doctorId, updatedData})</code>: Updates specialization or fee.
       </td>
     </tr>
     <tr>
@@ -491,7 +501,22 @@
   </table>
 
   <!-- SECTION 5 -->
-  <h2><span class="num">5</span> Persistent Chat System Architecture (messageSlice)</h2>
+  <h2><span class="num">5</span> Dynamic Doctor Schedule &amp; Date Availability Filtering (doctorSlice)</h2>
+
+  <div class="box box-amber">
+    <div class="box-title">How Dynamic Doctor Schedule Filtering Works</div>
+    <p style="margin:0">Previously, booking an appointment showed static time slots for any date. Now, Doctor Schedule configuration in `DoctorSchedule.jsx` is connected to `doctorSlice` in Redux and dynamically filters `BookAppointment.jsx`:</p>
+  </div>
+
+  <ul>
+    <li><strong>Doctor Configures Working Days:</strong> Doctor sets working days (e.g. Dr. Arjun is available Monday, Wednesday, Friday). Setting a day off-duty dispatches <code>updateDoctorSchedule()</code> to Redux.</li>
+    <li><strong>Patient Picks Date:</strong> In <code>BookAppointment.jsx</code>, picking a date (e.g. <code>2026-07-28</code>) calculates the weekday (e.g. <em>Tuesday</em>).</li>
+    <li><strong>Off-Duty Guard:</strong> If doctor is off-duty on Tuesdays, the UI displays a clear notification: <code>🚫 Dr. Arjun Menon is Off-Duty on Tuesdays. Working days: Monday, Wednesday, Friday.</code> and disables time slot selection.</li>
+    <li><strong>Dynamic Time Slots:</strong> If doctor IS working on that day, it displays <strong>ONLY the specific time slots</strong> configured for that day.</li>
+  </ul>
+
+  <!-- SECTION 6 -->
+  <h2><span class="num">6</span> Persistent Chat System Architecture (messageSlice)</h2>
 
   <div class="box box-purple">
     <div class="box-title">Why messageSlice was created</div>
@@ -503,24 +528,14 @@
     <li><strong>Navigation Persistence:</strong> Users can switch sidebar routes, navigate across pages, and return to chat without losing any sent or received messages.</li>
   </ul>
 
-  <pre><span class="cm">// Sending a message from DoctorMessages.jsx</span>
-<span class="kw">const</span> dispatch = <span class="hook">useDispatch</span>();
-
-dispatch(<span class="fn">sendMessage</span>({
-  patientId: selectedPatientId,
-  doctorId: doctorObj.id,
-  sender: <span class="str">"doctor"</span>,
-  text: newMessage.trim(),
-}));</pre>
-
-  <!-- SECTION 6 -->
-  <h2><span class="num">6</span> Complete End-to-End Clinical Consultation Workflow (1-0-1-0 Dosage)</h2>
+  <!-- SECTION 7 -->
+  <h2><span class="num">7</span> Complete End-to-End Clinical Consultation Workflow (1-0-1-0 Dosage)</h2>
 
   <div class="flow-step">
     <div class="flow-num">1</div>
     <div class="flow-body">
-      <h4>Patient Books Appointment</h4>
-      <p>Patient selects a doctor, date, and time slot → Dispatches <code>addAppointment()</code> with status <code>pending</code>.</p>
+      <h4>Patient Books Appointment with Date Availability Check</h4>
+      <p>Patient selects a doctor, picks an active working date and time slot → Dispatches <code>addAppointment()</code> with status <code>pending</code>.</p>
     </div>
   </div>
 
@@ -562,47 +577,21 @@ dispatch(<span class="fn">sendMessage</span>({
     </div>
   </div>
 
-  <!-- SECTION 7 -->
-  <h2><span class="num">7</span> React Context API — Custom Toast Notification System</h2>
-  <p>Instead of intrusive <code>window.alert()</code> popups, the app uses a custom Toast notification system powered by React Context API in <code>components/Toast.jsx</code>:</p>
-
-<pre><span class="cm">// In Toast.jsx</span>
-<span class="kw">const</span> ToastContext = <span class="fn">createContext</span>(<span class="kw">null</span>);
-
-<span class="kw">export function</span> <span class="fn">useToast</span>() {
-  <span class="kw">return</span> <span class="hook">useContext</span>(ToastContext);
-}
-
-<span class="cm">// In any page:</span>
-<span class="kw">const</span> toast = <span class="hook">useToast</span>();
-toast.<span class="fn">success</span>(<span class="str">"Prescription saved & consultation completed!"</span>, <span class="str">"Complete"</span>);
-toast.<span class="fn">warning</span>(<span class="str">"Slot capacity reached!"</span>);</pre>
-
   <!-- SECTION 8 -->
-  <h2><span class="num">8</span> Role Guards &amp; Protected Navigation (ProtectedRoute)</h2>
-  <p>Security and role isolation are implemented via <code>ProtectedRoute.jsx</code>:</p>
-
-<pre><span class="kw">function</span> <span class="fn">ProtectedRoute</span>({ children, allowedRoles }) {
-  <span class="kw">const</span> { isAuthenticated, user } = <span class="hook">useSelector</span>((state) => state.auth);
-
-  <span class="kw">if</span> (!isAuthenticated || !user) {
-    <span class="kw">return</span> <span class="tag">&lt;Navigate</span> <span class="kw">to</span>=<span class="str">"/login"</span> <span class="kw">replace</span> <span class="tag">/&gt;</span>;
-  }
-
-  <span class="kw">if</span> (allowedRoles && !allowedRoles.<span class="fn">includes</span>(user.role)) {
-    <span class="kw">return</span> <span class="tag">&lt;Navigate</span> <span class="kw">to</span>=<span class="str">"/unauthorized"</span> <span class="kw">replace</span> <span class="tag">/&gt;</span>;
-  }
-
-  <span class="kw">return</span> children;
-}</pre>
+  <h2><span class="num">8</span> React Context API — Custom Toast Notification System</h2>
+  <p>Instead of intrusive <code>window.alert()</code> popups, the app uses a custom Toast notification system powered by React Context API in <code>components/Toast.jsx</code>.</p>
 
   <!-- SECTION 9 -->
-  <h2><span class="num">9</span> Detailed Page-by-Page Logic Guide</h2>
+  <h2><span class="num">9</span> Role Guards &amp; Protected Navigation (ProtectedRoute)</h2>
+  <p>Security and role isolation are implemented via <code>ProtectedRoute.jsx</code>.</p>
+
+  <!-- SECTION 10 -->
+  <h2><span class="num">10</span> Detailed Page-by-Page Logic Guide</h2>
 
   <h3>Patient Pages</h3>
   <ul>
     <li><strong>DoctorSearch.jsx:</strong> Search filter by name &amp; specialization, auto-complete dropdown, click outside handler using <code>useRef</code>.</li>
-    <li><strong>BookAppointment.jsx:</strong> Reads <code>:doctorId</code> from URL, checks max 4-patient slot cap, dispatches <code>addAppointment</code>.</li>
+    <li><strong>BookAppointment.jsx:</strong> Dynamically calculates date weekday, filters doctor availability, checks max 4-patient slot cap, dispatches <code>addAppointment</code>.</li>
     <li><strong>MyAppointments.jsx:</strong> Shows patient's booked appointments with status badges (pending, confirmed, completed, cancelled) and cancel action.</li>
     <li><strong>MedicalHistory.jsx:</strong> Displays patient's EHR records, diagnoses, physician notes, and prescribed medications with <code>1-0-1-0</code> dosage schedules.</li>
     <li><strong>PatientBilling.jsx:</strong> Invoice settlement screen. Select payment method to dispatch <code>payBill</code>.</li>
@@ -613,6 +602,7 @@ toast.<span class="fn">warning</span>(<span class="str">"Slot capacity reached!"
   <ul>
     <li><strong>DoctorDashboard.jsx:</strong> Summary metrics for doctor's daily consultations, pending requests, and completed visits.</li>
     <li><strong>DoctorAppointments.jsx:</strong> Doctor queue with status filter, EHR history preview, and interactive prescription modal with <code>1-0-1-0</code> schedule buttons.</li>
+    <li><strong>DoctorSchedule.jsx:</strong> Weekly consultation hours configuration connected to Redux <code>doctorSlice</code>.</li>
     <li><strong>DoctorMessages.jsx:</strong> Doctor-side chat connected to Redux <code>messageSlice</code>.</li>
     <li><strong>IssueCertificate.jsx:</strong> Generator for medical leave / fitness certificates with printable preview.</li>
   </ul>
@@ -624,16 +614,21 @@ toast.<span class="fn">warning</span>(<span class="str">"Slot capacity reached!"
     <li><strong>AdminDashboard.jsx:</strong> Clinic-wide analytics (total revenue, active doctors, total patients, appointment stats).</li>
   </ul>
 
-  <!-- SECTION 10 -->
-  <h2><span class="num">10</span> Complete Technical Interview Q&amp;A Prep</h2>
+  <!-- SECTION 11 -->
+  <h2><span class="num">11</span> Complete Technical Interview Q&amp;A Prep</h2>
 
   <div class="qa-card">
     <div class="qa-q"><span>Q1.</span> How is state managed in this healthcare application?</div>
-    <div class="qa-a">State is divided cleanly between local state (`useState`) for transient UI inputs (like search text or tab selections), Context API for global Toast alerts, and Redux Toolkit (`configureStore`) for core domain entities like appointments, billing, notifications, EHR records, and persistent chat messages.</div>
+    <div class="qa-a">State is divided cleanly between local state (`useState`) for transient UI inputs (like search text or tab selections), Context API for global Toast alerts, and Redux Toolkit (`configureStore`) for core domain entities like appointments, doctors, billing, notifications, EHR records, and persistent chat messages.</div>
   </div>
 
   <div class="qa-card">
-    <div class="qa-q"><span>Q2.</span> How does the complete appointment lifecycle work from booking to payment?</div>
+    <div class="qa-q"><span>Q2.</span> How does doctor availability dynamic filtering work when a patient books an appointment?</div>
+    <div class="qa-a">Doctors set their active working days in `DoctorSchedule.jsx` which dispatches `updateDoctorSchedule` to `doctorSlice` in Redux. When a patient picks a date in `BookAppointment.jsx`, the app calculates the weekday name (e.g. Tuesday). It checks `doctor.availability` from Redux. If off-duty, it displays an off-duty notice and disables booking. If available, it renders only the specific time slots configured for that weekday.</div>
+  </div>
+
+  <div class="qa-card">
+    <div class="qa-q"><span>Q3.</span> How does the complete appointment lifecycle work from booking to payment?</div>
     <div class="qa-a">1. Patient books appointment → Dispatches `addAppointment` (status: `pending`).<br />
     2. Admin verifies slot capacity &amp; approves → Dispatches `approveAppointment` (status: `confirmed`) &amp; `addNotification`.<br />
     3. Doctor opens consultation workspace → Enters diagnosis &amp; `1-0-1-0` medication prescription → Dispatches `completeAppointment` (status: `completed`), `addRecord` (EHR), `addBill` (invoice), &amp; `addNotification`.<br />
@@ -641,42 +636,42 @@ toast.<span class="fn">warning</span>(<span class="str">"Slot capacity reached!"
   </div>
 
   <div class="qa-card">
-    <div class="qa-q"><span>Q3.</span> Why was a Redux `messageSlice` created instead of using local component state for messaging?</div>
+    <div class="qa-q"><span>Q4.</span> Why was a Redux `messageSlice` created instead of using local component state for messaging?</div>
     <div class="qa-a">Local state is unmounted when a user navigates away or switches sidebar links, which erased chat history. Creating `messageSlice` in Redux persists conversation logs globally. When a doctor sends a message, it is stored in Redux and immediately available when switching to the patient view or navigating across pages.</div>
   </div>
 
   <div class="qa-card">
-    <div class="qa-q"><span>Q4.</span> How does ProtectedRoute restrict unauthorized access?</div>
+    <div class="qa-q"><span>Q5.</span> How does ProtectedRoute restrict unauthorized access?</div>
     <div class="qa-a">`ProtectedRoute` is a higher-order guard component wrapping protected routes in `AppRoutes.jsx`. It reads the Redux auth state. If the user is unauthenticated, it renders `<Navigate to="/login" replace />`. If `allowedRoles` is passed and the logged-in user's role is not included, it renders `<Navigate to="/unauthorized" replace />`.</div>
   </div>
 
   <div class="qa-card">
-    <div class="qa-q"><span>Q5.</span> What is the purpose of `useRef` in `DoctorSearch.jsx`?</div>
+    <div class="qa-q"><span>Q6.</span> What is the purpose of `useRef` in `DoctorSearch.jsx`?</div>
     <div class="qa-a">`useRef` is used to attach a direct reference to the search container DOM element. Inside a `useEffect` event listener for `mousedown`, we check if `searchRef.current.contains(event.target)`. If the click occurred outside the container, `setShowSuggestions(false)` is called. `useRef` holds this DOM reference without causing extra re-renders when updated.</div>
   </div>
 
   <div class="qa-card">
-    <div class="qa-q"><span>Q6.</span> How does Redux Toolkit simplify Redux development compared to classic Redux?</div>
+    <div class="qa-q"><span>Q7.</span> How does Redux Toolkit simplify Redux development compared to classic Redux?</div>
     <div class="qa-a">Redux Toolkit's `createSlice` automatically generates action creators and action types from reducer function names, eliminating string constants. It also integrates Immer internally, allowing developers to write direct state mutation syntax (like `state.push()`) safely while producing immutable state updates behind the scenes.</div>
   </div>
 
   <div class="qa-card">
-    <div class="qa-q"><span>Q7.</span> How does the Toast notification system work using Context API?</div>
+    <div class="qa-q"><span>Q8.</span> How does the Toast notification system work using Context API?</div>
     <div class="qa-a">In `Toast.jsx`, a `ToastContext` is created with `createContext(null)`. `ToastProvider` wraps the entire app in `main.jsx` and maintains the list of active toast popups. The `useToast()` custom hook calls `useContext(ToastContext)`, giving any component instant access to helper methods like `toast.success()`, `toast.error()`, and `toast.warning()`.</div>
   </div>
 
   <div class="qa-card">
-    <div class="qa-q"><span>Q8.</span> What is the difference between `useNavigate` and `<Navigate />` in React Router v6?</div>
+    <div class="qa-q"><span>Q9.</span> What is the difference between `useNavigate` and `<Navigate />` in React Router v6?</div>
     <div class="qa-a">`useNavigate` is a React hook that returns a function for programmatic navigation inside event handlers or side effects (e.g. `navigate('/patient/my-appointments')` after form submission). `<Navigate />` is a React JSX component used in conditional rendering (e.g., returning `<Navigate to="/login" />` inside `ProtectedRoute` when not authenticated).</div>
   </div>
 
   <div class="qa-card">
-    <div class="qa-q"><span>Q9.</span> How is the 1-0-1-0 prescription schedule stored and displayed?</div>
+    <div class="qa-q"><span>Q10.</span> How is the 1-0-1-0 prescription schedule stored and displayed?</div>
     <div class="qa-a">During consultation in `DoctorAppointments.jsx`, the doctor selects dosage schedule presets like `1-0-1-0` (Morning - Noon - Evening - Night). On save, this is dispatched inside an array of prescription objects to `recordsSlice`. `MedicalHistory.jsx` reads this slice using `useSelector` and displays the medication name, dosage timing (`1-0-1-0`), and duration under the patient's EHR records.</div>
   </div>
 
   <div class="qa-card">
-    <div class="qa-q"><span>Q10.</span> How does `useCallback` optimize performance in `Toast.jsx`?</div>
+    <div class="qa-q"><span>Q11.</span> How does `useCallback` optimize performance in `Toast.jsx`?</div>
     <div class="qa-a">`useCallback` memoizes the `addToast` and `removeToast` functions so their reference memory addresses remain identical across re-renders. Because these functions are passed to child components, memoizing them prevents child components from re-rendering unnecessarily.</div>
   </div>
 

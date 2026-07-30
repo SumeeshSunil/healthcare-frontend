@@ -2,7 +2,7 @@ import { useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { addAppointment } from "../../redux/slices/appointmentSlice";
-import doctors from "../../data/dummyDoctors.json";
+import dummyDoctors from "../../data/dummyDoctors.json";
 import patients from "../../data/dummyPatients.json";
 import Layout from "../../components/Layout";
 import { useToast } from "../../components/Toast";
@@ -13,26 +13,51 @@ function BookAppointment() {
     const dispatch = useDispatch();
     const toast = useToast();
     const auth = useSelector((state) => state.auth);
+    const reduxDoctors = useSelector((state) => state.doctors?.doctors || dummyDoctors);
     const appointments = useSelector((state) => state.appointment?.appointments || []);
 
     const currentUserId = auth?.user ? auth.user.id : 4;
     const currentPatient = patients.find((p) => p.userId === currentUserId) || patients[0];
-    const doctor = doctors.find((d) => d.id === parseInt(doctorId, 10)) || doctors[0];
+    const doctor = reduxDoctors.find((d) => d.id === parseInt(doctorId, 10)) || reduxDoctors[0];
 
     const [selectedDate, setSelectedDate] = useState(new Date().toISOString().split("T")[0]);
     const [selectedTime, setSelectedTime] = useState("");
     const [reason, setReason] = useState("");
 
-    const timeSlots = [
-        "09:00 AM",
-        "10:00 AM",
-        "11:00 AM",
-        "11:30 AM",
-        "01:00 PM",
-        "02:00 PM",
-        "03:00 PM",
-        "04:00 PM"
-    ];
+    const getDayNameFromDate = (dateString) => {
+        if (!dateString) return "";
+        const parts = dateString.split("-");
+        if (parts.length === 3) {
+            const dateObj = new Date(Number(parts[0]), Number(parts[1]) - 1, Number(parts[2]));
+            return dateObj.toLocaleDateString("en-US", { weekday: "long" });
+        }
+        return new Date(dateString).toLocaleDateString("en-US", { weekday: "long" });
+    };
+
+    const selectedDayName = getDayNameFromDate(selectedDate);
+
+    const getAvailableSlotsForDate = () => {
+        if (!doctor.availability || doctor.availability.length === 0) {
+            return ["09:00 AM", "10:00 AM", "11:00 AM", "02:00 PM", "03:00 PM"];
+        }
+        const daySchedule = doctor.availability.find(
+            (a) => a.day.toLowerCase() === selectedDayName.toLowerCase()
+        );
+        if (!daySchedule || !daySchedule.slots || daySchedule.slots.length === 0) {
+            return [];
+        }
+        return daySchedule.slots;
+    };
+
+    const availableSlots = getAvailableSlotsForDate();
+
+    const getAvailableDaysList = () => {
+        if (!doctor.availability || doctor.availability.length === 0) return "All Days";
+        return doctor.availability
+            .filter((a) => a.slots && a.slots.length > 0)
+            .map((a) => a.day)
+            .join(", ");
+    };
 
     const getSlotBookingCount = (slotTime) => {
         return appointments.filter(
@@ -48,6 +73,11 @@ function BookAppointment() {
         e.preventDefault();
         if (!selectedDate || !selectedTime) {
             toast.warning("Please select a consultation date and available time slot.");
+            return;
+        }
+
+        if (availableSlots.length === 0) {
+            toast.error(`${doctor.name} is off-duty on ${selectedDayName}s. Please pick another date.`);
             return;
         }
 
@@ -70,7 +100,7 @@ function BookAppointment() {
         };
 
         dispatch(addAppointment(newAppointment));
-        toast.success(`Appointment requested with ${doctor.name} for ${selectedTime}. Pending Admin approval.`, "Request Submitted");
+        toast.success(`Appointment requested with ${doctor.name} for ${selectedTime} on ${selectedDate}. Pending Admin approval.`, "Request Submitted");
         navigate("/patient/my-appointments");
     };
 
@@ -91,6 +121,9 @@ function BookAppointment() {
                             </h1>
                             <p className="text-xs text-slate-500 font-semibold">
                                 {doctor.specialization} • Fee: ₹{doctor.fee || 500} • {doctor.location || "Kerala"}
+                            </p>
+                            <p className="text-[11px] text-teal-600 font-bold mt-1">
+                                📅 Available Consultation Days: <span className="text-slate-800">{getAvailableDaysList()}</span>
                             </p>
                         </div>
                     </div>
@@ -116,59 +149,73 @@ function BookAppointment() {
                                 setSelectedDate(e.target.value);
                                 setSelectedTime("");
                             }}
-                            className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 focus:outline-none focus:border-teal-500 focus:bg-white transition text-slate-800"
+                            className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 focus:outline-none focus:border-teal-500 focus:bg-white transition text-slate-800 font-semibold"
                             required
                         />
+                        <p className="text-[11px] text-slate-500 mt-1 font-medium">
+                            Selected day: <strong className="text-slate-800">{selectedDayName}</strong>
+                        </p>
                     </div>
 
                     <div>
                         <div className="flex justify-between items-center mb-2">
                             <label className="block font-bold text-slate-700">
-                                2. Choose Time Slot (Max 4 Patients Per Slot)
+                                2. Available Time Slots for {doctor.name} ({selectedDayName})
                             </label>
                             <span className="text-[11px] font-semibold text-slate-400">
                                 Selected Date: {selectedDate}
                             </span>
                         </div>
 
-                        <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-                            {timeSlots.map((slot) => {
-                                const bookedCount = getSlotBookingCount(slot);
-                                const isFull = bookedCount >= 4;
-                                const isSelected = selectedTime === slot;
+                        {availableSlots.length === 0 ? (
+                            <div className="bg-rose-50 border border-rose-200 p-5 rounded-2xl text-center space-y-1">
+                                <p className="text-xs font-bold text-rose-700">
+                                    🚫 {doctor.name} is Off-Duty on {selectedDayName}s
+                                </p>
+                                <p className="text-[11px] text-rose-600">
+                                    Doctor's working days are: <strong className="text-slate-900">{getAvailableDaysList()}</strong>. Please choose another date.
+                                </p>
+                            </div>
+                        ) : (
+                            <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+                                {availableSlots.map((slot) => {
+                                    const bookedCount = getSlotBookingCount(slot);
+                                    const isFull = bookedCount >= 4;
+                                    const isSelected = selectedTime === slot;
 
-                                return (
-                                    <button
-                                        type="button"
-                                        key={slot}
-                                        disabled={isFull}
-                                        onClick={() => setSelectedTime(slot)}
-                                        className={`py-3 px-3 rounded-xl text-xs font-bold transition flex flex-col items-center justify-center gap-1 border ${
-                                            isFull
-                                                ? "bg-slate-100 text-slate-400 border-slate-200 cursor-not-allowed opacity-60"
-                                                : isSelected
-                                                ? "bg-teal-600 text-white border-teal-600 shadow-md shadow-teal-600/20"
-                                                : "bg-slate-50 text-slate-700 border-slate-200 hover:bg-teal-50 hover:border-teal-300"
-                                        }`}
-                                    >
-                                        <span>🕒 {slot}</span>
-                                        <span
-                                            className={`text-[10px] font-extrabold ${
+                                    return (
+                                        <button
+                                            type="button"
+                                            key={slot}
+                                            disabled={isFull}
+                                            onClick={() => setSelectedTime(slot)}
+                                            className={`py-3 px-3 rounded-xl text-xs font-bold transition flex flex-col items-center justify-center gap-1 border ${
                                                 isFull
-                                                    ? "text-rose-500"
+                                                    ? "bg-slate-100 text-slate-400 border-slate-200 cursor-not-allowed opacity-60"
                                                     : isSelected
-                                                    ? "text-teal-100"
-                                                    : bookedCount > 2
-                                                    ? "text-amber-600"
-                                                    : "text-emerald-600"
+                                                    ? "bg-teal-600 text-white border-teal-600 shadow-md shadow-teal-600/20"
+                                                    : "bg-slate-50 text-slate-700 border-slate-200 hover:bg-teal-50 hover:border-teal-300"
                                             }`}
                                         >
-                                            {isFull ? "No slot available" : `${bookedCount}/4 booked`}
-                                        </span>
-                                    </button>
-                                );
-                            })}
-                        </div>
+                                            <span>🕒 {slot}</span>
+                                            <span
+                                                className={`text-[10px] font-extrabold ${
+                                                    isFull
+                                                        ? "text-rose-500"
+                                                        : isSelected
+                                                        ? "text-teal-100"
+                                                        : bookedCount > 2
+                                                        ? "text-amber-600"
+                                                        : "text-emerald-600"
+                                                }`}
+                                            >
+                                                {isFull ? "No slot available" : `${bookedCount}/4 booked`}
+                                            </span>
+                                        </button>
+                                    );
+                                })}
+                            </div>
+                        )}
                     </div>
 
                     <div>
@@ -200,9 +247,9 @@ function BookAppointment() {
                         </div>
                         <button
                             type="submit"
-                            disabled={!selectedTime}
+                            disabled={!selectedTime || availableSlots.length === 0}
                             className={`w-full sm:w-auto px-8 py-3 rounded-xl font-bold transition shadow-md ${
-                                selectedTime
+                                selectedTime && availableSlots.length > 0
                                     ? "bg-teal-600 hover:bg-teal-700 text-white shadow-teal-600/20"
                                     : "bg-slate-300 text-slate-500 cursor-not-allowed"
                             }`}
