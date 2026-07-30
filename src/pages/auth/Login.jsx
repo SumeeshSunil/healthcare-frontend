@@ -1,126 +1,119 @@
 import { useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
 import { useNavigate, Link } from "react-router-dom";
-
-import { loginSuccess, loginFailure } from "../../redux/slices/authSlice";
-import users from "../../data/dummyUsers.json";
+import { login } from "../../redux/slices/authSlice";
+import dummyUsers from "../../data/dummyUsers.json";
 
 function Login() {
-  const [emailInput, setEmailInput] = useState("");
-  const [passwordInput, setPasswordInput] = useState("");
+    const [selectedUserId, setSelectedUserId] = useState(4);
+    const [email, setEmail] = useState("kannan@healthcare.com");
+    const [password, setPassword] = useState("patient123");
 
-  const dispatch = useDispatch();
-  const auth = useSelector((state) => state.auth);
-  const navigate = useNavigate();
+    const dispatch = useDispatch();
+    const navigate = useNavigate();
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
+    const handleSelectPresetUser = (uId) => {
+        const userObj = dummyUsers.find((u) => u.id === parseInt(uId, 10));
+        if (userObj) {
+            setSelectedUserId(userObj.id);
+            setEmail(userObj.email);
+            setPassword(userObj.password);
+        }
+    };
 
-    const foundUser = users.find(
-      (u) => u.email === emailInput && u.password === passwordInput
-    );
+    const handleSubmit = (e) => {
+        e.preventDefault();
 
-    if (foundUser) {
-      dispatch(loginSuccess(foundUser));
+        const userObj = dummyUsers.find((u) => u.email.toLowerCase() === email.toLowerCase()) || {
+            id: selectedUserId,
+            name: email.split("@")[0],
+            email: email,
+            role: "patient"
+        };
 
-      if (foundUser.role === "admin") {
-        navigate('/admin/dashboard');
-      } else if (foundUser.role === "doctor") {
-        navigate('/doctor/dashboard');
-      } else if (foundUser.role === "patient") {
-        navigate('/patient/dashboard');
-      }
-    } else {
-      dispatch(loginFailure("Invalid username or password"));
-    }
-  };
+        dispatch(login(userObj));
 
-  return (
-    <div className="min-h-screen flex items-center justify-center bg-slate-900 p-4">
+        if (userObj.role === "patient") navigate("/patient/dashboard");
+        else if (userObj.role === "doctor") navigate("/doctor/dashboard");
+        else navigate("/admin/dashboard");
+    };
 
-      <div className="w-full max-w-md bg-white rounded-3xl shadow-2xl p-8 border border-slate-800">
+    return (
+        <div className="min-h-screen bg-slate-900 flex items-center justify-center p-4 sm:p-6 relative overflow-hidden">
+            <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top_right,_var(--tw-gradient-stops))] from-teal-900/40 via-slate-900 to-slate-950 pointer-events-none"></div>
 
-        <div className="text-center mb-8">
+            <div className="max-w-md w-full bg-white rounded-3xl p-6 sm:p-8 shadow-2xl border border-slate-800 relative z-10 space-y-6">
+                <div className="text-center space-y-2">
+                    <div className="w-14 h-14 rounded-2xl bg-gradient-to-tr from-blue-700 via-teal-600 to-teal-400 text-white flex items-center justify-center font-black text-2xl mx-auto shadow-lg shadow-teal-500/20">
+                        ✚
+                    </div>
+                    <h1 className="text-2xl sm:text-3xl font-extrabold text-slate-900 tracking-tight">
+                        MEDICO <span className="text-teal-600">PORTAL</span>
+                    </h1>
+                    <p className="text-xs text-slate-500 font-medium">
+                        Sign in to access your healthcare portal account
+                    </p>
+                </div>
 
-          <div className="w-14 h-14 rounded-2xl bg-gradient-to-tr from-blue-700 via-teal-600 to-teal-400 text-white flex items-center justify-center font-black text-2xl shadow-lg mx-auto mb-4">
-            ✚
-          </div>
+                <div>
+                    <label className="block font-bold text-slate-700 mb-1.5 text-xs">
+                        Select Portal User
+                    </label>
+                    <select
+                        value={selectedUserId}
+                        onChange={(e) => handleSelectPresetUser(e.target.value)}
+                        className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-slate-800 text-xs font-bold focus:outline-none focus:border-teal-500"
+                    >
+                        {dummyUsers.map((u) => (
+                            <option key={u.id} value={u.id}>
+                                {u.name} ({u.role.toUpperCase()}) — {u.email}
+                            </option>
+                        ))}
+                    </select>
+                </div>
 
-          <h1 className="text-2xl font-extrabold text-slate-900 tracking-tight">
-            MEDICO <span className="text-teal-600 font-bold">PORTAL</span>
-          </h1>
+                <form onSubmit={handleSubmit} className="space-y-4 text-xs sm:text-sm">
+                    <div>
+                        <label className="block font-bold text-slate-700 mb-1.5">Email Address</label>
+                        <input
+                            type="email"
+                            placeholder="Enter your registered email..."
+                            value={email}
+                            onChange={(e) => setEmail(e.target.value)}
+                            className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-slate-800 focus:outline-none focus:border-teal-500 transition"
+                            required
+                        />
+                    </div>
 
-          <p className="text-xs text-slate-500 mt-1">
-            Sign in to access your electronic health record
-          </p>
+                    <div>
+                        <label className="block font-bold text-slate-700 mb-1.5">Security Password</label>
+                        <input
+                            type="password"
+                            placeholder="••••••••"
+                            value={password}
+                            onChange={(e) => setPassword(e.target.value)}
+                            className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-slate-800 focus:outline-none focus:border-teal-500 transition"
+                            required
+                        />
+                    </div>
 
-        </div>
+                    <button
+                        type="submit"
+                        className="w-full bg-slate-900 hover:bg-teal-600 text-white font-bold py-3.5 rounded-xl transition shadow-lg text-xs tracking-wider uppercase"
+                    >
+                        Sign In to Account
+                    </button>
+                </form>
 
-        <form onSubmit={handleSubmit} className="space-y-5 text-xs">
-
-          <div>
-
-            <label className="block font-bold text-slate-700 mb-2">
-              Email Address
-            </label>
-
-            <input
-              type="email"
-              placeholder="patient@healthcare.com"
-              value={emailInput}
-              onChange={(e) => setEmailInput(e.target.value)}
-              className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-teal-500 font-semibold text-slate-900 text-xs"
-              required
-            />
-
-          </div>
-
-          <div>
-
-            <label className="block font-bold text-slate-700 mb-2">
-              Password
-            </label>
-
-            <input
-              type="password"
-              placeholder="••••••••"
-              value={passwordInput}
-              onChange={(e) => setPasswordInput(e.target.value)}
-              className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-teal-500 font-semibold text-slate-900 text-xs"
-              required
-            />
-
-          </div>
-
-          {auth.error && (
-            <div className="p-3 bg-rose-50 border border-rose-200 text-rose-700 rounded-xl font-bold text-xs">
-              {auth.error}
+                <div className="pt-4 border-t border-slate-100 text-center text-xs text-slate-500">
+                    Don't have an account?{" "}
+                    <Link to="/register" className="font-bold text-teal-600 hover:underline">
+                        Register here
+                    </Link>
+                </div>
             </div>
-          )}
-
-          <button
-            type="submit"
-            className="w-full bg-teal-600 hover:bg-teal-700 text-white font-bold py-3.5 rounded-xl text-xs uppercase tracking-wider transition shadow-lg shadow-teal-600/25"
-          >
-            Access Portal
-          </button>
-
-          <div className="text-center pt-2 text-xs text-slate-500">
-
-            Need an account?{" "}
-
-            <Link to="/register" className="text-teal-600 font-bold hover:underline">
-              Register here
-            </Link>
-
-          </div>
-
-        </form>
-
-      </div>
-
-    </div>
-  );
+        </div>
+    );
 }
 
 export default Login;

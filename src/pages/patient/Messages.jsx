@@ -1,221 +1,157 @@
 import { useState } from "react";
 import { useSelector } from "react-redux";
-
-import doctors from "../../data/dummyDoctors.json";
-import Navbar from "../../components/Navbar";
-import Sidebar from "../../components/Sidebar";
+import dummyDoctors from "../../data/dummyDoctors.json";
+import dummyPatients from "../../data/dummyPatients.json";
+import Layout from "../../components/Layout";
 
 function Messages() {
     const auth = useSelector((state) => state.auth);
+    const userRole = auth?.user?.role || "patient";
 
-    const [selectedDoctor, setSelectedDoctor] = useState(doctors[0]);
-    const [messageInput, setMessageInput] = useState("");
-    const [chatHistory, setChatHistory] = useState({
-        1: [
-            { sender: "doctor", text: "Hello Kannan, how are you feeling after taking Amlodipine?", time: "10:00 AM" },
-            { sender: "patient", text: "Hi Dr. Ananya, my blood pressure is steady now, no dizziness.", time: "10:05 AM" },
-            { sender: "doctor", text: "Great to hear! Continue the dosage for 30 days as prescribed.", time: "10:07 AM" }
-        ],
-        2: [
-            { sender: "doctor", text: "Please make sure to apply hydrocortisone cream twice daily.", time: "Yesterday" }
-        ]
-    });
+    const contacts = userRole === "doctor"
+        ? dummyPatients.map((p) => ({
+              id: p.id,
+              name: p.name,
+              subtext: `Age: ${p.age} • ${p.gender} • EHR #${p.id}`,
+              avatar: p.name.charAt(0),
+              chatHistory: [
+                  { sender: "patient", text: "Hello Doctor, I wanted to follow up on my recent consultation.", time: "09:30 AM" },
+                  { sender: "doctor", text: `Hello ${p.name}! How are you feeling today? Any changes in symptoms?`, time: "09:45 AM" }
+              ]
+          }))
+        : dummyDoctors.map((d) => ({
+              id: d.id,
+              name: d.name,
+              subtext: `${d.specialization} (${d.location})`,
+              avatar: d.name.replace(/^Dr\.?\s*/i, "").charAt(0),
+              chatHistory: [
+                  { sender: "doctor", text: `Hello! I am ${d.name}. How can I assist you with your health query today?`, time: "10:15 AM" },
+                  { sender: "patient", text: "Hi Doctor! Checking in regarding my prescription and follow-up date.", time: "10:22 AM" }
+              ]
+          }));
 
-    const activeMessages = chatHistory[selectedDoctor.id] || [];
+    const [activeContactId, setActiveContactId] = useState(contacts[0]?.id || 1);
+    const [inputMessage, setInputMessage] = useState("");
+
+    const activeContact = contacts.find((c) => c.id === activeContactId) || contacts[0];
 
     const handleSendMessage = (e) => {
         e.preventDefault();
+        if (!inputMessage.trim()) return;
 
-        if (!messageInput.trim()) return;
-
-        const newMessage = {
-            sender: "patient",
-            text: messageInput,
+        activeContact.chatHistory.push({
+            sender: userRole,
+            text: inputMessage,
             time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
-        };
-
-        setChatHistory({
-            ...chatHistory,
-            [selectedDoctor.id]: [...activeMessages, newMessage]
         });
 
-        setMessageInput("");
+        setInputMessage("");
     };
 
     return (
-        <div className="min-h-screen bg-slate-50 flex flex-col">
-
-            <Navbar />
-
-            <div className="flex flex-1">
-
-                <Sidebar />
-
-                <main className="flex-1 max-w-6xl p-8 flex flex-col">
-
-                    <div className="bg-white rounded-3xl shadow-sm border border-slate-200/80 flex flex-col md:flex-row flex-1 overflow-hidden min-h-[600px]">
-
-                        {/* Physician selection panel */}
-
-                        <div className="w-full md:w-80 border-r border-slate-200/80 bg-slate-50/50 flex flex-col">
-
-                            <div className="p-5 border-b border-slate-200 bg-white">
-
-                                <h2 className="text-lg font-extrabold text-slate-900">
-                                    Clinical Chat
-                                </h2>
-
-                                <p className="text-xs text-slate-400 mt-0.5 font-medium">
-                                    Direct physician consultations
-                                </p>
-
-                            </div>
-
-                            <div className="overflow-y-auto flex-1 divide-y divide-slate-100">
-
-                                {doctors.map((doctor) => {
-
-                                    const isSelected = selectedDoctor.id === doctor.id;
-
-                                    return (
-
-                                        <div
-                                            key={doctor.id}
-                                            onClick={() => setSelectedDoctor(doctor)}
-                                            className={`p-4 cursor-pointer flex items-center gap-3 transition ${
-                                                isSelected
-                                                    ? "bg-teal-50/80 border-l-4 border-teal-600"
-                                                    : "hover:bg-slate-100/60"
-                                            }`}
-                                        >
-
-                                            <div className="w-10 h-10 rounded-xl bg-slate-900 text-teal-300 font-extrabold flex items-center justify-center text-sm shrink-0">
-                                                {doctor.name.replace(/^Dr\.?\s*/i, "").charAt(0)}
-                                            </div>
-
-                                            <div className="overflow-hidden">
-
-                                                <h3 className="font-bold text-xs text-slate-900 truncate">
-                                                    {doctor.name}
-                                                </h3>
-
-                                                <p className="text-[11px] text-teal-600 font-semibold truncate mt-0.5">
-                                                    {doctor.specialization}
-                                                </p>
-
-                                            </div>
-
-                                        </div>
-
-                                    );
-                                })}
-
-                            </div>
-
-                        </div>
-
-                        {/* Chat Box */}
-
-                        <div className="flex-1 flex flex-col bg-white">
-
-                            <div className="p-4 px-6 border-b border-slate-100 flex items-center gap-3 bg-slate-50/50">
-
-                                <div className="w-10 h-10 rounded-xl bg-slate-900 text-teal-300 font-extrabold flex items-center justify-center text-sm">
-                                    {selectedDoctor.name.replace(/^Dr\.?\s*/i, "").charAt(0)}
-                                </div>
-
-                                <div>
-
-                                    <h3 className="font-bold text-sm text-slate-900">
-                                        {selectedDoctor.name}
-                                    </h3>
-
-                                    <p className="text-[11px] text-teal-600 font-semibold">
-                                        {selectedDoctor.specialization} • Online
-                                    </p>
-
-                                </div>
-
-                            </div>
-
-                            <div className="flex-1 p-6 overflow-y-auto space-y-4 bg-slate-50/30">
-
-                                {activeMessages.length === 0 ? (
-
-                                    <div className="text-center text-slate-400 text-xs py-12">
-                                        No messages found. Send your query below.
-                                    </div>
-
-                                ) : (
-
-                                    activeMessages.map((msg, index) => {
-
-                                        const isPatient = msg.sender === "patient";
-
-                                        return (
-
-                                            <div
-                                                key={index}
-                                                className={`flex ${isPatient ? "justify-end" : "justify-start"}`}
-                                            >
-
-                                                <div
-                                                    className={`max-w-md p-4 rounded-2xl shadow-sm text-xs ${
-                                                        isPatient
-                                                            ? "bg-slate-900 text-white rounded-br-none"
-                                                            : "bg-white text-slate-800 border border-slate-200 rounded-bl-none font-medium"
-                                                    }`}
-                                                >
-
-                                                    <p className="leading-relaxed">{msg.text}</p>
-
-                                                    <span
-                                                        className={`text-[10px] mt-1.5 block text-right font-medium ${
-                                                            isPatient ? "text-teal-300" : "text-slate-400"
-                                                        }`}
-                                                    >
-                                                        {msg.time}
-                                                    </span>
-
-                                                </div>
-
-                                            </div>
-
-                                        );
-                                    })
-
-                                )}
-
-                            </div>
-
-                            <form onSubmit={handleSendMessage} className="p-4 border-t border-slate-100 bg-white flex gap-3">
-
-                                <input
-                                    type="text"
-                                    placeholder={`Send clinical message to ${selectedDoctor.name}...`}
-                                    value={messageInput}
-                                    onChange={(e) => setMessageInput(e.target.value)}
-                                    className="flex-1 px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-teal-500 text-xs font-semibold"
-                                />
-
-                                <button
-                                    type="submit"
-                                    className="bg-teal-600 hover:bg-teal-700 text-white px-6 py-3 rounded-xl font-bold text-xs transition shadow"
-                                >
-                                    Send
-                                </button>
-
-                            </form>
-
-                        </div>
-
-                    </div>
-
-                </main>
-
+        <Layout>
+            <div className="bg-gradient-to-r from-slate-900 via-slate-800 to-teal-900 text-white rounded-3xl p-6 sm:p-8 shadow-xl">
+                <span className="inline-block px-3 py-1 bg-teal-500/20 text-teal-300 rounded-full text-xs font-semibold uppercase tracking-wider mb-3 border border-teal-500/30">
+                    Clinical Messaging
+                </span>
+                <h1 className="text-2xl sm:text-4xl font-extrabold tracking-tight">
+                    {userRole === "doctor" ? "Patient Consultation Messages" : "Doctor Consultation Chat"}
+                </h1>
+                <p className="text-slate-300 mt-2 text-xs sm:text-sm leading-relaxed">
+                    Direct secure messaging channel between attending medical specialists and patients in Kerala.
+                </p>
             </div>
 
-        </div>
+            <div className="bg-white rounded-3xl shadow-sm border border-slate-200/80 grid grid-cols-1 md:grid-cols-3 overflow-hidden min-h-[500px]">
+                <div className="border-b md:border-b-0 md:border-r border-slate-200 p-4 space-y-3 bg-slate-50/50">
+                    <h3 className="font-extrabold text-slate-900 text-xs uppercase tracking-wider px-2">
+                        {userRole === "doctor" ? "Registered Patients" : "Specialist Doctors"}
+                    </h3>
+                    <div className="space-y-2">
+                        {contacts.map((contact) => (
+                            <div
+                                key={contact.id}
+                                onClick={() => setActiveContactId(contact.id)}
+                                className={`p-3 rounded-2xl cursor-pointer transition flex items-center gap-3 ${
+                                    activeContactId === contact.id
+                                        ? "bg-white border border-teal-300 shadow-sm"
+                                        : "hover:bg-white/80 border border-transparent"
+                                }`}
+                            >
+                                <div className="w-10 h-10 rounded-xl bg-slate-900 text-teal-400 font-bold flex items-center justify-center shrink-0">
+                                    {contact.avatar}
+                                </div>
+                                <div className="min-w-0 flex-1">
+                                    <h4 className="font-bold text-slate-900 text-xs truncate">
+                                        {contact.name}
+                                    </h4>
+                                    <p className="text-[10px] text-slate-500 truncate mt-0.5">
+                                        {contact.subtext}
+                                    </p>
+                                </div>
+                            </div>
+                        ))}
+                    </div>
+                </div>
+
+                <div className="md:col-span-2 flex flex-col h-[500px] justify-between bg-white">
+                    <div className="p-4 border-b border-slate-100 flex items-center gap-3 bg-slate-50/30">
+                        <div className="w-9 h-9 rounded-xl bg-slate-900 text-teal-400 font-bold flex items-center justify-center shrink-0">
+                            {activeContact.avatar}
+                        </div>
+                        <div>
+                            <h4 className="font-bold text-slate-900 text-sm">{activeContact.name}</h4>
+                            <p className="text-[10px] text-teal-600 font-semibold">{activeContact.subtext}</p>
+                        </div>
+                    </div>
+
+                    <div className="p-4 space-y-4 overflow-y-auto flex-1 bg-slate-50/20">
+                        {activeContact.chatHistory.map((msg, index) => {
+                            const isMe = msg.sender === userRole;
+                            return (
+                                <div
+                                    key={index}
+                                    className={`flex ${isMe ? "justify-end" : "justify-start"}`}
+                                >
+                                    <div
+                                        className={`max-w-xs sm:max-w-md rounded-2xl px-4 py-3 text-xs leading-relaxed ${
+                                            isMe
+                                                ? "bg-teal-600 text-white rounded-br-none shadow-sm"
+                                                : "bg-white text-slate-800 border border-slate-200 rounded-bl-none shadow-sm"
+                                        }`}
+                                    >
+                                        <p>{msg.text}</p>
+                                        <span
+                                            className={`block text-[9px] mt-1 text-right ${
+                                                isMe ? "text-teal-200" : "text-slate-400"
+                                            }`}
+                                        >
+                                            {msg.time}
+                                        </span>
+                                    </div>
+                                </div>
+                            );
+                        })}
+                    </div>
+
+                    <form onSubmit={handleSendMessage} className="p-4 border-t border-slate-100 flex gap-2">
+                        <input
+                            type="text"
+                            placeholder="Type a message..."
+                            value={inputMessage}
+                            onChange={(e) => setInputMessage(e.target.value)}
+                            className="flex-1 bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-xs focus:outline-none focus:border-teal-500 focus:bg-white transition text-slate-800"
+                        />
+                        <button
+                            type="submit"
+                            className="bg-slate-900 hover:bg-teal-600 text-white px-5 py-2.5 rounded-xl text-xs font-bold transition shadow"
+                        >
+                            Send
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </Layout>
     );
 }
 

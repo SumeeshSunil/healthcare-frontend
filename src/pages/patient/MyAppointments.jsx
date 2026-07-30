@@ -1,54 +1,26 @@
 import { useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
-import { Link } from "react-router-dom";
-
 import { cancelAppointment } from "../../redux/slices/appointmentSlice";
-
-import patients from "../../data/dummyPatients.json";
 import doctors from "../../data/dummyDoctors.json";
-import Navbar from "../../components/Navbar";
-import Sidebar from "../../components/Sidebar";
+import patients from "../../data/dummyPatients.json";
+import Layout from "../../components/Layout";
 
 function MyAppointments() {
-    const [activeTab, setActiveTab] = useState("all");
-
-    const auth = useSelector((state) => state.auth);
-    const appointments = useSelector((state) => state.appointment.appointments);
     const dispatch = useDispatch();
+    const auth = useSelector((state) => state.auth);
+    const appointments = useSelector((state) => state.appointment?.appointments || []);
 
-    const currentUserId = auth.user ? auth.user.id : 4;
+    const [filter, setFilter] = useState("all");
 
-    const patientProfile = patients.find(
-        (p) => p.userId === currentUserId
-    ) || patients[0];
+    const currentUserId = auth?.user ? auth.user.id : 4;
+    const currentPatient = patients.find((p) => p.userId === currentUserId) || patients[0];
 
-    const myAppointments = appointments.filter(
-        (a) => a.patientId === patientProfile.id
-    );
+    const myAppointments = appointments.filter((a) => a.patientId === currentPatient.id);
 
-    const filteredAppointments = myAppointments.filter((appointment) => {
-        if (activeTab === "all") return true;
-        return appointment.status === activeTab;
+    const filteredAppointments = myAppointments.filter((a) => {
+        if (filter === "all") return true;
+        return a.status === filter;
     });
-
-    const getStatusBadge = (status) => {
-        switch (status) {
-            case "confirmed":
-                return "bg-emerald-50 text-emerald-700 border-emerald-200";
-
-            case "pending":
-                return "bg-amber-50 text-amber-700 border-amber-200";
-
-            case "cancelled":
-                return "bg-rose-50 text-rose-700 border-rose-200";
-
-            case "completed":
-                return "bg-sky-50 text-sky-700 border-sky-200";
-
-            default:
-                return "bg-slate-50 text-slate-700 border-slate-200";
-        }
-    };
 
     const handleCancel = (id) => {
         if (window.confirm("Are you sure you want to cancel this appointment?")) {
@@ -56,175 +28,110 @@ function MyAppointments() {
         }
     };
 
+    const getStatusBadge = (status) => {
+        switch (status) {
+            case "confirmed":
+                return "bg-emerald-50 text-emerald-700 border-emerald-200";
+            case "pending":
+                return "bg-amber-50 text-amber-700 border-amber-200";
+            case "cancelled":
+                return "bg-rose-50 text-rose-700 border-rose-200";
+            case "completed":
+                return "bg-sky-50 text-sky-700 border-sky-200";
+            default:
+                return "bg-slate-50 text-slate-700 border-slate-200";
+        }
+    };
+
     return (
-        <div className="min-h-screen bg-slate-50 flex flex-col">
-            <Navbar />
+        <Layout>
+            <div className="bg-gradient-to-r from-slate-900 via-slate-800 to-teal-900 text-white rounded-3xl p-6 sm:p-8 shadow-xl">
+                <span className="inline-block px-3 py-1 bg-teal-500/20 text-teal-300 rounded-full text-xs font-semibold uppercase tracking-wider mb-3 border border-teal-500/30">
+                    Appointments Management
+                </span>
+                <h1 className="text-2xl sm:text-4xl font-extrabold tracking-tight">
+                    My Scheduled Consultations
+                </h1>
+                <p className="text-slate-300 mt-2 sm:mt-3 text-xs sm:text-sm leading-relaxed max-w-2xl">
+                    Review and track all your scheduled doctor visits, past consultations, and status updates.
+                </p>
+            </div>
 
-            <div className="flex flex-1">
-                <Sidebar />
+            <div className="bg-white rounded-2xl p-4 sm:p-5 shadow-sm border border-slate-200/80 flex items-center gap-2 overflow-x-auto">
+                {["all", "confirmed", "pending", "completed", "cancelled"].map((statusKey) => (
+                    <button
+                        key={statusKey}
+                        onClick={() => setFilter(statusKey)}
+                        className={`px-4 py-2 rounded-xl text-xs font-bold capitalize transition shrink-0 ${
+                            filter === statusKey
+                                ? "bg-slate-900 text-white shadow-sm"
+                                : "bg-slate-50 text-slate-600 hover:bg-slate-100"
+                        }`}
+                    >
+                        {statusKey} ({statusKey === "all" ? myAppointments.length : myAppointments.filter(a => a.status === statusKey).length})
+                    </button>
+                ))}
+            </div>
 
-                <main className="flex-1 max-w-6xl p-8 space-y-8">
-
-                    {/* Page Header */}
-
-                    <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 bg-white p-6 rounded-3xl shadow-sm border border-slate-200/80">
-
-                        <div>
-
-                            <h1 className="text-2xl font-extrabold text-slate-900 tracking-tight">
-                                Consultation Schedule
-                            </h1>
-
-                            <p className="text-xs text-slate-500 mt-1">
-                                Manage active, completed, and pending doctor visits.
-                            </p>
-
+            <div className="space-y-4">
+                {filteredAppointments.length === 0 ? (
+                    <div className="bg-white rounded-2xl p-12 text-center border border-slate-200/80">
+                        <div className="w-16 h-16 rounded-full bg-slate-100 text-slate-400 flex items-center justify-center mx-auto text-2xl mb-3">
+                            📅
                         </div>
-
-                        <Link
-                            to="/patient/doctor-search"
-                            className="bg-teal-600 hover:bg-teal-700 text-white px-5 py-2.5 rounded-xl text-xs font-bold shadow transition"
-                        >
-                            + Book New Visit
-                        </Link>
-
+                        <h3 className="font-bold text-slate-800 text-base">No appointments found</h3>
+                        <p className="text-xs text-slate-500 mt-1">There are no consultations matching your selected status filter.</p>
                     </div>
+                ) : (
+                    filteredAppointments.map((appointment) => {
+                        const doctor = doctors.find((d) => d.id === appointment.doctorId) || {
+                            name: "Specialist Doctor",
+                            specialization: "Clinical Care"
+                        };
 
-                    {/* Tabs */}
-
-                    <div className="flex flex-wrap gap-2 bg-white p-2 rounded-2xl border border-slate-200/80 shadow-sm">
-
-                        {["all", "confirmed", "pending", "completed", "cancelled"].map((tab) => (
-
-                            <button
-                                key={tab}
-                                onClick={() => setActiveTab(tab)}
-                                className={`px-5 py-2.5 rounded-xl text-xs font-bold capitalize transition ${
-                                    activeTab === tab
-                                        ? "bg-slate-900 text-white shadow-md"
-                                        : "text-slate-600 hover:bg-slate-100"
-                                }`}
+                        return (
+                            <div
+                                key={appointment.id}
+                                className="bg-white rounded-2xl p-5 sm:p-6 shadow-sm border border-slate-200/80 hover:border-teal-300 transition flex flex-col md:flex-row items-start md:items-center justify-between gap-4"
                             >
-                                {tab}
-                            </button>
-
-                        ))}
-
-                    </div>
-
-                    {/* Appointments Cards */}
-
-                    {filteredAppointments.length === 0 ? (
-
-                        <div className="bg-white rounded-3xl p-12 text-center border border-slate-200/80 shadow-sm">
-
-                            <div className="text-4xl mb-3">📅</div>
-
-                            <h3 className="text-lg font-bold text-slate-800">
-                                No appointments found
-                            </h3>
-
-                            <p className="text-xs text-slate-500 mt-1">
-                                There are no {activeTab !== "all" ? activeTab : ""} consultations listed.
-                            </p>
-
-                        </div>
-
-                    ) : (
-
-                        <div className="space-y-4">
-
-                            {filteredAppointments.map((appointment) => {
-
-                                const doctor = doctors.find(
-                                    (d) => d.id === appointment.doctorId
-                                ) || { name: "Doctor", specialization: "Specialist", location: "Clinic" };
-
-                                return (
-
-                                    <div
-                                        key={appointment.id}
-                                        className="bg-white rounded-3xl p-6 shadow-sm border border-slate-200/80 hover:shadow-md transition flex flex-col md:flex-row justify-between items-start md:items-center gap-6"
-                                    >
-
-                                        <div className="flex items-start gap-4">
-
-                                            <div className="w-14 h-14 rounded-2xl bg-slate-900 text-teal-300 font-extrabold text-xl flex items-center justify-center shrink-0">
-                                                {doctor.name.replace(/^Dr\.?\s*/i, "").charAt(0)}
-                                            </div>
-
-                                            <div>
-
-                                                <h3 className="text-lg font-bold text-slate-900">
-                                                    {doctor.name}
-                                                </h3>
-
-                                                <p className="text-xs font-bold text-teal-600 mt-0.5">
-                                                    {doctor.specialization}
-                                                </p>
-
-                                                <p className="text-xs text-slate-500 mt-1">
-                                                    📍 {doctor.location}
-                                                </p>
-
-                                                {appointment.reason && (
-                                                    <p className="text-xs text-slate-600 mt-2 bg-slate-50 px-3 py-1.5 rounded-lg inline-block border border-slate-200">
-                                                        <span className="font-semibold text-slate-800">Reason:</span> {appointment.reason}
-                                                    </p>
-                                                )}
-
-                                            </div>
-
-                                        </div>
-
-                                        <div className="flex flex-col md:items-end gap-3 w-full md:w-auto pt-4 md:pt-0 border-t md:border-0 border-slate-100">
-
-                                            <span
-                                                className={`px-3 py-1 rounded-full text-xs font-bold capitalize border ${getStatusBadge(
-                                                    appointment.status
-                                                )}`}
-                                            >
+                                <div className="flex items-start sm:items-center gap-4">
+                                    <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-slate-900 to-teal-900 text-teal-300 font-extrabold text-xl flex items-center justify-center shrink-0 border border-slate-700 shadow-sm">
+                                        {doctor.name.replace(/^Dr\.?\s*/i, "").charAt(0)}
+                                    </div>
+                                    <div>
+                                        <div className="flex flex-wrap items-center gap-2">
+                                            <h3 className="font-extrabold text-slate-900 text-base sm:text-lg">
+                                                {doctor.name}
+                                            </h3>
+                                            <span className={`px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider border ${getStatusBadge(appointment.status)}`}>
                                                 {appointment.status}
                                             </span>
-
-                                            <div className="text-xs text-slate-600 md:text-right space-y-0.5">
-
-                                                <p className="font-bold text-slate-800">
-                                                    📅 {appointment.date}
-                                                </p>
-
-                                                <p>
-                                                    🕒 {appointment.time}
-                                                </p>
-
-                                            </div>
-
-                                            {(appointment.status === "confirmed" || appointment.status === "pending") && (
-
-                                                <button
-                                                    onClick={() => handleCancel(appointment.id)}
-                                                    className="text-xs text-rose-600 hover:text-rose-800 hover:bg-rose-50 px-3.5 py-1.5 rounded-xl font-bold border border-rose-200 transition"
-                                                >
-                                                    Cancel Appointment
-                                                </button>
-
-                                            )}
-
                                         </div>
-
+                                        <p className="text-xs font-semibold text-teal-600 mt-0.5">
+                                            {doctor.specialization}
+                                        </p>
+                                        <div className="flex flex-wrap items-center gap-4 mt-2 text-xs text-slate-500">
+                                            <span>📅 {appointment.date}</span>
+                                            <span>🕒 {appointment.time}</span>
+                                            <span>📋 {appointment.notes || "General Checkup"}</span>
+                                        </div>
                                     </div>
+                                </div>
 
-                                );
-                            })}
-
-                        </div>
-
-                    )}
-
-                </main>
-
+                                {appointment.status !== "cancelled" && appointment.status !== "completed" && (
+                                    <button
+                                        onClick={() => handleCancel(appointment.id)}
+                                        className="w-full md:w-auto bg-rose-50 hover:bg-rose-100 text-rose-700 border border-rose-200 px-4 py-2.5 rounded-xl text-xs font-bold transition"
+                                    >
+                                        Cancel Appointment
+                                    </button>
+                                )}
+                            </div>
+                        );
+                    })
+                )}
             </div>
-        </div>
+        </Layout>
     );
 }
 

@@ -1,249 +1,125 @@
 import { useState } from "react";
-import { Link } from "react-router-dom";
+import { useDispatch } from "react-redux";
+import { useNavigate, Link } from "react-router-dom";
+import { login } from "../../redux/slices/authSlice";
 
 function Register() {
-  const [role, setRole] = useState("patient");
-  const [nameInput, setNameInput] = useState("");
-  const [emailInput, setEmailInput] = useState("");
-  const [passwordInput, setPasswordInput] = useState("");
-  const [dobInput, setDobInput] = useState("");
-  const [addressInput, setAddressInput] = useState("");
-  const [mobileInput, setMobileInput] = useState("");
-  const [qualificationInput, setQualificationInput] = useState("");
-  const [specializationInput, setSpecializationInput] = useState("");
-  const [experienceInput, setExperienceInput] = useState("");
-  const [error, setError] = useState(null);
+    const [name, setName] = useState("");
+    const [email, setEmail] = useState("");
+    const [password, setPassword] = useState("");
+    const [role, setRole] = useState("patient");
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-  };
+    const dispatch = useDispatch();
+    const navigate = useNavigate();
 
-  return (
-    <div className="min-h-screen bg-slate-900 flex items-center justify-center p-6 py-12">
-      <div className="w-full max-w-xl bg-white rounded-3xl shadow-2xl p-8 border border-slate-800">
+    const handleSubmit = (e) => {
+        e.preventDefault();
 
-        <div className="text-center mb-8">
+        const newUser = {
+            id: Date.now(),
+            name: name || "New User",
+            email: email,
+            role: role
+        };
 
-          <div className="w-12 h-12 rounded-2xl bg-gradient-to-tr from-blue-700 via-teal-600 to-teal-400 text-white flex items-center justify-center font-black text-xl shadow-lg mx-auto mb-3">
-            ✚
-          </div>
+        dispatch(login(newUser));
 
-          <h1 className="text-2xl font-extrabold text-slate-900 tracking-tight">
-            Create Account
-          </h1>
+        if (role === "patient") navigate("/patient/dashboard");
+        else if (role === "doctor") navigate("/doctor/dashboard");
+        else navigate("/admin/dashboard");
+    };
 
-          <p className="text-xs text-slate-500 mt-1">
-            Register as a Patient or Healthcare Practitioner
-          </p>
+    return (
+        <div className="min-h-screen bg-slate-900 flex items-center justify-center p-4 sm:p-6 relative overflow-hidden">
+            <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top_right,_var(--tw-gradient-stops))] from-teal-900/40 via-slate-900 to-slate-950 pointer-events-none"></div>
 
+            <div className="max-w-md w-full bg-white rounded-3xl p-6 sm:p-8 shadow-2xl border border-slate-800 relative z-10 space-y-6">
+                <div className="text-center space-y-2">
+                    <div className="w-14 h-14 rounded-2xl bg-gradient-to-tr from-blue-700 via-teal-600 to-teal-400 text-white flex items-center justify-center font-black text-2xl mx-auto shadow-lg shadow-teal-500/20">
+                        ✚
+                    </div>
+                    <h1 className="text-2xl sm:text-3xl font-extrabold text-slate-900 tracking-tight">
+                        CREATE <span className="text-teal-600">ACCOUNT</span>
+                    </h1>
+                    <p className="text-xs text-slate-500 font-medium">
+                        Join the integrated clinical healthcare network
+                    </p>
+                </div>
+
+                <form onSubmit={handleSubmit} className="space-y-4 text-xs sm:text-sm">
+                    <div>
+                        <label className="block font-bold text-slate-700 mb-1.5">Register As</label>
+                        <div className="grid grid-cols-2 gap-2">
+                            {["patient", "doctor"].map((r) => (
+                                <button
+                                    type="button"
+                                    key={r}
+                                    onClick={() => setRole(r)}
+                                    className={`py-2 rounded-xl text-xs font-bold capitalize transition border ${
+                                        role === r
+                                            ? "bg-teal-600 text-white border-teal-600 shadow-md shadow-teal-600/20"
+                                            : "bg-slate-50 text-slate-700 border-slate-200 hover:bg-slate-100"
+                                    }`}
+                                >
+                                    {r}
+                                </button>
+                            ))}
+                        </div>
+                    </div>
+
+                    <div>
+                        <label className="block font-bold text-slate-700 mb-1.5">Full Name</label>
+                        <input
+                            type="text"
+                            placeholder="John Doe"
+                            value={name}
+                            onChange={(e) => setName(e.target.value)}
+                            className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-slate-800 focus:outline-none focus:border-teal-500 transition"
+                            required
+                        />
+                    </div>
+
+                    <div>
+                        <label className="block font-bold text-slate-700 mb-1.5">Email Address</label>
+                        <input
+                            type="email"
+                            placeholder="john@example.com"
+                            value={email}
+                            onChange={(e) => setEmail(e.target.value)}
+                            className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-slate-800 focus:outline-none focus:border-teal-500 transition"
+                            required
+                        />
+                    </div>
+
+                    <div>
+                        <label className="block font-bold text-slate-700 mb-1.5">Password</label>
+                        <input
+                            type="password"
+                            placeholder="Create strong password..."
+                            value={password}
+                            onChange={(e) => setPassword(e.target.value)}
+                            className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-slate-800 focus:outline-none focus:border-teal-500 transition"
+                            required
+                        />
+                    </div>
+
+                    <button
+                        type="submit"
+                        className="w-full bg-teal-600 hover:bg-teal-700 text-white font-bold py-3.5 rounded-xl transition shadow-lg text-xs tracking-wider uppercase"
+                    >
+                        Register Account
+                    </button>
+                </form>
+
+                <div className="pt-4 border-t border-slate-100 text-center text-xs text-slate-500">
+                    Already registered?{" "}
+                    <Link to="/login" className="font-bold text-teal-600 hover:underline">
+                        Sign in here
+                    </Link>
+                </div>
+            </div>
         </div>
-
-        <form onSubmit={handleSubmit} className="space-y-5 text-xs">
-
-          <div className="bg-slate-50 p-4 rounded-2xl border border-slate-200">
-
-            <label className="block font-bold text-slate-700 mb-2">
-              Registration Role
-            </label>
-
-            <div className="flex gap-8">
-
-              <label className="flex items-center gap-2 cursor-pointer font-bold text-slate-800">
-                <input
-                  type="radio"
-                  name="role"
-                  value="patient"
-                  checked={role === "patient"}
-                  onChange={(e) => setRole(e.target.value)}
-                  className="accent-teal-600"
-                />
-                Patient Account
-              </label>
-
-              <label className="flex items-center gap-2 cursor-pointer font-bold text-slate-800">
-                <input
-                  type="radio"
-                  name="role"
-                  value="doctor"
-                  checked={role === "doctor"}
-                  onChange={(e) => setRole(e.target.value)}
-                  className="accent-teal-600"
-                />
-                Physician Practitioner
-              </label>
-
-            </div>
-
-          </div>
-
-          <div>
-            <label className="block font-bold text-slate-700 mb-1.5">
-              Full Legal Name
-            </label>
-
-            <input
-              type="text"
-              placeholder="Enter full name"
-              value={nameInput}
-              onChange={(e) => setNameInput(e.target.value)}
-              className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-teal-500 font-semibold text-slate-900"
-            />
-          </div>
-
-          <div>
-            <label className="block font-bold text-slate-700 mb-1.5">
-              Email Address
-            </label>
-
-            <input
-              type="email"
-              placeholder="name@domain.com"
-              value={emailInput}
-              onChange={(e) => setEmailInput(e.target.value)}
-              className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-teal-500 font-semibold text-slate-900"
-            />
-          </div>
-
-          <div>
-            <label className="block font-bold text-slate-700 mb-1.5">
-              Account Password
-            </label>
-
-            <input
-              type="password"
-              placeholder="••••••••"
-              value={passwordInput}
-              onChange={(e) => setPasswordInput(e.target.value)}
-              className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-teal-500 font-semibold text-slate-900"
-            />
-          </div>
-
-          {role === "patient" && (
-            <div className="space-y-4 pt-2">
-
-              <div>
-                <label className="block font-bold text-slate-700 mb-1.5">
-                  Residential Address
-                </label>
-
-                <input
-                  type="text"
-                  placeholder="Enter full address"
-                  value={addressInput}
-                  onChange={(e) => setAddressInput(e.target.value)}
-                  className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-teal-500 font-semibold text-slate-900"
-                />
-              </div>
-
-              <div>
-                <label className="block font-bold text-slate-700 mb-1.5">
-                  Mobile Contact Number
-                </label>
-
-                <input
-                  type="text"
-                  placeholder="Enter contact number"
-                  value={mobileInput}
-                  onChange={(e) => setMobileInput(e.target.value)}
-                  className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-teal-500 font-semibold text-slate-900"
-                />
-              </div>
-
-              <div>
-                <label className="block font-bold text-slate-700 mb-1.5">
-                  Date of Birth
-                </label>
-
-                <input
-                  type="date"
-                  value={dobInput}
-                  onChange={(e) => setDobInput(e.target.value)}
-                  className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-teal-500 font-semibold text-slate-900"
-                />
-              </div>
-
-            </div>
-          )}
-
-          {role === "doctor" && (
-            <div className="space-y-4 pt-2">
-
-              <div>
-                <label className="block font-bold text-slate-700 mb-1.5">
-                  Medical Specialization
-                </label>
-
-                <input
-                  type="text"
-                  placeholder="e.g. Cardiology, Orthopedics"
-                  value={specializationInput}
-                  onChange={(e) =>
-                    setSpecializationInput(e.target.value)
-                  }
-                  className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-teal-500 font-semibold text-slate-900"
-                />
-              </div>
-
-              <div>
-                <label className="block font-bold text-slate-700 mb-1.5">
-                  Years of Practice
-                </label>
-
-                <input
-                  type="number"
-                  placeholder="Years in practice"
-                  value={experienceInput}
-                  onChange={(e) =>
-                    setExperienceInput(e.target.value)
-                  }
-                  className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-teal-500 font-semibold text-slate-900"
-                />
-              </div>
-
-              <div>
-                <label className="block font-bold text-slate-700 mb-1.5">
-                  Medical Qualifications
-                </label>
-
-                <input
-                  type="text"
-                  placeholder="e.g. MBBS, MD"
-                  value={qualificationInput}
-                  onChange={(e) =>
-                    setQualificationInput(e.target.value)
-                  }
-                  className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-teal-500 font-semibold text-slate-900"
-                />
-              </div>
-
-            </div>
-          )}
-
-          {error && (
-            <p className="text-rose-600 font-bold">{error}</p>
-          )}
-
-          <button
-            type="submit"
-            className="w-full bg-teal-600 hover:bg-teal-700 transition text-white py-3.5 rounded-xl font-bold uppercase tracking-wider text-xs shadow-lg shadow-teal-600/25"
-          >
-            Create Account
-          </button>
-
-          <div className="text-center pt-2 text-slate-500">
-
-            Already registered?{" "}
-
-            <Link to="/login" className="text-teal-600 font-bold hover:underline">
-              Sign In
-            </Link>
-
-          </div>
-
-        </form>
-      </div>
-    </div>
-  );
+    );
 }
 
 export default Register;

@@ -1,274 +1,216 @@
 import { useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import { useSelector, useDispatch } from "react-redux";
-
+import { useDispatch, useSelector } from "react-redux";
 import { addAppointment } from "../../redux/slices/appointmentSlice";
-
-import patients from "../../data/dummyPatients.json";
 import doctors from "../../data/dummyDoctors.json";
-import Navbar from "../../components/Navbar";
-import Sidebar from "../../components/Sidebar";
+import patients from "../../data/dummyPatients.json";
+import Layout from "../../components/Layout";
 
 function BookAppointment() {
-    const auth = useSelector((state) => state.auth);
-    const appointments = useSelector((state) => state.appointment.appointments);
-    const dispatch = useDispatch();
-    const [selectedDate, setSelectedDate] = useState("");
-    const [selectedTimeSlot, setSelectedTimeSlot] = useState("");
-
-    const dayNames = [
-        "Sunday",
-        "Monday",
-        "Tuesday",
-        "Wednesday",
-        "Thursday",
-        "Friday",
-        "Saturday"
-    ];
-
     const { doctorId } = useParams();
     const navigate = useNavigate();
+    const dispatch = useDispatch();
+    const auth = useSelector((state) => state.auth);
+    const appointments = useSelector((state) => state.appointment?.appointments || []);
 
-    const doctor = doctors.find((d) => d.id === Number(doctorId)) || doctors[0];
+    const currentUserId = auth?.user ? auth.user.id : 4;
+    const currentPatient = patients.find((p) => p.userId === currentUserId) || patients[0];
+    const doctor = doctors.find((d) => d.id === parseInt(doctorId, 10)) || doctors[0];
 
-    const dateObj = new Date(selectedDate);
-    const dayIndex = dateObj.getDay();
-    const dayName = dayNames[dayIndex];
+    const [selectedDate, setSelectedDate] = useState(new Date().toISOString().split("T")[0]);
+    const [selectedTime, setSelectedTime] = useState("");
+    const [reason, setReason] = useState("");
 
-    const available = doctor.availability?.find((a) => a.day === dayName);
+    const timeSlots = [
+        "09:00 AM",
+        "10:00 AM",
+        "11:00 AM",
+        "11:30 AM",
+        "01:00 PM",
+        "02:00 PM",
+        "03:00 PM",
+        "04:00 PM"
+    ];
 
-    const existingAppointment = appointments.find((a) =>
-        a.doctorId === doctor.id &&
-        a.date === selectedDate &&
-        a.time === selectedTimeSlot &&
-        a.status !== "cancelled"
-    );
+    const getSlotBookingCount = (slotTime) => {
+        return appointments.filter(
+            (a) =>
+                a.doctorId === doctor.id &&
+                a.date === selectedDate &&
+                a.time === slotTime &&
+                a.status !== "cancelled"
+        ).length;
+    };
 
-    const handleConfirmBooking = () => {
-        const patientProfile = patients.find((P) => P.userId === (auth.user ? auth.user.id : 4)) || patients[0];
+    const handleSubmit = (e) => {
+        e.preventDefault();
+        if (!selectedDate || !selectedTime) {
+            alert("Please select a consultation date and available time slot.");
+            return;
+        }
+
+        const count = getSlotBookingCount(selectedTime);
+        if (count >= 4) {
+            alert("Sorry, this time slot has reached its maximum capacity of 4 patients. Please choose another time slot.");
+            return;
+        }
 
         const newAppointment = {
             id: Date.now(),
-            patientId: patientProfile.id,
+            patientId: currentPatient.id,
             doctorId: doctor.id,
             date: selectedDate,
-            time: selectedTimeSlot,
+            time: selectedTime,
             status: "pending",
-            reason: "General consultation",
-            createdAt: new Date().toISOString().split("T")[0],
+            reason: reason || "General Consultation",
+            notes: reason || "Submitted for Admin confirmation",
+            createdAt: new Date().toISOString().split("T")[0]
         };
 
         dispatch(addAppointment(newAppointment));
-        alert("Appointment consultation successfully scheduled.");
-        navigate("/patient/dashboard");
+        alert(`Appointment requested with ${doctor.name} for ${selectedTime}! Your request is now pending Admin approval.`);
+        navigate("/patient/my-appointments");
     };
 
     return (
-        <div className="min-h-screen bg-slate-50 flex flex-col">
-            <Navbar />
-
-            <div className="flex flex-1">
-                <Sidebar />
-
-                <main className="flex-1 max-w-5xl p-8 space-y-8">
-
-                    {/* Doctor Header Banner */}
-
-                    <div className="bg-gradient-to-r from-slate-900 via-slate-800 to-teal-900 text-white rounded-3xl p-8 shadow-xl border border-slate-800">
-
-                        <div className="flex flex-col sm:flex-row items-center gap-6">
-
-                            <div className="w-24 h-24 rounded-2xl bg-gradient-to-br from-teal-500 to-blue-600 text-white text-3xl font-extrabold flex items-center justify-center shadow-lg border-2 border-white/20 shrink-0">
-                                {doctor.name
-                                    .replace(/^Dr\.?\s*/i, "")
-                                    .charAt(0)
-                                    .toUpperCase()}
-                            </div>
-
-                            <div className="text-center sm:text-left">
-
-                                <div className="flex items-center justify-center sm:justify-start gap-2">
-
-                                    <h1 className="text-3xl font-extrabold text-white">
-                                        {doctor.name}
-                                    </h1>
-
-                                    {doctor.verified && (
-                                        <span className="bg-teal-500/20 text-teal-300 border border-teal-500/30 px-3 py-0.5 rounded-full text-xs font-semibold">
-                                            ✔ Verified Physician
-                                        </span>
-                                    )}
-
-                                </div>
-
-                                <p className="text-teal-300 font-semibold mt-1">
-                                    {doctor.specialization}
-                                </p>
-
-                                <div className="flex flex-wrap items-center justify-center sm:justify-start gap-4 mt-4 text-xs text-slate-300">
-
-                                    <span className="bg-white/10 px-3.5 py-1.5 rounded-xl border border-white/10">
-                                        📍 {doctor.location}
-                                    </span>
-
-                                    <span className="bg-white/10 px-3.5 py-1.5 rounded-xl border border-white/10">
-                                        💼 {doctor.experience}
-                                    </span>
-
-                                    <span className="bg-amber-400/20 text-amber-300 px-3.5 py-1.5 rounded-xl border border-amber-400/30 font-bold">
-                                        ⭐ {doctor.rating} Rating
-                                    </span>
-
-                                </div>
-
-                            </div>
-
+        <Layout>
+            <div className="max-w-3xl mx-auto bg-white rounded-3xl p-6 sm:p-8 shadow-sm border border-slate-200/80 space-y-6">
+                <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between border-b border-slate-100 pb-6 gap-4">
+                    <div className="flex items-center gap-4">
+                        <div className="w-16 h-16 rounded-2xl bg-slate-900 text-teal-300 font-extrabold text-2xl flex items-center justify-center border-2 border-white shadow shrink-0">
+                            {doctor.name.replace(/^Dr\.?\s*/i, "").charAt(0)}
                         </div>
-
+                        <div>
+                            <span className="text-[10px] uppercase font-bold text-teal-600 tracking-wider">
+                                Direct Consultation Booking
+                            </span>
+                            <h1 className="text-xl sm:text-2xl font-extrabold text-slate-900 mt-0.5">
+                                {doctor.name}
+                            </h1>
+                            <p className="text-xs text-slate-500 font-semibold">
+                                {doctor.specialization} • Fee: ₹{doctor.fee || 500} • {doctor.location || "Kerala"}
+                            </p>
+                        </div>
                     </div>
 
-                    {/* Date & Time Picker Container */}
+                    <button
+                        onClick={() => navigate(-1)}
+                        className="text-xs font-bold text-slate-500 hover:text-slate-900 bg-slate-100 hover:bg-slate-200 px-3.5 py-2 rounded-xl transition"
+                    >
+                        ← Back to Search
+                    </button>
+                </div>
 
-                    <div className="bg-white rounded-3xl shadow-sm border border-slate-200/80 p-8 space-y-8">
+                <form onSubmit={handleSubmit} className="space-y-6 text-xs sm:text-sm">
+                    <div>
+                        <label className="block font-bold text-slate-700 mb-2">
+                            1. Select Consultation Date
+                        </label>
+                        <input
+                            type="date"
+                            value={selectedDate}
+                            min={new Date().toISOString().split("T")[0]}
+                            onChange={(e) => {
+                                setSelectedDate(e.target.value);
+                                setSelectedTime("");
+                            }}
+                            className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 focus:outline-none focus:border-teal-500 focus:bg-white transition text-slate-800"
+                            required
+                        />
+                    </div>
 
-                        <div>
-
-                            <h2 className="text-lg font-bold text-slate-900 mb-2">
-                                1. Select Preferred Consultation Date
-                            </h2>
-
-                            <p className="text-xs text-slate-500 mb-4">
-                                Choose an available date on the clinical calendar.
-                            </p>
-
-                            <input
-                                type="date"
-                                value={selectedDate}
-                                onChange={(e) => setSelectedDate(e.target.value)}
-                                className="border border-slate-200 rounded-2xl px-5 py-3 text-sm w-full md:w-80 font-semibold text-slate-800 bg-slate-50/50 focus:outline-none focus:ring-2 focus:ring-teal-500 focus:bg-white"
-                            />
-
-                            {selectedDate && (
-                                <p className="mt-3 text-xs text-slate-600">
-                                    Selected Day of Week: <span className="font-bold text-teal-600">{dayName}</span>
-                                </p>
-                            )}
-
+                    <div>
+                        <div className="flex justify-between items-center mb-2">
+                            <label className="block font-bold text-slate-700">
+                                2. Choose Time Slot (Max 4 Patients Per Slot)
+                            </label>
+                            <span className="text-[11px] font-semibold text-slate-400">
+                                Selected Date: {selectedDate}
+                            </span>
                         </div>
 
-                        <div>
+                        <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+                            {timeSlots.map((slot) => {
+                                const bookedCount = getSlotBookingCount(slot);
+                                const isFull = bookedCount >= 4;
+                                const isSelected = selectedTime === slot;
 
-                            <h2 className="text-lg font-bold text-slate-900 mb-2">
-                                2. Select Available Time Slot
-                            </h2>
-
-                            {available ? (
-
-                                <div className="flex flex-wrap gap-3 mt-4">
-
-                                    {available.slots.map((slot) => (
-
-                                        <button
-                                            key={slot}
-                                            onClick={() => setSelectedTimeSlot(slot)}
-                                            className={`px-5 py-3 rounded-2xl text-xs font-bold transition duration-200 shadow-sm ${
-                                                selectedTimeSlot === slot
-                                                    ? "bg-teal-600 text-white shadow-lg shadow-teal-600/30 scale-105"
-                                                    : "bg-slate-50 text-slate-700 border border-slate-200 hover:bg-teal-50 hover:border-teal-300"
+                                return (
+                                    <button
+                                        type="button"
+                                        key={slot}
+                                        disabled={isFull}
+                                        onClick={() => setSelectedTime(slot)}
+                                        className={`py-3 px-3 rounded-xl text-xs font-bold transition flex flex-col items-center justify-center gap-1 border ${
+                                            isFull
+                                                ? "bg-slate-100 text-slate-400 border-slate-200 cursor-not-allowed opacity-60"
+                                                : isSelected
+                                                ? "bg-teal-600 text-white border-teal-600 shadow-md shadow-teal-600/20"
+                                                : "bg-slate-50 text-slate-700 border-slate-200 hover:bg-teal-50 hover:border-teal-300"
+                                        }`}
+                                    >
+                                        <span>🕒 {slot}</span>
+                                        <span
+                                            className={`text-[10px] font-extrabold ${
+                                                isFull
+                                                    ? "text-rose-500"
+                                                    : isSelected
+                                                    ? "text-teal-100"
+                                                    : bookedCount > 2
+                                                    ? "text-amber-600"
+                                                    : "text-emerald-600"
                                             }`}
                                         >
-                                            🕒 {slot}
-                                        </button>
-
-                                    ))}
-
-                                </div>
-
-                            ) : (
-
-                                <div className="bg-rose-50 border border-rose-200 rounded-2xl p-6 text-center text-xs">
-
-                                    <p className="font-bold text-rose-700">
-                                        Physician is unavailable on {dayName || "the selected date"}.
-                                    </p>
-
-                                    <p className="text-slate-500 mt-1">
-                                        Please select a different date on the calendar above.
-                                    </p>
-
-                                </div>
-
-                            )}
-
-                        </div>
-
-                        {/* Booking State Display */}
-
-                        {selectedTimeSlot && (
-
-                            existingAppointment ? (
-
-                                <div className="bg-rose-50 border border-rose-200 rounded-2xl p-6 text-rose-900">
-
-                                    <h3 className="font-bold text-base text-rose-700 mb-1">
-                                        ⚠️ Reserved Slot Notice
-                                    </h3>
-
-                                    <p className="text-xs text-slate-600 mb-4">
-                                        This time slot ({selectedTimeSlot} on {selectedDate}) is already booked. Please choose another time.
-                                    </p>
-
-                                </div>
-
-                            ) : (
-
-                                <div className="bg-gradient-to-r from-slate-900 to-teal-900 rounded-2xl p-6 text-white shadow-lg space-y-4">
-
-                                    <h3 className="font-extrabold text-base text-white">
-                                        Consultation Summary
-                                    </h3>
-
-                                    <div className="grid sm:grid-cols-3 gap-4 text-xs text-slate-300">
-
-                                        <div>
-                                            <span className="text-slate-400 block">Physician</span>
-
-                                            <span className="font-bold text-white text-sm">{doctor.name}</span>
-                                        </div>
-
-                                        <div>
-                                            <span className="text-slate-400 block">Date</span>
-
-                                            <span className="font-bold text-white text-sm">{selectedDate}</span>
-                                        </div>
-
-                                        <div>
-                                            <span className="text-slate-400 block">Time</span>
-
-                                            <span className="font-bold text-white text-sm">{selectedTimeSlot}</span>
-                                        </div>
-
-                                    </div>
-
-                                    <button
-                                        onClick={handleConfirmBooking}
-                                        className="w-full bg-teal-500 hover:bg-teal-400 text-slate-950 font-extrabold py-3 rounded-xl text-xs uppercase tracking-wider shadow transition"
-                                    >
-                                        Confirm Consultation
+                                            {isFull ? "No slot available" : `${bookedCount}/4 booked`}
+                                        </span>
                                     </button>
-
-                                </div>
-
-                            )
-
-                        )}
-
+                                );
+                            })}
+                        </div>
                     </div>
 
-                </main>
+                    <div>
+                        <label className="block font-bold text-slate-700 mb-2">
+                            3. Chief Complaint / Reason for Visit
+                        </label>
+                        <textarea
+                            value={reason}
+                            onChange={(e) => setReason(e.target.value)}
+                            rows="3"
+                            placeholder="Describe symptoms or clinical checkup reasons..."
+                            className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 focus:outline-none focus:border-teal-500 focus:bg-white transition text-slate-800"
+                        ></textarea>
+                    </div>
 
+                    <div className="bg-amber-50 border border-amber-200 p-4 rounded-2xl text-xs text-amber-800 space-y-1">
+                        <p className="font-bold flex items-center gap-1.5">
+                            <span>ℹ️</span> Admin Approval Notice
+                        </p>
+                        <p>
+                            Appointments are submitted to the Hospital Administration for schedule verification before being confirmed.
+                        </p>
+                    </div>
+
+                    <div className="pt-4 border-t border-slate-100 flex flex-col sm:flex-row items-center justify-between gap-4">
+                        <div>
+                            <p className="text-[11px] text-slate-400 font-semibold uppercase">Total Fee</p>
+                            <p className="text-xl font-extrabold text-slate-900">₹{doctor.fee || 500}</p>
+                        </div>
+                        <button
+                            type="submit"
+                            disabled={!selectedTime}
+                            className={`w-full sm:w-auto px-8 py-3 rounded-xl font-bold transition shadow-md ${
+                                selectedTime
+                                    ? "bg-teal-600 hover:bg-teal-700 text-white shadow-teal-600/20"
+                                    : "bg-slate-300 text-slate-500 cursor-not-allowed"
+                            }`}
+                        >
+                            Request Appointment (Admin Verification)
+                        </button>
+                    </div>
+                </form>
             </div>
-        </div>
+        </Layout>
     );
 }
 
